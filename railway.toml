@@ -1,0 +1,9 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "BookingSystem/Dockerfile"
+
+[deploy]
+startCommand = "dotnet BookingSystem.dll"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
