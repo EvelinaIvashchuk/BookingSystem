@@ -1,0 +1,37 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="container py-5 text-center">
+    <div class="mb-4">
+        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 4rem;"></i>
+    </div>
+    
+    <h1 class="text-danger fw-bold">Something went wrong</h1>
+    <h2 class="h4 text-muted mb-5">An error occurred while processing your request.</h2>
+
+    @if (Model?.ShowRequestId == true)
+    {
+        <div class="card border-0 bg-light mb-5 mx-auto" style="max-width: 500px;">
+            <div class="card-body">
+                <span class="text-secondary small text-uppercase fw-bold">Request ID</span>
+                <p class="mb-0 mt-1"><code class="fs-5">@Model.RequestId</code></p>
+            </div>
+        </div>
+    }
+
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a href="/" class="btn btn-primary btn-lg px-4 gap-3">Go to Homepage</a>
+        <button onclick="history.back()" class="btn btn-outline-secondary btn-lg px-4">Go Back</button>
+    </div>
+
+    @if (Context.Items["Exception"] != null)
+    {
+        <div class="mt-5 text-start">
+             <div class="alert alert-warning small">
+                 <strong>Technical Details:</strong> @Context.Items["Exception"]?.ToString()
+             </div>
+        </div>
+    }
+</div>

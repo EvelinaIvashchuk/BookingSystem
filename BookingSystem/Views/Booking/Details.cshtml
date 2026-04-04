@@ -1,0 +1,153 @@
+@model Booking
+@{
+    ViewData["Title"] = "Booking Details: " + Model.Resource?.Name;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="MyBookings">My Bookings</a></li>
+                    <li class="breadcrumb-item active">Details</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-primary text-white p-4 border-0 rounded-top d-flex justify-content-between align-items-center">
+                    <h2 class="h4 mb-0"><i class="bi bi-info-circle me-2"></i> Booking Details</h2>
+                    <span class="badge bg-white text-primary">ID: @Model.Id</span>
+                </div>
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Status timeline -->
+                    <div class="mb-5">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            @{
+                                var steps = new[] { BookingStatus.Pending, BookingStatus.Confirmed };
+                                var isCancelled = Model.Status == BookingStatus.Cancelled;
+                                var isRejected  = Model.Status == BookingStatus.Rejected;
+                            }
+                            @foreach (var step in steps)
+                            {
+                                var reached = Model.Status == step ||
+                                    (step == BookingStatus.Pending && Model.Status != BookingStatus.Pending);
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center @(reached ? "bg-primary text-white" : "bg-light text-muted border")"
+                                         style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                        @if (reached)
+                                        {
+                                            <i class="bi bi-check"></i>
+                                        }
+                                        else
+                                        {
+                                            <span>@((int)step + 1)</span>
+                                        }
+                                    </div>
+                                    <span class="ms-2 small @(reached ? "fw-semibold" : "text-muted")">@step</span>
+                                </div>
+                                if (step != steps.Last())
+                                {
+                                    <div class="flex-grow-0" style="width: 40px; height: 2px; background: var(--bs-border-color);"></div>
+                                }
+                            }
+                            @if (isCancelled || isRejected)
+                            {
+                                <div class="flex-grow-0" style="width: 40px; height: 2px; background: var(--bs-danger);"></div>
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center"
+                                         style="width: 32px; height: 32px;">
+                                        <i class="bi bi-x"></i>
+                                    </div>
+                                    <span class="ms-2 small fw-semibold text-danger">@Model.Status</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row g-5">
+                        <div class="col-md-6">
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Resource Information</h3>
+                            <div class="d-flex mb-3">
+                                <div class="bg-light p-2 rounded me-3">
+                                    <i class="bi bi-building fs-4 text-primary"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">@Model.Resource?.Name</div>
+                                    <div class="small text-muted">@Model.Resource?.Location</div>
+                                    <div class="small text-muted">@Model.Resource?.Category?.Name</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 text-md-end">
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Current Status</h3>
+                            <partial name="_BookingStatusBadge" model="Model.Status" />
+                            <div class="text-muted small mt-2">
+                                Booked on @Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")
+                            </div>
+                        </div>
+
+                        <div class="col-12"><hr></div>
+
+                        <div class="col-md-6">
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Time Slot</h3>
+                            <div class="mb-3">
+                                <label class="small text-muted d-block">Start Time</label>
+                                <div class="fs-5 fw-semibold">@Model.StartTime?.ToString("dddd, MMM dd, yyyy HH:mm")</div>
+                            </div>
+                            <div>
+                                <label class="small text-muted d-block">End Time</label>
+                                <div class="fs-5 fw-semibold">@Model.EndTime?.ToString("dddd, MMM dd, yyyy HH:mm")</div>
+                            </div>
+                            @if (Model.Duration.HasValue)
+                            {
+                                <div class="mt-2">
+                                    <span class="badge bg-light text-dark border">
+                                        <i class="bi bi-hourglass-split me-1"></i>
+                                        @Model.Duration.Value.TotalHours.ToString("0.0") hours
+                                    </span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="col-md-6">
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Purpose / Notes</h3>
+                            <p class="mb-0">@(string.IsNullOrEmpty(Model.Purpose) ? "No purpose specified." : Model.Purpose)</p>
+
+                            @if (!string.IsNullOrEmpty(Model.AdminNote))
+                            {
+                                <div class="mt-4 p-3 bg-light border-start border-primary border-4 rounded">
+                                    <label class="small text-uppercase text-primary fw-bold d-block mb-1">Admin Note</label>
+                                    <p class="mb-0 small fst-italic">@Model.AdminNote</p>
+                                </div>
+                            }
+
+                            @if (Model.CancelledAt.HasValue)
+                            {
+                                <div class="mt-3 text-muted small">
+                                    <i class="bi bi-clock-history me-1"></i>
+                                    Cancelled on @Model.CancelledAt.Value.ToString("dd MMM yyyy, HH:mm")
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-top d-flex justify-content-between align-items-center">
+                        <a asp-action="MyBookings" class="btn btn-outline-secondary">Back to My Bookings</a>
+
+                        @if (Model.CanBeCancelledByUser)
+                        {
+                            <form asp-controller="Booking" asp-action="Cancel" method="post"
+                                  onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <button type="submit" class="btn btn-danger px-4">Cancel Booking</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

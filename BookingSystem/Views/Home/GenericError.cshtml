@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Error";
+    var code = ViewBag.StatusCode as int? ?? 500;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="display-1 fw-bold text-danger mb-3">@(code)</div>
+            <h2 class="h3 fw-bold mb-2">Something went wrong</h2>
+            <p class="text-muted mb-4">
+                An unexpected error occurred. If this persists, please contact the administrator.
+            </p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4">
+                <i class="bi bi-house me-1"></i> Go Home
+            </a>
+        </div>
+    </div>
+</div>

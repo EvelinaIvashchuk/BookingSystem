@@ -1,0 +1,20 @@
+===================================
+MOCK EMAIL — 2026-04-04 18:59:01 UTC
+===================================
+To:      ivashchuk67@gmail.com
+Subject: Booking Request Submitted
+-----------------------------------
+
+Dear Vlad Ivashchuk,
+
+Your booking request has been submitted and is awaiting admin approval.
+
+Resource:  Conference Room A
+From:      субота, 04 квіт. 2026 19:00
+To:        субота, 04 квіт. 2026 20:00
+
+You will be notified once the booking is confirmed or rejected.
+
+— BookingSystem
+
+===================================

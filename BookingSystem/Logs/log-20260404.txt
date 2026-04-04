@@ -1,0 +1,411 @@
+2026-04-04 21:49:18.614 +03:00 [ERR] (Microsoft.EntityFrameworkCore.Query) An exception occurred while iterating over the results of a query for context type 'BookingSystem.Data.ApplicationDbContext'.
+System.TypeLoadException: Method 'VisitRightJoin' in type 'Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal.MySqlBoolOptimizingExpressionVisitor' from assembly 'Pomelo.EntityFrameworkCore.MySql, Version=9.0.0.0, Culture=neutral, PublicKeyToken=2cc498582444921b' does not have an implementation.
+   at Pomelo.EntityFrameworkCore.MySql.Query.Internal.MySqlParameterBasedSqlProcessor.Optimize(Expression queryExpression, IReadOnlyDictionary`2 parametersValues, Boolean& canCache)
+   at Pomelo.EntityFrameworkCore.MySql.Query.Internal.MySqlParameterBasedSqlProcessor.Optimize(Expression queryExpression, IReadOnlyDictionary`2 parametersValues, Boolean& canCache)
+   at Microsoft.EntityFrameworkCore.Query.Internal.RelationalCommandCache.GetRelationalCommandTemplate(IReadOnlyDictionary`2 parameters)
+   at Microsoft.EntityFrameworkCore.Internal.RelationalCommandResolverExtensions.RentAndPopulateRelationalCommand(RelationalCommandResolver relationalCommandResolver, RelationalQueryContext queryContext)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.TypeLoadException: Method 'VisitRightJoin' in type 'Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal.MySqlBoolOptimizingExpressionVisitor' from assembly 'Pomelo.EntityFrameworkCore.MySql, Version=9.0.0.0, Culture=neutral, PublicKeyToken=2cc498582444921b' does not have an implementation.
+   at Pomelo.EntityFrameworkCore.MySql.Query.Internal.MySqlParameterBasedSqlProcessor.Optimize(Expression queryExpression, IReadOnlyDictionary`2 parametersValues, Boolean& canCache)
+   at Pomelo.EntityFrameworkCore.MySql.Query.Internal.MySqlParameterBasedSqlProcessor.Optimize(Expression queryExpression, IReadOnlyDictionary`2 parametersValues, Boolean& canCache)
+   at Microsoft.EntityFrameworkCore.Query.Internal.RelationalCommandCache.GetRelationalCommandTemplate(IReadOnlyDictionary`2 parameters)
+   at Microsoft.EntityFrameworkCore.Internal.RelationalCommandResolverExtensions.RentAndPopulateRelationalCommand(RelationalCommandResolver relationalCommandResolver, RelationalQueryContext queryContext)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2026-04-04 21:50:08.164 +03:00 [ERR] (Microsoft.EntityFrameworkCore.Query) An exception occurred while iterating over the results of a query for context type 'BookingSystem.Data.ApplicationDbContext'.
+System.TypeLoadException: Method 'VisitRightJoin' in type 'Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal.MySqlBoolOptimizingExpressionVisitor' from assembly 'Pomelo.EntityFrameworkCore.MySql, Version=9.0.0.0, Culture=neutral, PublicKeyToken=2cc498582444921b' does not have an implementation.
+   at Pomelo.EntityFrameworkCore.MySql.Query.Internal.MySqlParameterBasedSqlProcessor.Optimize(Expression queryExpression, IReadOnlyDictionary`2 parametersValues, Boolean& canCache)
+   at Pomelo.EntityFrameworkCore.MySql.Query.Internal.MySqlParameterBasedSqlProcessor.Optimize(Expression queryExpression, IReadOnlyDictionary`2 parametersValues, Boolean& canCache)
+   at Microsoft.EntityFrameworkCore.Query.Internal.RelationalCommandCache.GetRelationalCommandTemplate(IReadOnlyDictionary`2 parameters)
+   at Microsoft.EntityFrameworkCore.Internal.RelationalCommandResolverExtensions.RentAndPopulateRelationalCommand(RelationalCommandResolver relationalCommandResolver, RelationalQueryContext queryContext)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.TypeLoadException: Method 'VisitRightJoin' in type 'Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal.MySqlBoolOptimizingExpressionVisitor' from assembly 'Pomelo.EntityFrameworkCore.MySql, Version=9.0.0.0, Culture=neutral, PublicKeyToken=2cc498582444921b' does not have an implementation.
+   at Pomelo.EntityFrameworkCore.MySql.Query.Internal.MySqlParameterBasedSqlProcessor.Optimize(Expression queryExpression, IReadOnlyDictionary`2 parametersValues, Boolean& canCache)
+   at Pomelo.EntityFrameworkCore.MySql.Query.Internal.MySqlParameterBasedSqlProcessor.Optimize(Expression queryExpression, IReadOnlyDictionary`2 parametersValues, Boolean& canCache)
+   at Microsoft.EntityFrameworkCore.Query.Internal.RelationalCommandCache.GetRelationalCommandTemplate(IReadOnlyDictionary`2 parameters)
+   at Microsoft.EntityFrameworkCore.Internal.RelationalCommandResolverExtensions.RentAndPopulateRelationalCommand(RelationalCommandResolver relationalCommandResolver, RelationalQueryContext queryContext)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2026-04-04 21:50:30.954 +03:00 [INF] (BookingSystem.Data.ApplicationDbContext) Admin account seeded: admin@bookingsystem.local
+2026-04-04 21:50:31.276 +03:00 [INF] (Microsoft.Hosting.Lifetime) Now listening on: http://localhost:5110
+2026-04-04 21:50:31.277 +03:00 [INF] (Microsoft.Hosting.Lifetime) Application started. Press Ctrl+C to shut down.
+2026-04-04 21:50:31.279 +03:00 [INF] (Microsoft.Hosting.Lifetime) Hosting environment: Development
+2026-04-04 21:50:31.280 +03:00 [INF] (Microsoft.Hosting.Lifetime) Content root path: C:\BookingSystem\BookingSystem
+2026-04-04 21:55:34.905 +03:00 [INF] (Microsoft.Hosting.Lifetime) Application is shutting down...
+2026-04-04 21:56:02.548 +03:00 [INF] (Microsoft.Hosting.Lifetime) Now listening on: http://localhost:5110
+2026-04-04 21:56:02.586 +03:00 [INF] (Microsoft.Hosting.Lifetime) Application started. Press Ctrl+C to shut down.
+2026-04-04 21:56:02.589 +03:00 [INF] (Microsoft.Hosting.Lifetime) Hosting environment: Development
+2026-04-04 21:56:02.592 +03:00 [INF] (Microsoft.Hosting.Lifetime) Content root path: C:\BookingSystem\BookingSystem
+2026-04-04 21:56:23.702 +03:00 [INF] (Microsoft.Hosting.Lifetime) Now listening on: http://localhost:5110
+2026-04-04 21:56:23.793 +03:00 [INF] (Microsoft.Hosting.Lifetime) Application started. Press Ctrl+C to shut down.
+2026-04-04 21:56:23.798 +03:00 [INF] (Microsoft.Hosting.Lifetime) Hosting environment: Development
+2026-04-04 21:56:23.803 +03:00 [INF] (Microsoft.Hosting.Lifetime) Content root path: C:\BookingSystem\BookingSystem
+2026-04-04 21:56:33.468 +03:00 [WRN] (Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware) Failed to determine the https port for redirect.
+2026-04-04 21:56:34.264 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET / responded 200 in 795.8546 ms
+2026-04-04 21:56:34.707 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 415.7133 ms
+2026-04-04 21:56:34.707 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 6.9235 ms
+2026-04-04 21:56:34.707 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 416.0403 ms
+2026-04-04 21:56:34.712 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 419.5081 ms
+2026-04-04 21:56:34.712 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 420.8888 ms
+2026-04-04 21:56:34.712 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 361.5986 ms
+2026-04-04 21:56:35.189 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /favicon.ico responded 200 in 1.7250 ms
+2026-04-04 21:56:48.801 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Resource/Details/5 responded 200 in 110.1207 ms
+2026-04-04 21:56:48.857 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 2.1376 ms
+2026-04-04 21:56:48.858 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 2.1839 ms
+2026-04-04 21:56:48.911 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 54.5396 ms
+2026-04-04 21:56:48.911 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 66.4976 ms
+2026-04-04 21:56:48.911 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 53.9344 ms
+2026-04-04 21:56:48.928 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 2.6249 ms
+2026-04-04 21:56:54.429 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Resource/Details/2 responded 200 in 18.2729 ms
+2026-04-04 21:56:54.482 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 6.7016 ms
+2026-04-04 21:56:54.487 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 1.1469 ms
+2026-04-04 21:56:54.487 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 2.0903 ms
+2026-04-04 21:56:54.490 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 1.4364 ms
+2026-04-04 21:56:54.490 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 4.0540 ms
+2026-04-04 21:56:54.491 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 4.5379 ms
+2026-04-04 21:57:01.245 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Resource responded 200 in 209.4510 ms
+2026-04-04 21:57:01.294 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 4.8481 ms
+2026-04-04 21:57:01.305 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 1.0810 ms
+2026-04-04 21:57:01.305 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 0.9799 ms
+2026-04-04 21:57:01.308 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 3.3441 ms
+2026-04-04 21:57:01.309 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 3.9288 ms
+2026-04-04 21:57:01.321 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 1.0790 ms
+2026-04-04 21:57:05.202 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET / responded 200 in 16.3756 ms
+2026-04-04 21:57:05.268 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 4.1711 ms
+2026-04-04 21:57:05.275 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 0.9307 ms
+2026-04-04 21:57:05.275 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 1.0619 ms
+2026-04-04 21:57:05.276 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 0.8123 ms
+2026-04-04 21:57:05.278 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 3.4614 ms
+2026-04-04 21:57:05.278 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 3.3897 ms
+2026-04-04 21:57:07.147 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Resource responded 200 in 20.1522 ms
+2026-04-04 21:57:07.203 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 4.6174 ms
+2026-04-04 21:57:07.212 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 0.8077 ms
+2026-04-04 21:57:07.212 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 0.7277 ms
+2026-04-04 21:57:07.215 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 2.8024 ms
+2026-04-04 21:57:07.216 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 4.7140 ms
+2026-04-04 21:57:07.217 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 5.1667 ms
+2026-04-04 21:57:11.595 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Resource responded 200 in 44.3703 ms
+2026-04-04 21:57:11.637 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 4.9463 ms
+2026-04-04 21:57:11.651 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 1.0323 ms
+2026-04-04 21:57:11.651 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 1.2827 ms
+2026-04-04 21:57:11.653 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 2.7718 ms
+2026-04-04 21:57:11.653 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 2.8578 ms
+2026-04-04 21:57:11.662 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 1.0558 ms
+2026-04-04 21:57:12.529 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Resource responded 200 in 17.5033 ms
+2026-04-04 21:57:12.578 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 4.8091 ms
+2026-04-04 21:57:12.584 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 1.2193 ms
+2026-04-04 21:57:12.584 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 1.0146 ms
+2026-04-04 21:57:12.588 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 3.5535 ms
+2026-04-04 21:57:12.588 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 3.7412 ms
+2026-04-04 21:57:12.601 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 1.0878 ms
+2026-04-04 21:57:14.789 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Resource responded 200 in 17.1637 ms
+2026-04-04 21:57:14.840 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 0.9318 ms
+2026-04-04 21:57:14.840 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 0.8066 ms
+2026-04-04 21:57:14.842 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 5.5396 ms
+2026-04-04 21:57:14.843 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 3.0307 ms
+2026-04-04 21:57:14.843 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 3.0636 ms
+2026-04-04 21:57:14.848 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 0.9282 ms
+2026-04-04 21:57:21.398 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Resource/Details/2 responded 200 in 16.7985 ms
+2026-04-04 21:57:21.440 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 5.7339 ms
+2026-04-04 21:57:21.447 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 1.0152 ms
+2026-04-04 21:57:21.448 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 0.9572 ms
+2026-04-04 21:57:21.450 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 2.5288 ms
+2026-04-04 21:57:21.450 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 2.2924 ms
+2026-04-04 21:57:21.459 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 0.9727 ms
+2026-04-04 21:57:25.045 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Booking/Create responded 302 in 13.2574 ms
+2026-04-04 21:57:25.150 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Account/Login responded 200 in 93.4333 ms
+2026-04-04 21:57:25.207 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 5.1878 ms
+2026-04-04 21:57:25.219 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 1.0959 ms
+2026-04-04 21:57:25.219 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 0.6910 ms
+2026-04-04 21:57:25.221 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 1.5205 ms
+2026-04-04 21:57:25.221 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 2.9312 ms
+2026-04-04 21:57:25.222 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 3.0349 ms
+2026-04-04 21:57:25.227 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 1.5044 ms
+2026-04-04 21:57:25.231 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 1.6731 ms
+2026-04-04 21:57:27.718 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Account/Login responded 200 in 25.7969 ms
+2026-04-04 21:57:27.767 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 5.9280 ms
+2026-04-04 21:57:27.775 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 0.9404 ms
+2026-04-04 21:57:27.776 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 0.8457 ms
+2026-04-04 21:57:27.778 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 2.1216 ms
+2026-04-04 21:57:27.779 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 3.9325 ms
+2026-04-04 21:57:27.779 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 3.9383 ms
+2026-04-04 21:57:27.797 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 7.0156 ms
+2026-04-04 21:57:27.806 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 4.9463 ms
+2026-04-04 21:57:28.435 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Account/Register responded 200 in 56.2099 ms
+2026-04-04 21:57:28.490 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 5.2463 ms
+2026-04-04 21:57:28.500 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 0.9431 ms
+2026-04-04 21:57:28.500 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 0.7862 ms
+2026-04-04 21:57:28.501 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 0.7325 ms
+2026-04-04 21:57:28.503 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 3.3966 ms
+2026-04-04 21:57:28.504 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 3.5929 ms
+2026-04-04 21:57:28.507 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 1.3114 ms
+2026-04-04 21:57:28.511 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 1.2743 ms
+2026-04-04 21:57:28.989 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Account/Login responded 200 in 13.7873 ms
+2026-04-04 21:57:29.031 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 5.1418 ms
+2026-04-04 21:57:29.037 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 1.3346 ms
+2026-04-04 21:57:29.037 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 1.2315 ms
+2026-04-04 21:57:29.038 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 0.7858 ms
+2026-04-04 21:57:29.039 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 2.8529 ms
+2026-04-04 21:57:29.040 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 3.0202 ms
+2026-04-04 21:57:29.045 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 1.3229 ms
+2026-04-04 21:57:29.060 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 1.4390 ms
+2026-04-04 21:57:29.439 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Account/Register responded 200 in 13.4778 ms
+2026-04-04 21:57:29.497 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 5.7853 ms
+2026-04-04 21:57:29.503 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 1.2948 ms
+2026-04-04 21:57:29.504 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 1.0217 ms
+2026-04-04 21:57:29.505 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 1.3943 ms
+2026-04-04 21:57:29.506 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 2.9817 ms
+2026-04-04 21:57:29.506 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 2.8096 ms
+2026-04-04 21:57:29.510 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 1.7903 ms
+2026-04-04 21:57:29.514 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 1.3928 ms
+2026-04-04 21:57:29.864 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Account/Register responded 200 in 13.7570 ms
+2026-04-04 21:57:29.913 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 1.0117 ms
+2026-04-04 21:57:29.913 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 0.9209 ms
+2026-04-04 21:57:29.915 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 1.1797 ms
+2026-04-04 21:57:29.915 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 5.8910 ms
+2026-04-04 21:57:29.917 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 3.0784 ms
+2026-04-04 21:57:29.917 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 4.1178 ms
+2026-04-04 21:57:29.926 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 1.6496 ms
+2026-04-04 21:57:29.929 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 1.1405 ms
+2026-04-04 21:57:30.931 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Account/Login responded 200 in 12.7152 ms
+2026-04-04 21:57:30.986 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 5.3061 ms
+2026-04-04 21:57:30.996 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 1.3045 ms
+2026-04-04 21:57:30.997 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 1.0815 ms
+2026-04-04 21:57:30.998 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 1.3023 ms
+2026-04-04 21:57:31.000 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 3.3889 ms
+2026-04-04 21:57:31.000 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 3.5201 ms
+2026-04-04 21:57:31.004 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 1.6409 ms
+2026-04-04 21:57:31.006 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 1.2972 ms
+2026-04-04 21:57:32.313 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Account/Register responded 200 in 12.9117 ms
+2026-04-04 21:57:32.365 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 4.3707 ms
+2026-04-04 21:57:32.373 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 1.0176 ms
+2026-04-04 21:57:32.373 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 0.7680 ms
+2026-04-04 21:57:32.375 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 2.0388 ms
+2026-04-04 21:57:32.377 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 4.0287 ms
+2026-04-04 21:57:32.377 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 4.1998 ms
+2026-04-04 21:57:32.388 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 5.2379 ms
+2026-04-04 21:57:32.389 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 1.2034 ms
+2026-04-04 21:57:49.447 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP POST /Account/Register responded 200 in 62.3721 ms
+2026-04-04 21:57:49.495 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 0.9696 ms
+2026-04-04 21:57:49.495 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 0.8971 ms
+2026-04-04 21:57:49.497 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 1.0318 ms
+2026-04-04 21:57:49.497 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 5.5127 ms
+2026-04-04 21:57:49.498 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 3.4113 ms
+2026-04-04 21:57:49.499 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 3.2101 ms
+2026-04-04 21:57:49.511 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 1.2806 ms
+2026-04-04 21:57:49.512 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 1.7506 ms
+2026-04-04 21:58:06.118 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP POST /Account/Register responded 302 in 683.7708 ms
+2026-04-04 21:58:06.155 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET / responded 200 in 25.4513 ms
+2026-04-04 21:58:06.205 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 15.3686 ms
+2026-04-04 21:58:06.209 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 18.1412 ms
+2026-04-04 21:58:06.205 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 15.7202 ms
+2026-04-04 21:58:06.214 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 23.1002 ms
+2026-04-04 21:58:06.214 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 24.4091 ms
+2026-04-04 21:58:06.215 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 26.3104 ms
+2026-04-04 21:58:11.811 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Resource responded 200 in 19.4996 ms
+2026-04-04 21:58:11.866 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 17.9448 ms
+2026-04-04 21:58:11.876 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 16.2264 ms
+2026-04-04 21:58:11.876 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 16.1423 ms
+2026-04-04 21:58:11.878 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 16.7389 ms
+2026-04-04 21:58:11.880 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 19.5876 ms
+2026-04-04 21:58:11.880 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 19.5162 ms
+2026-04-04 21:58:12.304 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Booking/MyBookings responded 200 in 62.0078 ms
+2026-04-04 21:58:12.369 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 18.0504 ms
+2026-04-04 21:58:12.382 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 16.0221 ms
+2026-04-04 21:58:12.382 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 17.9288 ms
+2026-04-04 21:58:12.383 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 18.1783 ms
+2026-04-04 21:58:12.383 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 18.0066 ms
+2026-04-04 21:58:12.385 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 19.2652 ms
+2026-04-04 21:58:13.775 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Resource responded 200 in 17.6550 ms
+2026-04-04 21:58:13.833 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 16.1555 ms
+2026-04-04 21:58:13.840 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 13.8364 ms
+2026-04-04 21:58:13.842 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 14.6313 ms
+2026-04-04 21:58:13.842 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 16.1431 ms
+2026-04-04 21:58:13.844 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 17.4309 ms
+2026-04-04 21:58:13.845 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 17.6314 ms
+2026-04-04 21:58:16.762 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Resource/Details/2 responded 200 in 16.7151 ms
+2026-04-04 21:58:16.830 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 15.7565 ms
+2026-04-04 21:58:16.840 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 14.7275 ms
+2026-04-04 21:58:16.840 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 15.2244 ms
+2026-04-04 21:58:16.843 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 17.3523 ms
+2026-04-04 21:58:16.843 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 16.9922 ms
+2026-04-04 21:58:16.848 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 16.4140 ms
+2026-04-04 21:58:17.792 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Booking/Create responded 200 in 84.6807 ms
+2026-04-04 21:58:17.848 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 15.7853 ms
+2026-04-04 21:58:17.860 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 14.3533 ms
+2026-04-04 21:58:17.862 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 17.2392 ms
+2026-04-04 21:58:17.863 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 16.4013 ms
+2026-04-04 21:58:17.864 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 18.1007 ms
+2026-04-04 21:58:17.865 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 18.7380 ms
+2026-04-04 21:58:17.887 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 15.6436 ms
+2026-04-04 21:58:17.891 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 13.5324 ms
+2026-04-04 21:58:36.268 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP POST /Booking/Create responded 200 in 35.0759 ms
+2026-04-04 21:58:36.326 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 18.0570 ms
+2026-04-04 21:58:36.339 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 18.8525 ms
+2026-04-04 21:58:36.340 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 20.5605 ms
+2026-04-04 21:58:36.340 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 21.0807 ms
+2026-04-04 21:58:36.343 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 22.4999 ms
+2026-04-04 21:58:36.345 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 24.8354 ms
+2026-04-04 21:58:36.361 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 16.8087 ms
+2026-04-04 21:58:36.371 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 18.0094 ms
+2026-04-04 21:58:56.972 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Booking/Create responded 200 in 84.9389 ms
+2026-04-04 21:58:57.281 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 263.9488 ms
+2026-04-04 21:58:57.282 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 254.9464 ms
+2026-04-04 21:58:57.282 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 254.3185 ms
+2026-04-04 21:58:57.287 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 161.3447 ms
+2026-04-04 21:58:57.288 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 189.9249 ms
+2026-04-04 21:58:57.290 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 74.8477 ms
+2026-04-04 21:58:57.308 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 13.6220 ms
+2026-04-04 21:58:57.313 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 12.7757 ms
+2026-04-04 21:59:01.927 +03:00 [INF] (BookingSystem.Services.BookingService) Booking 1 created by user 64e5fd04-74df-4da6-8e2e-028271724589 for resource 1 ["2026-04-04T19:00:00.0000000" – "2026-04-04T20:00:00.0000000"]
+2026-04-04 21:59:01.977 +03:00 [INF] (BookingSystem.Services.MockEmailService) [MOCK EMAIL] To: ivashchuk67@gmail.com | Subject: Booking Request Submitted
+2026-04-04 21:59:01.989 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP POST /Booking/Create responded 302 in 374.4518 ms
+2026-04-04 21:59:02.039 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Booking/MyBookings responded 200 in 37.3545 ms
+2026-04-04 21:59:02.117 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 21.0835 ms
+2026-04-04 21:59:02.121 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 18.3802 ms
+2026-04-04 21:59:02.121 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 18.0927 ms
+2026-04-04 21:59:02.217 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 113.8521 ms
+2026-04-04 21:59:02.217 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 113.5070 ms
+2026-04-04 21:59:02.220 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 111.6734 ms
+2026-04-04 21:59:11.362 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Booking/Details/1 responded 200 in 39.8103 ms
+2026-04-04 21:59:11.422 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 16.7920 ms
+2026-04-04 21:59:11.429 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 14.2184 ms
+2026-04-04 21:59:11.430 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 14.7085 ms
+2026-04-04 21:59:11.430 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 13.8500 ms
+2026-04-04 21:59:11.432 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 16.6455 ms
+2026-04-04 21:59:11.433 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 17.7466 ms
+2026-04-04 21:59:24.879 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Booking/MyBookings responded 200 in 17.3915 ms
+2026-04-04 21:59:24.949 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 21.7979 ms
+2026-04-04 21:59:24.960 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 20.0396 ms
+2026-04-04 21:59:24.960 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 19.0180 ms
+2026-04-04 21:59:24.968 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 26.7827 ms
+2026-04-04 21:59:24.972 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 30.0675 ms
+2026-04-04 21:59:24.975 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 22.8915 ms
+2026-04-04 21:59:26.964 +03:00 [INF] (BookingSystem.Services.BookingService) Booking 1 cancelled by user 64e5fd04-74df-4da6-8e2e-028271724589
+2026-04-04 21:59:26.973 +03:00 [INF] (BookingSystem.Services.MockEmailService) [MOCK EMAIL] To: ivashchuk67@gmail.com | Subject: Booking Cancelled
+2026-04-04 21:59:26.980 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP POST /Booking/Cancel responded 302 in 51.4576 ms
+2026-04-04 21:59:27.011 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Booking/MyBookings responded 200 in 16.1779 ms
+2026-04-04 21:59:27.095 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 16.0994 ms
+2026-04-04 21:59:27.104 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 15.5196 ms
+2026-04-04 21:59:27.104 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 15.4140 ms
+2026-04-04 21:59:27.105 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 15.3007 ms
+2026-04-04 21:59:27.107 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 17.2247 ms
+2026-04-04 21:59:27.107 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 18.0418 ms
+2026-04-04 21:59:29.510 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Booking/MyBookings responded 200 in 15.8360 ms
+2026-04-04 21:59:29.574 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 14.0942 ms
+2026-04-04 21:59:29.575 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 13.6493 ms
+2026-04-04 21:59:29.575 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 18.5727 ms
+2026-04-04 21:59:29.576 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 15.9789 ms
+2026-04-04 21:59:29.577 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 15.7446 ms
+2026-04-04 21:59:29.577 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 17.4208 ms
+2026-04-04 21:59:30.973 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Booking/Details/1 responded 200 in 16.3493 ms
+2026-04-04 21:59:31.033 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 15.6666 ms
+2026-04-04 21:59:31.039 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 12.8933 ms
+2026-04-04 21:59:31.042 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 16.2761 ms
+2026-04-04 21:59:31.064 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 23.1161 ms
+2026-04-04 21:59:31.045 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 18.1881 ms
+2026-04-04 21:59:31.044 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 17.2907 ms
+2026-04-04 21:59:35.789 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET / responded 200 in 15.6442 ms
+2026-04-04 21:59:35.852 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 16.1941 ms
+2026-04-04 21:59:35.862 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 14.4438 ms
+2026-04-04 21:59:35.867 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 17.7301 ms
+2026-04-04 21:59:35.867 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 19.1997 ms
+2026-04-04 21:59:35.889 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 19.0052 ms
+2026-04-04 21:59:35.890 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 41.5608 ms
+2026-04-04 21:59:36.372 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET / responded 200 in 16.5016 ms
+2026-04-04 21:59:36.429 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 12.5575 ms
+2026-04-04 21:59:36.429 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 13.7236 ms
+2026-04-04 21:59:36.429 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 14.4376 ms
+2026-04-04 21:59:36.432 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 15.5030 ms
+2026-04-04 21:59:36.432 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 15.9641 ms
+2026-04-04 21:59:36.432 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 20.1063 ms
+2026-04-04 22:00:54.088 +03:00 [INF] (Microsoft.Hosting.Lifetime) Now listening on: http://localhost:5110
+2026-04-04 22:00:54.169 +03:00 [INF] (Microsoft.Hosting.Lifetime) Application started. Press Ctrl+C to shut down.
+2026-04-04 22:00:54.174 +03:00 [INF] (Microsoft.Hosting.Lifetime) Hosting environment: Development
+2026-04-04 22:00:54.179 +03:00 [INF] (Microsoft.Hosting.Lifetime) Content root path: C:\BookingSystem\BookingSystem
+2026-04-04 22:00:54.329 +03:00 [WRN] (Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware) Failed to determine the https port for redirect.
+2026-04-04 22:00:55.117 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET / responded 200 in 786.5688 ms
+2026-04-04 22:00:55.441 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 316.1345 ms
+2026-04-04 22:00:55.441 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 41.1143 ms
+2026-04-04 22:00:55.450 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 327.7687 ms
+2026-04-04 22:00:55.491 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 21.0230 ms
+2026-04-04 22:00:55.512 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 42.0037 ms
+2026-04-04 22:00:55.512 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 42.0028 ms
+2026-04-04 22:00:55.943 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /favicon.ico responded 200 in 13.6371 ms
+2026-04-04 22:01:39.082 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP POST /Account/Logout responded 302 in 47.4008 ms
+2026-04-04 22:01:39.153 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET / responded 200 in 60.2113 ms
+2026-04-04 22:01:39.397 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 124.9506 ms
+2026-04-04 22:01:39.428 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 94.2019 ms
+2026-04-04 22:01:39.435 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 35.7628 ms
+2026-04-04 22:01:39.467 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 263.7516 ms
+2026-04-04 22:01:39.468 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 133.3014 ms
+2026-04-04 22:01:39.468 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 72.1316 ms
+2026-04-04 22:01:40.914 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Account/Login responded 200 in 98.9010 ms
+2026-04-04 22:01:40.966 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 4.7975 ms
+2026-04-04 22:01:40.975 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 1.0833 ms
+2026-04-04 22:01:40.975 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 1.0399 ms
+2026-04-04 22:01:40.976 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 0.8901 ms
+2026-04-04 22:01:40.978 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 3.2800 ms
+2026-04-04 22:01:40.978 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 2.9736 ms
+2026-04-04 22:01:40.990 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 1.9327 ms
+2026-04-04 22:01:40.992 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 1.5674 ms
+2026-04-04 22:01:53.841 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP POST /Account/Login responded 302 in 260.7227 ms
+2026-04-04 22:01:53.878 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET / responded 200 in 21.2962 ms
+2026-04-04 22:01:53.947 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 16.8972 ms
+2026-04-04 22:01:53.956 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 15.2506 ms
+2026-04-04 22:01:53.957 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 17.1339 ms
+2026-04-04 22:01:53.959 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 17.8942 ms
+2026-04-04 22:01:53.959 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 18.5164 ms
+2026-04-04 22:01:53.962 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 20.9383 ms
+2026-04-04 22:01:58.230 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Admin responded 200 in 136.9854 ms
+2026-04-04 22:01:58.291 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 16.4893 ms
+2026-04-04 22:01:58.305 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 16.7812 ms
+2026-04-04 22:01:58.305 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 17.2372 ms
+2026-04-04 22:01:58.307 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 18.1180 ms
+2026-04-04 22:01:58.307 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 19.0140 ms
+2026-04-04 22:01:58.317 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 16.3006 ms
+2026-04-04 22:01:59.383 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Booking/MyBookings responded 200 in 62.5460 ms
+2026-04-04 22:01:59.448 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 16.4063 ms
+2026-04-04 22:01:59.460 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 17.6416 ms
+2026-04-04 22:01:59.461 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 18.5791 ms
+2026-04-04 22:01:59.462 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 18.0950 ms
+2026-04-04 22:01:59.463 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 19.1128 ms
+2026-04-04 22:01:59.464 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 20.7757 ms
+2026-04-04 22:02:00.440 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Admin responded 200 in 24.3297 ms
+2026-04-04 22:02:00.504 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 17.1656 ms
+2026-04-04 22:02:00.517 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 20.8535 ms
+2026-04-04 22:02:00.511 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 14.0385 ms
+2026-04-04 22:02:00.509 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 13.3055 ms
+2026-04-04 22:02:00.510 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 13.8830 ms
+2026-04-04 22:02:00.518 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 21.3802 ms
+2026-04-04 22:02:12.081 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Admin/Resources responded 200 in 43.9706 ms
+2026-04-04 22:02:12.133 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 12.3689 ms
+2026-04-04 22:02:12.133 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 12.8520 ms
+2026-04-04 22:02:12.136 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 14.3717 ms
+2026-04-04 22:02:12.138 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 16.6479 ms
+2026-04-04 22:02:12.139 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 19.6393 ms
+2026-04-04 22:02:12.146 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 15.6652 ms
+2026-04-04 22:02:16.215 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Admin/EditResource/5 responded 200 in 142.0430 ms
+2026-04-04 22:02:16.293 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 16.2010 ms
+2026-04-04 22:02:16.301 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 14.4366 ms
+2026-04-04 22:02:16.302 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 15.4900 ms
+2026-04-04 22:02:16.303 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 15.6105 ms
+2026-04-04 22:02:16.303 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 15.6928 ms
+2026-04-04 22:02:16.305 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 18.0984 ms
+2026-04-04 22:02:16.325 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation/dist/jquery.validate.min.js responded 200 in 21.6536 ms
+2026-04-04 22:02:16.327 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js responded 200 in 16.9327 ms
+2026-04-04 22:02:19.007 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Admin/Resources responded 200 in 20.0197 ms
+2026-04-04 22:02:24.172 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Admin responded 200 in 21.3173 ms
+2026-04-04 22:02:25.799 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /Admin/Bookings responded 200 in 124.8816 ms
+2026-04-04 22:02:25.850 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/css/bootstrap.min.css responded 200 in 15.4832 ms
+2026-04-04 22:02:25.861 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /css/site.css responded 200 in 14.7067 ms
+2026-04-04 22:02:25.861 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /BookingSystem.styles.css responded 200 in 14.4684 ms
+2026-04-04 22:02:25.862 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/bootstrap/dist/js/bootstrap.bundle.min.js responded 200 in 15.2620 ms
+2026-04-04 22:02:25.863 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /lib/jquery/dist/jquery.min.js responded 200 in 15.7265 ms
+2026-04-04 22:02:25.873 +03:00 [INF] (Serilog.AspNetCore.RequestLoggingMiddleware) HTTP GET /js/site.js responded 200 in 13.2704 ms

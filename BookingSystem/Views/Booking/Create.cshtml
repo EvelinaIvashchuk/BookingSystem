@@ -1,0 +1,97 @@
+﻿@model BookingCreateViewModel
+@{
+    ViewData["Title"] = "Book " + Model.ResourceName;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white p-4 border-0 rounded-top">
+                    <h2 class="h4 mb-0"><i class="bi bi-calendar-plus me-2"></i> Book Resource</h2>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <div class="mb-5 p-4 bg-light rounded-3 border">
+                        <h3 class="h5 fw-bold mb-3 text-primary">Resource Details</h3>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label class="text-muted small text-uppercase fw-bold d-block">Name</label>
+                                <span class="fs-5 fw-semibold text-dark">@Model.ResourceName</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="text-muted small text-uppercase fw-bold d-block">Location</label>
+                                <span class="text-dark">@Model.Location</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="text-muted small text-uppercase fw-bold d-block">Category</label>
+                                <span class="badge bg-secondary">@Model.CategoryName</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="text-muted small text-uppercase fw-bold d-block">Capacity</label>
+                                <span class="text-dark">@Model.Capacity persons</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="Create" method="post" class="needs-validation" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+                        <input type="hidden" asp-for="ResourceId" />
+                        <input type="hidden" asp-for="ResourceName" />
+                        <input type="hidden" asp-for="Location" />
+                        <input type="hidden" asp-for="Capacity" />
+                        <input type="hidden" asp-for="CategoryName" />
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="StartTime" class="form-label fw-bold"></label>
+                                <input asp-for="StartTime" class="form-control form-control-lg" type="datetime-local" />
+                                <span asp-validation-for="StartTime" class="text-danger small"></span>
+                                <div class="form-text mt-2 small">Select when your booking should begin.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="EndTime" class="form-label fw-bold"></label>
+                                <input asp-for="EndTime" class="form-control form-control-lg" type="datetime-local" />
+                                <span asp-validation-for="EndTime" class="text-danger small"></span>
+                                <div class="form-text mt-2 small">Select when your booking should end.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label asp-for="Purpose" class="form-label fw-bold"></label>
+                            <textarea asp-for="Purpose" class="form-control" rows="4" 
+                                      placeholder="Explain why you need this resource (optional)..."></textarea>
+                            <span asp-validation-for="Purpose" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end pt-3 border-top">
+                            <a asp-controller="Resource" asp-action="Details" asp-route-id="@Model.ResourceId" 
+                               class="btn btn-outline-secondary btn-lg px-4 me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">Confirm Booking Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Set default start time to today + 1 hour, end time to start + 1 hour
+        window.addEventListener('load', () => {
+            const startInput = document.querySelector('input[name="StartTime"]');
+            const endInput = document.querySelector('input[name="EndTime"]');
+            
+            if (!startInput.value) {
+                const now = new Date();
+                now.setHours(now.getHours() + 1, 0, 0, 0);
+                startInput.value = now.toISOString().slice(0, 16);
+                
+                const later = new Date(now);
+                later.setHours(later.getHours() + 1);
+                endInput.value = later.toISOString().slice(0, 16);
+            }
+        });
+    </script>
+}

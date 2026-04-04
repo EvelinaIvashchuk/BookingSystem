@@ -1,0 +1,15 @@
+===================================
+MOCK EMAIL — 2026-04-04 18:59:26 UTC
+===================================
+To:      ivashchuk67@gmail.com
+Subject: Booking Cancelled
+-----------------------------------
+
+Dear Vlad Ivashchuk,
+
+Your booking for "Conference Room A" on 04 квіт. 2026 19:00 – 20:00
+has been cancelled as requested. The time slot is now available for others.
+
+— BookingSystem
+
+===================================

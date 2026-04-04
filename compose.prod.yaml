@@ -1,0 +1,36 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-bookingpass}
+      MYSQL_DATABASE: BookingSystemDb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bookingsystem:
+    image: bookingsystem
+    build:
+      context: .
+      dockerfile: BookingSystem/Dockerfile
+    restart: always
+    ports:
+      - "80:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=BookingSystemDb;User=root;Password=${MYSQL_PASSWORD:-bookingpass};
+      - Seed__AdminEmail=${ADMIN_EMAIL:-admin@bookingsystem.local}
+      - Seed__AdminPassword=${ADMIN_PASSWORD:-Admin@12345}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

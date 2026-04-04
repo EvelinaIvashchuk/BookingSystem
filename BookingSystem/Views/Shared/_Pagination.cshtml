@@ -1,0 +1,85 @@
+@*
+    Generic pagination partial.
+    Pass via ViewData:
+      - "PageIndex"   (int)
+      - "TotalPages"  (int)
+      - "Action"      (string) — controller action name
+      - "RouteValues" (Dictionary<string, string>) — extra query params to preserve
+*@
+
+@{
+    var pageIndex   = (int)ViewData["PageIndex"]!;
+    var totalPages  = (int)ViewData["TotalPages"]!;
+    var action      = (string)ViewData["Action"]!;
+    var routeValues = ViewData["RouteValues"] as Dictionary<string, string> ?? new();
+}
+
+@if (totalPages > 1)
+{
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center mb-0">
+            @* Previous *@
+            <li class="page-item @(pageIndex <= 1 ? "disabled" : "")">
+                @{
+                    var prevRoute = new Dictionary<string, string>(routeValues) { ["page"] = (pageIndex - 1).ToString() };
+                }
+                <a class="page-link" asp-action="@action" asp-all-route-data="@prevRoute">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+
+            @* Page numbers *@
+            @{
+                // Show max 5 pages around current
+                var startPage = Math.Max(1, pageIndex - 2);
+                var endPage   = Math.Min(totalPages, pageIndex + 2);
+
+                if (startPage > 1)
+                {
+                    var firstRoute = new Dictionary<string, string>(routeValues) { ["page"] = "1" };
+                    <li class="page-item">
+                        <a class="page-link" asp-action="@action" asp-all-route-data="@firstRoute">1</a>
+                    </li>
+                    if (startPage > 2)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                }
+
+                for (var i = startPage; i <= endPage; i++)
+                {
+                    var pageRoute = new Dictionary<string, string>(routeValues) { ["page"] = i.ToString() };
+                    <li class="page-item @(i == pageIndex ? "active" : "")">
+                        <a class="page-link" asp-action="@action" asp-all-route-data="@pageRoute">@i</a>
+                    </li>
+                }
+
+                if (endPage < totalPages)
+                {
+                    if (endPage < totalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                    var lastRoute = new Dictionary<string, string>(routeValues) { ["page"] = totalPages.ToString() };
+                    <li class="page-item">
+                        <a class="page-link" asp-action="@action" asp-all-route-data="@lastRoute">@totalPages</a>
+                    </li>
+                }
+            }
+
+            @* Next *@
+            <li class="page-item @(pageIndex >= totalPages ? "disabled" : "")">
+                @{
+                    var nextRoute = new Dictionary<string, string>(routeValues) { ["page"] = (pageIndex + 1).ToString() };
+                }
+                <a class="page-link" asp-action="@action" asp-all-route-data="@nextRoute">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="text-center text-muted small mt-2">
+        Page @pageIndex of @totalPages
+    </div>
+}

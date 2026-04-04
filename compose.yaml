@@ -1,0 +1,31 @@
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: bookingpass
+      MYSQL_DATABASE: BookingSystemDb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bookingsystem:
+    image: bookingsystem
+    build:
+      context: .
+      dockerfile: BookingSystem/Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=BookingSystemDb;User=root;Password=bookingpass;
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
