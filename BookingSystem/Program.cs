@@ -1,8 +1,12 @@
 using BookingSystem.Data;
 using BookingSystem.Data.Repositories;
+using BookingSystem.Mappings;
 using BookingSystem.Models;
 using BookingSystem.Services;
 using BookingSystem.Services.Interfaces;
+using BookingSystem.Validators;
+using BookingSystem.ViewModels;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -67,11 +71,23 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<IBookingRepository,  BookingRepository>();
 builder.Services.AddScoped<IResourceRepository, ResourceRepository>();
 
+// ── Unit of Work ─────────────────────────────────────────────────────────────
+// Координує репозиторії та фіксує зміни через єдиний CommitAsync().
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 // ── Services ──────────────────────────────────────────────────────────────────
 builder.Services.AddScoped<IBookingService,  BookingService>();
 builder.Services.AddScoped<IResourceService, ResourceService>();
 builder.Services.AddScoped<IUserService,     UserService>();
 builder.Services.AddScoped<IEmailService,    MockEmailService>();
+
+// ── AutoMapper ────────────────────────────────────────────────────────────────
+// Реєструє всі профілі маппінгу з поточної збірки.
+builder.Services.AddAutoMapper(typeof(BookingMappingProfile).Assembly);
+
+// ── FluentValidation ──────────────────────────────────────────────────────────
+// Реєструє валідатори з поточної збірки.
+builder.Services.AddScoped<IValidator<BookingCreateViewModel>, BookingCreateViewModelValidator>();
 
 // ── MVC ───────────────────────────────────────────────────────────────────────
 builder.Services.AddControllersWithViews();

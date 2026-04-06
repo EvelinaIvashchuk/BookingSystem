@@ -1,17 +1,22 @@
-using BookingSystem.Data.Repositories;
+using BookingSystem.Data;
 using BookingSystem.Enums;
 using BookingSystem.Models;
+using BookingSystem.Services.Dtos;
 using BookingSystem.Services.Interfaces;
 
 namespace BookingSystem.Services;
 
+/// <summary>
+/// Реалізація IBookingService.
+/// Використовує IUnitOfWork для доступу до репозиторіїв і фіксації змін,
+/// що забезпечує атомарність операцій над кількома сутностями.
+/// </summary>
 public class BookingService(
-    IBookingRepository  bookingRepo,
-    IResourceRepository resourceRepo,
-    IEmailService       emailService,
+    IUnitOfWork             uow,
+    IEmailService           emailService,
     ILogger<BookingService> logger) : IBookingService
 {
-    // ── Business rule constants ────────────────────────────────────────────────
+    // ── Бізнес-константи ──────────────────────────────────────────────────────
     private const int MaxActiveBookingsPerUser = 3;
     private const int MinDurationMinutes       = 30;
     private const int MaxDurationHours         = 8;
@@ -19,20 +24,17 @@ public class BookingService(
 
     // ── Create ────────────────────────────────────────────────────────────────
 
+    /// <inheritdoc/>
     public async Task<ServiceResult<Booking>> CreateBookingAsync(
-        string   userId,
-        int      resourceId,
-        DateTime start,
-        DateTime end,
-        string?  purpose)
+        string userId, CreateBookingDto dto)
     {
-        // 1. Basic time validation
-        var timeCheck = ValidateTimes(start, end);
+        // 1. Базова перевірка часів
+        var timeCheck = ValidateTimes(dto.StartTime, dto.EndTime);
         if (!timeCheck.IsSuccess)
-            return ServiceResult<Booking>.Fail(timeCheck.Error);
+            return ServiceResult<Booking>.Fail(timeCheck.Error!);
 
-        // 2. Resource exists and is available for booking
-        var resource = await resourceRepo.GetWithCategoryAsync(resourceId);
+        // 2. Ресурс існує і доступний для бронювання
+        var resource = await uow.Resources.GetWithCategoryAsync(dto.ResourceId);
         if (resource is null)
             return ServiceResult<Booking>.Fail("The selected resource does not exist.");
 
@@ -40,55 +42,55 @@ public class BookingService(
             return ServiceResult<Booking>.Fail(
                 $"\"{resource.Name}\" is currently {resource.Status.ToString().ToLowerInvariant()} and cannot be booked.");
 
-        // 3. User has not exceeded their active booking limit
-        var activeCount = await bookingRepo.GetActiveBookingCountAsync(userId);
+        // 3. Користувач не перевищив ліміт активних бронювань
+        var activeCount = await uow.Bookings.GetActiveBookingCountAsync(userId);
         if (activeCount >= MaxActiveBookingsPerUser)
             return ServiceResult<Booking>.Fail(
                 $"You already have {MaxActiveBookingsPerUser} active bookings. " +
                 "Please cancel one before making a new reservation.");
 
-        // 4. No overlap with existing bookings on this resource
-        var hasOverlap = await bookingRepo.HasOverlapAsync(resourceId, start, end);
+        // 4. Немає накладань з іншими бронюваннями цього ресурсу
+        var hasOverlap = await uow.Bookings.HasOverlapAsync(dto.ResourceId, dto.StartTime, dto.EndTime);
         if (hasOverlap)
             return ServiceResult<Booking>.Fail(
                 "This resource is already booked for the selected time slot. " +
                 "Please choose a different time.");
 
-        // 5. Persist
+        // 5. Зберегти через UnitOfWork (єдина точка CommitAsync)
         var booking = new Booking
         {
             UserId     = userId,
-            ResourceId = resourceId,
-            StartTime  = start,
-            EndTime    = end,
-            Purpose    = purpose?.Trim(),
+            ResourceId = dto.ResourceId,
+            StartTime  = dto.StartTime,
+            EndTime    = dto.EndTime,
+            Purpose    = dto.Purpose?.Trim(),
             Status     = BookingStatus.Pending,
             CreatedAt  = DateTime.UtcNow
         };
 
-        await bookingRepo.AddAsync(booking);
-        await bookingRepo.SaveChangesAsync();
+        await uow.Bookings.AddAsync(booking);
+        await uow.CommitAsync();
 
         logger.LogInformation(
             "Booking {BookingId} created by user {UserId} for resource {ResourceId} [{Start} – {End}]",
-            booking.Id, userId, resourceId, start, end);
+            booking.Id, userId, dto.ResourceId, dto.StartTime, dto.EndTime);
 
-        // Load navigation data so the caller has a fully populated object
-        var created = await bookingRepo.GetWithDetailsAsync(booking.Id);
+        var created = await uow.Bookings.GetWithDetailsAsync(booking.Id);
 
-        // Send notification (fire-and-forget — failure must not break booking)
         _ = SafeSendEmailAsync(() =>
             emailService.SendBookingCreatedAsync(
-                created!.User.Email!, created.User.FullName, resource.Name, start, end));
+                created!.User.Email!, created.User.FullName,
+                resource.Name, dto.StartTime, dto.EndTime));
 
         return ServiceResult<Booking>.Ok(created!);
     }
 
-    // ── Cancel (by user) ─────────────────────────────────────────────────────
+    // ── Cancel ────────────────────────────────────────────────────────────────
 
+    /// <inheritdoc/>
     public async Task<ServiceResult> CancelBookingAsync(int bookingId, string userId)
     {
-        var booking = await bookingRepo.GetByIdAsync(bookingId);
+        var booking = await uow.Bookings.GetByIdAsync(bookingId);
 
         if (booking is null)
             return ServiceResult.Fail("Booking not found.");
@@ -105,13 +107,12 @@ public class BookingService(
         booking.Status      = BookingStatus.Cancelled;
         booking.CancelledAt = DateTime.UtcNow;
 
-        bookingRepo.Update(booking);
-        await bookingRepo.SaveChangesAsync();
+        uow.Bookings.Update(booking);
+        await uow.CommitAsync();
 
         logger.LogInformation("Booking {BookingId} cancelled by user {UserId}", bookingId, userId);
 
-        // Reload with navigation for email
-        var full = await bookingRepo.GetWithDetailsAsync(bookingId);
+        var full = await uow.Bookings.GetWithDetailsAsync(bookingId);
         if (full?.User?.Email != null && full.StartTime.HasValue && full.EndTime.HasValue)
         {
             _ = SafeSendEmailAsync(() =>
@@ -126,9 +127,10 @@ public class BookingService(
 
     // ── Admin: Confirm ────────────────────────────────────────────────────────
 
+    /// <inheritdoc/>
     public async Task<ServiceResult> ConfirmBookingAsync(int bookingId, string? adminNote)
     {
-        var booking = await bookingRepo.GetByIdAsync(bookingId);
+        var booking = await uow.Bookings.GetByIdAsync(bookingId);
 
         if (booking is null)
             return ServiceResult.Fail("Booking not found.");
@@ -140,12 +142,12 @@ public class BookingService(
         booking.Status    = BookingStatus.Confirmed;
         booking.AdminNote = adminNote?.Trim();
 
-        bookingRepo.Update(booking);
-        await bookingRepo.SaveChangesAsync();
+        uow.Bookings.Update(booking);
+        await uow.CommitAsync();
 
         logger.LogInformation("Booking {BookingId} confirmed by admin", bookingId);
 
-        var full = await bookingRepo.GetWithDetailsAsync(bookingId);
+        var full = await uow.Bookings.GetWithDetailsAsync(bookingId);
         if (full?.User?.Email != null && full.StartTime.HasValue && full.EndTime.HasValue)
         {
             _ = SafeSendEmailAsync(() =>
@@ -160,12 +162,13 @@ public class BookingService(
 
     // ── Admin: Reject ─────────────────────────────────────────────────────────
 
+    /// <inheritdoc/>
     public async Task<ServiceResult> RejectBookingAsync(int bookingId, string adminNote)
     {
         if (string.IsNullOrWhiteSpace(adminNote))
             return ServiceResult.Fail("A rejection reason is required.");
 
-        var booking = await bookingRepo.GetByIdAsync(bookingId);
+        var booking = await uow.Bookings.GetByIdAsync(bookingId);
 
         if (booking is null)
             return ServiceResult.Fail("Booking not found.");
@@ -177,12 +180,12 @@ public class BookingService(
         booking.Status    = BookingStatus.Rejected;
         booking.AdminNote = adminNote.Trim();
 
-        bookingRepo.Update(booking);
-        await bookingRepo.SaveChangesAsync();
+        uow.Bookings.Update(booking);
+        await uow.CommitAsync();
 
-        logger.LogInformation("Booking {BookingId} rejected by admin. Reason: {Note}", bookingId, adminNote);
+        logger.LogInformation("Booking {BookingId} rejected. Reason: {Note}", bookingId, adminNote);
 
-        var full = await bookingRepo.GetWithDetailsAsync(bookingId);
+        var full = await uow.Bookings.GetWithDetailsAsync(bookingId);
         if (full?.User?.Email != null)
         {
             _ = SafeSendEmailAsync(() =>
@@ -197,16 +200,19 @@ public class BookingService(
 
     // ── Queries ───────────────────────────────────────────────────────────────
 
+    /// <inheritdoc/>
     public Task<IEnumerable<Booking>> GetUserBookingsAsync(string userId) =>
-        bookingRepo.GetUserBookingsAsync(userId);
+        uow.Bookings.GetUserBookingsAsync(userId);
 
+    /// <inheritdoc/>
     public Task<IEnumerable<Booking>> GetAllBookingsAsync() =>
-        bookingRepo.GetAllWithDetailsAsync();
+        uow.Bookings.GetAllWithDetailsAsync();
 
+    /// <inheritdoc/>
     public Task<Booking?> GetBookingByIdAsync(int bookingId) =>
-        bookingRepo.GetWithDetailsAsync(bookingId);
+        uow.Bookings.GetWithDetailsAsync(bookingId);
 
-    // ── Private helpers ───────────────────────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static ServiceResult ValidateTimes(DateTime start, DateTime end)
     {
@@ -221,12 +227,10 @@ public class BookingService(
         var duration = end - start;
 
         if (duration.TotalMinutes < MinDurationMinutes)
-            return ServiceResult.Fail(
-                $"Bookings must be at least {MinDurationMinutes} minutes long.");
+            return ServiceResult.Fail($"Bookings must be at least {MinDurationMinutes} minutes long.");
 
         if (duration.TotalHours > MaxDurationHours)
-            return ServiceResult.Fail(
-                $"Bookings cannot exceed {MaxDurationHours} hours.");
+            return ServiceResult.Fail($"Bookings cannot exceed {MaxDurationHours} hours.");
 
         if (start > now.AddDays(MaxAdvanceBookingDays))
             return ServiceResult.Fail(
@@ -236,17 +240,14 @@ public class BookingService(
     }
 
     /// <summary>
-    /// Fire-and-forget email wrapper. Logs failures instead of crashing the booking flow.
+    /// Fire-and-forget обгортка. Логує помилки замість переривання потоку.
     /// </summary>
     private async Task SafeSendEmailAsync(Func<Task> sendAction)
     {
-        try
-        {
-            await sendAction();
-        }
+        try   { await sendAction(); }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Failed to send email notification — booking was still saved.");
+            logger.LogWarning(ex, "Email notification failed — booking was still saved.");
         }
     }
 }
