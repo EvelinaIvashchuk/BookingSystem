@@ -1,0 +1,369 @@
+@startuml BookingSystem_ClassDiagram
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #555
+skinparam interfaceBackgroundColor #E8F4FD
+skinparam interfaceBorderColor #2980B9
+skinparam arrowColor #333
+skinparam stereotypeCBackgroundColor #F9E79F
+skinparam packageBackgroundColor #FDFEFE
+skinparam packageBorderColor #AAA
+skinparam noteBorderColor #AAA
+skinparam noteBackgroundColor #FFFDE7
+
+title Booking System — Class Diagram\n«Logical Chain: BookingController → BookingService → BookingRepository → GenericRepository → Booking»
+
+' ══════════════════════════════════════════════════
+' PACKAGE: ViewModels
+' ══════════════════════════════════════════════════
+package "ViewModels" #EBF5FB {
+
+    class BookingCreateViewModel {
+        + ResourceId : int
+        + ResourceName : string
+        + Location : string
+        + Capacity : int
+        + CategoryName : string
+        --
+        + StartTime : DateTime?   «[Required]»
+        + EndTime : DateTime?     «[Required]»
+        + Purpose : string        «[Required][MaxLength(500)]»
+    }
+
+    note right of BookingCreateViewModel
+      Передає дані форми
+      створення бронювання.
+      Поля відображення (ResourceName,
+      Location тощо) — read-only,
+      не прив'язані до бази.
+    end note
+}
+
+' ══════════════════════════════════════════════════
+' PACKAGE: Controllers
+' ══════════════════════════════════════════════════
+package "Controllers" #EAF7EA {
+
+    class BookingController {
+        - _bookingService : IBookingService
+        - _userManager : UserManager<ApplicationUser>
+        --
+        + Create(resourceId: int) : Task<IActionResult>
+        + Create(vm: BookingCreateViewModel) : Task<IActionResult>
+        + MyBookings(page: int) : Task<IActionResult>
+        + Details(id: int) : Task<IActionResult>
+        + Cancel(id: int) : Task<IActionResult>
+    }
+
+    note right of BookingController
+      «Authorize» — тільки
+      автентифіковані користувачі.
+      Залежить від IBookingService
+      та UserManager через DI.
+    end note
+}
+
+' ══════════════════════════════════════════════════
+' PACKAGE: Services / Interfaces
+' ══════════════════════════════════════════════════
+package "Services" #FEF9E7 {
+
+    interface IBookingService <<interface>> {
+        + CreateBookingAsync(userId: string, vm: BookingCreateViewModel) : Task<ServiceResult<Booking>>
+        + CancelBookingAsync(bookingId: int, userId: string, isAdmin: bool) : Task<ServiceResult>
+        + ConfirmBookingAsync(bookingId: int) : Task<ServiceResult>
+        + RejectBookingAsync(bookingId: int, note: string) : Task<ServiceResult>
+        + GetUserBookingsAsync(userId: string, page: int, pageSize: int) : Task<PaginatedList<Booking>>
+        + GetAllBookingsAsync(page: int, pageSize: int, statusFilter: BookingStatus?) : Task<PaginatedList<Booking>>
+        + GetBookingByIdAsync(id: int) : Task<Booking?>
+    }
+
+    class BookingService {
+        - MaxActiveBookings : int = 3      «const»
+        - MinDurationMinutes : int = 30    «const»
+        - MaxDurationHours : int = 8       «const»
+        - MaxAdvanceDays : int = 30        «const»
+        --
+        - _bookingRepo : IBookingRepository
+        - _resourceRepo : IResourceRepository
+        - _emailService : IEmailService
+        --
+        + CreateBookingAsync(userId, vm) : Task<ServiceResult<Booking>>
+        + CancelBookingAsync(bookingId, userId, isAdmin) : Task<ServiceResult>
+        + ConfirmBookingAsync(bookingId) : Task<ServiceResult>
+        + RejectBookingAsync(bookingId, note) : Task<ServiceResult>
+        + GetUserBookingsAsync(userId, page, pageSize) : Task<PaginatedList<Booking>>
+        + GetAllBookingsAsync(page, pageSize, statusFilter) : Task<PaginatedList<Booking>>
+        + GetBookingByIdAsync(id) : Task<Booking?>
+        - SafeSendEmailAsync(task: Task) : Task
+    }
+
+    note right of BookingService
+      Бізнес-правила:
+      • Тільки майбутні дати
+      • EndTime > StartTime
+      • Тривалість: 30хв – 8год
+      • Не більше 30 днів наперед
+      • Ресурс має бути «Available»
+      • Макс. 3 активних бронювання
+      • Відсутність накладань (overlap)
+    end note
+
+    class ServiceResult<T> {
+        + IsSuccess : bool
+        + Value : T?
+        + Error : string?
+        --
+        + {static} Ok(value: T) : ServiceResult<T>
+        + {static} Fail(error: string) : ServiceResult<T>
+    }
+
+    class ServiceResult {
+        + IsSuccess : bool
+        + Error : string?
+        --
+        + {static} Ok() : ServiceResult
+        + {static} Fail(error: string) : ServiceResult
+    }
+
+    interface IEmailService <<interface>> {
+        + SendBookingConfirmationAsync(user: ApplicationUser, booking: Booking) : Task
+        + SendBookingCancellationAsync(user: ApplicationUser, booking: Booking) : Task
+    }
+
+    class MockEmailService {
+        - _logger : ILogger<MockEmailService>
+        --
+        + SendBookingConfirmationAsync(user, booking) : Task
+        + SendBookingCancellationAsync(user, booking) : Task
+    }
+
+    note bottom of MockEmailService
+      Записує листи у файл Logs/Emails/.
+      Не відправляє реальні emails.
+      Призначений для coursework-рівня.
+    end note
+}
+
+' ══════════════════════════════════════════════════
+' PACKAGE: Repositories / Interfaces
+' ══════════════════════════════════════════════════
+package "Data / Repositories" #F5EEF8 {
+
+    interface IGenericRepository<T> <<interface>> {
+        + GetByIdAsync(id: int) : Task<T?>
+        + GetAllAsync() : Task<IReadOnlyList<T>>
+        + FindAsync(predicate: Expression<Func<T,bool>>) : Task<IReadOnlyList<T>>
+        + AnyAsync(predicate: Expression<Func<T,bool>>) : Task<bool>
+        + AddAsync(entity: T) : Task
+        + Update(entity: T) : void
+        + Delete(entity: T) : void
+        + SaveChangesAsync() : Task
+    }
+
+    interface IBookingRepository <<interface>> {
+        + GetUserBookingsAsync(userId: string) : Task<IReadOnlyList<Booking>>
+        + GetAllWithDetailsAsync() : Task<IReadOnlyList<Booking>>
+        + GetWithDetailsAsync(id: int) : Task<Booking?>
+        + HasOverlapAsync(resourceId: int, start: DateTime, end: DateTime, excludeId: int) : Task<bool>
+        + GetActiveBookingCountAsync(userId: string) : Task<int>
+    }
+
+    class GenericRepository<T> {
+        # _db : ApplicationDbContext
+        --
+        + GenericRepository(db: ApplicationDbContext)
+        --
+        + GetByIdAsync(id: int) : Task<T?>
+        + GetAllAsync() : Task<IReadOnlyList<T>>
+        + FindAsync(predicate) : Task<IReadOnlyList<T>>
+        + AnyAsync(predicate) : Task<bool>
+        + AddAsync(entity: T) : Task
+        + Update(entity: T) : void
+        + Delete(entity: T) : void
+        + SaveChangesAsync() : Task
+    }
+
+    class BookingRepository {
+        + BookingRepository(db: ApplicationDbContext)
+        --
+        + GetUserBookingsAsync(userId) : Task<IReadOnlyList<Booking>>
+        + GetAllWithDetailsAsync() : Task<IReadOnlyList<Booking>>
+        + GetWithDetailsAsync(id) : Task<Booking?>
+        + HasOverlapAsync(resourceId, start, end, excludeId) : Task<bool>
+        + GetActiveBookingCountAsync(userId) : Task<int>
+    }
+
+    note right of BookingRepository
+      HasOverlapAsync використовує
+      формулу перекриття інтервалів:
+      existingStart < newEnd
+      AND existingEnd > newStart
+    end note
+
+    class ApplicationDbContext {
+        + Bookings : DbSet<Booking>
+        + Resources : DbSet<Resource>
+        + Categories : DbSet<Category>
+        + Payments : DbSet<Payment>
+        --
+        + ApplicationDbContext(options)
+        # OnModelCreating(builder) : void
+    }
+}
+
+' ══════════════════════════════════════════════════
+' PACKAGE: Models (Entities)
+' ══════════════════════════════════════════════════
+package "Models / Entities" #FDEDEC {
+
+    class Booking {
+        + Id : int
+        + UserId : string          «FK»
+        + ResourceId : int         «FK»
+        + StartTime : DateTime?    «[Required]»
+        + EndTime : DateTime?      «[Required]»
+        + Purpose : string         «[Required][MaxLength(500)]»
+        + Status : BookingStatus
+        + CreatedAt : DateTime
+        + CancelledAt : DateTime?
+        + AdminNote : string?
+        --
+        + User : ApplicationUser   «navigation»
+        + Resource : Resource      «navigation»
+        --
+        + Duration : TimeSpan      «computed»
+        + CanBeCancelledByUser : bool  «computed»
+    }
+
+    class ApplicationUser {
+        + FirstName : string       «[Required]»
+        + LastName : string        «[Required]»
+        + IsActive : bool
+        + CreatedAt : DateTime
+        --
+        + Bookings : ICollection<Booking>  «navigation»
+        --
+        + FullName : string        «computed»
+    }
+
+    class Resource {
+        + Id : int
+        + Name : string            «[Required][MaxLength(100)]»
+        + Description : string?
+        + Location : string        «[Required]»
+        + Capacity : int
+        + Status : ResourceStatus
+        + ImageUrl : string?
+        + CategoryId : int         «FK»
+        --
+        + Category : Category      «navigation»
+        + Bookings : ICollection<Booking>  «navigation»
+    }
+
+    class Category {
+        + Id : int
+        + Name : string            «[Required][Unique]»
+        + Description : string?
+        --
+        + Resources : ICollection<Resource>  «navigation»
+    }
+
+    enum BookingStatus <<enumeration>> {
+        Pending
+        Confirmed
+        Cancelled
+        Rejected
+    }
+
+    enum ResourceStatus <<enumeration>> {
+        Available
+        UnderMaintenance
+        Retired
+    }
+}
+
+' ══════════════════════════════════════════════════
+' PACKAGE: ASP.NET Identity (external)
+' ══════════════════════════════════════════════════
+package "ASP.NET Core Identity «external»" #F2F3F4 {
+
+    class IdentityUser<TKey> <<abstract>> {
+        + Id : TKey
+        + UserName : string?
+        + Email : string?
+        + PasswordHash : string?
+        + EmailConfirmed : bool
+    }
+
+    class UserManager<TUser> {
+        + FindByIdAsync(id) : Task<TUser?>
+        + GetUserAsync(principal) : Task<TUser?>
+        + GetUserId(principal) : string?
+        + IsInRoleAsync(user, role) : Task<bool>
+    }
+
+    class IdentityDbContext<TUser> <<abstract>> {
+        + Users : DbSet<TUser>
+        + Roles : DbSet<IdentityRole>
+        ...
+    }
+}
+
+' ══════════════════════════════════════════════════
+' HELPERS
+' ══════════════════════════════════════════════════
+package "Helpers" #EAFAF1 {
+    class PaginatedList<T> {
+        + Items : IReadOnlyList<T>
+        + PageIndex : int
+        + TotalPages : int
+        + TotalCount : int
+        --
+        + HasPreviousPage : bool   «computed»
+        + HasNextPage : bool       «computed»
+        --
+        + {static} CreateAsync(source: IQueryable<T>, pageIndex, pageSize) : Task<PaginatedList<T>>
+        + {static} Create(source: IEnumerable<T>, pageIndex, pageSize) : PaginatedList<T>
+    }
+}
+
+' ══════════════════════════════════════════════════
+' RELATIONSHIPS
+' ══════════════════════════════════════════════════
+
+' Inheritance / Realization
+ApplicationUser --|> IdentityUser : «extends»
+ApplicationDbContext --|> IdentityDbContext : «extends»
+BookingService ..|> IBookingService : «implements»
+MockEmailService ..|> IEmailService : «implements»
+BookingRepository --|> GenericRepository : «extends»
+BookingRepository ..|> IBookingRepository : «implements»
+GenericRepository ..|> IGenericRepository : «implements»
+IBookingRepository --|> IGenericRepository : «extends»
+
+' Dependencies (DI)
+BookingController ..> IBookingService : «uses»
+BookingController ..> UserManager : «uses»
+BookingService ..> IBookingRepository : «uses»
+BookingService ..> IEmailService : «uses»
+BookingService ..> ServiceResult : «creates»
+BookingService ..> ServiceResult : «creates»
+BookingController ..> BookingCreateViewModel : «binds»
+BookingController ..> PaginatedList : «uses»
+
+' Data layer
+GenericRepository --> ApplicationDbContext : «uses»
+ApplicationDbContext --> Booking : «DbSet»
+ApplicationDbContext --> Resource : «DbSet»
+ApplicationDbContext --> Category : «DbSet»
+
+' Entity associations
+Booking "many" --> "1" ApplicationUser : userId (FK)
+Booking "many" --> "1" Resource : resourceId (FK)
+Resource "many" --> "1" Category : categoryId (FK)
+Booking --> BookingStatus : «uses»
+Resource --> ResourceStatus : «uses»
+
+@enduml
