@@ -44,8 +44,8 @@ public class CarService(
 
     public async Task<ServiceResult> UpdateCarAsync(Car car)
     {
-        var exists = await carRepo.GetByIdAsync(car.Id);
-        if (exists is null)
+        var existing = await carRepo.GetByIdAsync(car.Id);
+        if (existing is null)
             return ServiceResult.Fail("Car not found.");
 
         var plateConflict = await carRepo.AnyAsync(
@@ -55,7 +55,20 @@ public class CarService(
             return ServiceResult.Fail(
                 "Another car with this license plate already exists.");
 
-        carRepo.Update(car);
+        existing.Brand        = car.Brand;
+        existing.Model        = car.Model;
+        existing.Year         = car.Year;
+        existing.LicensePlate = car.LicensePlate;
+        existing.FuelType     = car.FuelType;
+        existing.Transmission = car.Transmission;
+        existing.Seats        = car.Seats;
+        existing.PricePerDay  = car.PricePerDay;
+        existing.Description  = car.Description;
+        existing.Location     = car.Location;
+        existing.CategoryId   = car.CategoryId;
+        existing.ImageUrl     = car.ImageUrl;
+        existing.Status       = car.Status;
+
         await carRepo.SaveChangesAsync();
 
         logger.LogInformation("Car {CarId} updated", car.Id);
