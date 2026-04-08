@@ -1,0 +1,103 @@
+@using BookingSystem.Helpers
+@model PaginatedList<Rental>
+@{
+    ViewData["Title"] = "My Rentals";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div>
+            <h1 class="h2 mb-0">My Rentals</h1>
+            <p class="text-muted small mb-0">@Model.TotalCount rental(s) total.</p>
+        </div>
+        <a asp-controller="Car" asp-action="Index" class="btn btn-primary">
+            <i class="bi bi-car-front me-2"></i> Rent Another Car
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Car</th>
+                            <th>Dates</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th class="text-end pe-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <i class="bi bi-car-front fs-3 d-block mb-2"></i>
+                                    You haven't made any rentals yet.
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var r in Model)
+                        {
+                            <tr>
+                                <td class="ps-3">
+                                    <div class="fw-bold">@r.Car?.FullName</div>
+                                    <div class="text-muted extra-small">@r.Car?.Location</div>
+                                </td>
+                                <td>
+                                    <div class="small">@r.PickupDate?.ToString("dd MMM yyyy") – @r.ReturnDate?.ToString("dd MMM yyyy")</div>
+                                    <div class="text-muted extra-small">@r.DurationDays day(s)</div>
+                                </td>
+                                <td class="fw-bold">@r.TotalPrice.ToString("N0") ₴</td>
+                                <td>
+                                    <partial name="_RentalStatusBadge" model="r.Status" />
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-outline-primary">Details</a>
+                                        @if (r.CanBeCancelledByUser)
+                                        {
+                                            <form asp-action="Cancel" method="post" class="d-inline"
+                                                  onsubmit="return confirm('Are you sure you want to cancel this rental?');">
+                                                <input type="hidden" name="id" value="@r.Id" />
+                                                <button type="submit" class="btn btn-outline-danger">Cancel</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @{
+        ViewData["PageIndex"]   = Model.PageIndex;
+        ViewData["TotalPages"]  = Model.TotalPages;
+        ViewData["Action"]      = "MyRentals";
+        ViewData["RouteValues"] = new Dictionary<string, string>();
+    }
+    <partial name="_Pagination" />
+</div>
+
+<style>
+    .extra-small { font-size: 0.75rem; }
+</style>

@@ -1,0 +1,155 @@
+@model Rental
+@{
+    ViewData["Title"] = "Rental Details: " + Model.Car?.FullName;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="MyRentals">My Rentals</a></li>
+                    <li class="breadcrumb-item active">Details</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-primary text-white p-4 border-0 rounded-top d-flex justify-content-between align-items-center">
+                    <h2 class="h4 mb-0"><i class="bi bi-info-circle me-2"></i> Rental Details</h2>
+                    <span class="badge bg-white text-primary">ID: @Model.Id</span>
+                </div>
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="mb-5">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            @{
+                                var steps = new[] { RentalStatus.Pending, RentalStatus.Confirmed };
+                                var isCancelled = Model.Status == RentalStatus.Cancelled;
+                                var isRejected  = Model.Status == RentalStatus.Rejected;
+                            }
+                            @foreach (var step in steps)
+                            {
+                                var reached = Model.Status == step ||
+                                    (step == RentalStatus.Pending && Model.Status != RentalStatus.Pending);
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center @(reached ? "bg-primary text-white" : "bg-light text-muted border")"
+                                         style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                        @if (reached)
+                                        {
+                                            <i class="bi bi-check"></i>
+                                        }
+                                        else
+                                        {
+                                            <span>@((int)step + 1)</span>
+                                        }
+                                    </div>
+                                    <span class="ms-2 small @(reached ? "fw-semibold" : "text-muted")">@step</span>
+                                </div>
+                                if (step != steps.Last())
+                                {
+                                    <div class="flex-grow-0" style="width: 40px; height: 2px; background: var(--bs-border-color);"></div>
+                                }
+                            }
+                            @if (isCancelled || isRejected)
+                            {
+                                <div class="flex-grow-0" style="width: 40px; height: 2px; background: var(--bs-danger);"></div>
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center"
+                                         style="width: 32px; height: 32px;">
+                                        <i class="bi bi-x"></i>
+                                    </div>
+                                    <span class="ms-2 small fw-semibold text-danger">@Model.Status</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row g-5">
+                        <div class="col-md-6">
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Car Information</h3>
+                            <div class="d-flex mb-3">
+                                <div class="bg-light p-2 rounded me-3">
+                                    <i class="bi bi-car-front fs-4 text-primary"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">@Model.Car?.FullName</div>
+                                    <div class="small text-muted">@Model.Car?.Location</div>
+                                    <div class="small text-muted">@Model.Car?.Category?.Name</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 text-md-end">
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Current Status</h3>
+                            <partial name="_RentalStatusBadge" model="Model.Status" />
+                            <div class="text-muted small mt-2">
+                                Submitted on @Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")
+                            </div>
+                        </div>
+
+                        <div class="col-12"><hr></div>
+
+                        <div class="col-md-6">
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Rental Period</h3>
+                            <div class="mb-3">
+                                <label class="small text-muted d-block">Pickup Date</label>
+                                <div class="fs-5 fw-semibold">@Model.PickupDate?.ToString("dddd, dd MMM yyyy")</div>
+                            </div>
+                            <div>
+                                <label class="small text-muted d-block">Return Date</label>
+                                <div class="fs-5 fw-semibold">@Model.ReturnDate?.ToString("dddd, dd MMM yyyy")</div>
+                            </div>
+                            @if (Model.DurationDays.HasValue)
+                            {
+                                <div class="mt-2">
+                                    <span class="badge bg-light text-dark border">
+                                        <i class="bi bi-calendar-range me-1"></i>
+                                        @Model.DurationDays day(s)
+                                    </span>
+                                </div>
+                            }
+                            <div class="mt-3">
+                                <span class="fs-5 fw-bold text-primary">Total: @Model.TotalPrice.ToString("N0") ₴</span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Notes</h3>
+                            <p class="mb-0">@(string.IsNullOrEmpty(Model.Notes) ? "No notes." : Model.Notes)</p>
+
+                            @if (!string.IsNullOrEmpty(Model.AdminNote))
+                            {
+                                <div class="mt-4 p-3 bg-light border-start border-primary border-4 rounded">
+                                    <label class="small text-uppercase text-primary fw-bold d-block mb-1">Admin Note</label>
+                                    <p class="mb-0 small fst-italic">@Model.AdminNote</p>
+                                </div>
+                            }
+
+                            @if (Model.CancelledAt.HasValue)
+                            {
+                                <div class="mt-3 text-muted small">
+                                    <i class="bi bi-clock-history me-1"></i>
+                                    Cancelled on @Model.CancelledAt.Value.ToString("dd MMM yyyy, HH:mm")
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-top d-flex justify-content-between align-items-center">
+                        <a asp-action="MyRentals" class="btn btn-outline-secondary">Back to My Rentals</a>
+
+                        @if (Model.CanBeCancelledByUser)
+                        {
+                            <form asp-controller="Rental" asp-action="Cancel" method="post"
+                                  onsubmit="return confirm('Are you sure you want to cancel this rental?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <button type="submit" class="btn btn-danger px-4">Cancel Rental</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

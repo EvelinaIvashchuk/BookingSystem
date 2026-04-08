@@ -8,16 +8,14 @@ namespace BookingSystem.Data;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<ApplicationUser>(options)
 {
-    // Standard auto-properties — expression-bodied DbSet props (=> Set<T>())
-    // can confuse EF migration tooling in some SDK versions.
     public DbSet<Category> Categories { get; set; } = null!;
-    public DbSet<Resource>  Resources  { get; set; } = null!;
-    public DbSet<Booking>   Bookings   { get; set; } = null!;
-    public DbSet<Payment>   Payments   { get; set; } = null!;
+    public DbSet<Car>      Cars       { get; set; } = null!;
+    public DbSet<Rental>   Rentals    { get; set; } = null!;
+    public DbSet<Payment>  Payments   { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(builder); // Required — configures Identity tables
+        base.OnModelCreating(builder);
 
         // ── Category ──────────────────────────────────────────────────────────
         builder.Entity<Category>(e =>
@@ -28,57 +26,65 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             e.HasIndex(c => c.Name).IsUnique();
         });
 
-        // ── Resource ──────────────────────────────────────────────────────────
-        builder.Entity<Resource>(e =>
+        // ── Car ───────────────────────────────────────────────────────────────
+        builder.Entity<Car>(e =>
         {
-            e.HasKey(r => r.Id);
-            e.Property(r => r.Name).IsRequired().HasMaxLength(100);
-            e.Property(r => r.Description).HasMaxLength(500);
-            e.Property(r => r.Location).IsRequired().HasMaxLength(200);
-            e.Property(r => r.ImageUrl).HasMaxLength(500);
+            e.HasKey(c => c.Id);
+            e.Property(c => c.Brand).IsRequired().HasMaxLength(50);
+            e.Property(c => c.Model).IsRequired().HasMaxLength(50);
+            e.Property(c => c.LicensePlate).IsRequired().HasMaxLength(20);
+            e.Property(c => c.Description).HasMaxLength(500);
+            e.Property(c => c.Location).HasMaxLength(200);
+            e.Property(c => c.ImageUrl).HasMaxLength(500);
+            e.Property(c => c.PricePerDay).HasColumnType("decimal(18,2)");
 
-            e.Property(r => r.Status)
+            e.Property(c => c.Status)
              .HasConversion<string>()
              .HasMaxLength(30);
 
-            // Restrict: cannot delete a category that still has resources
-            e.HasOne(r => r.Category)
-             .WithMany(c => c.Resources)
-             .HasForeignKey(r => r.CategoryId)
-             .OnDelete(DeleteBehavior.Restrict);
-        });
-
-        // ── Booking ───────────────────────────────────────────────────────────
-        builder.Entity<Booking>(e =>
-        {
-            e.HasKey(b => b.Id);
-            e.Property(b => b.Purpose).HasMaxLength(500);
-            e.Property(b => b.AdminNote).HasMaxLength(500);
-
-            e.Property(b => b.Status)
+            e.Property(c => c.FuelType)
              .HasConversion<string>()
              .HasMaxLength(20);
 
-            // StartTime/EndTime are DateTime? in the model but stored as non-nullable
-            // columns — the DB values will always be set before saving.
-            e.Property(b => b.StartTime).IsRequired();
-            e.Property(b => b.EndTime).IsRequired();
+            e.Property(c => c.Transmission)
+             .HasConversion<string>()
+             .HasMaxLength(20);
 
-            // Restrict: preserve booking history if user is deactivated
-            e.HasOne(b => b.User)
-             .WithMany(u => u.Bookings)
-             .HasForeignKey(b => b.UserId)
+            e.HasIndex(c => c.LicensePlate).IsUnique();
+
+            e.HasOne(c => c.Category)
+             .WithMany(cat => cat.Cars)
+             .HasForeignKey(c => c.CategoryId)
+             .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // ── Rental ────────────────────────────────────────────────────────────
+        builder.Entity<Rental>(e =>
+        {
+            e.HasKey(r => r.Id);
+            e.Property(r => r.Notes).HasMaxLength(500);
+            e.Property(r => r.AdminNote).HasMaxLength(500);
+            e.Property(r => r.TotalPrice).HasColumnType("decimal(18,2)");
+
+            e.Property(r => r.Status)
+             .HasConversion<string>()
+             .HasMaxLength(20);
+
+            e.Property(r => r.PickupDate).IsRequired();
+            e.Property(r => r.ReturnDate).IsRequired();
+
+            e.HasOne(r => r.User)
+             .WithMany(u => u.Rentals)
+             .HasForeignKey(r => r.UserId)
              .OnDelete(DeleteBehavior.Restrict);
 
-            // Restrict: cannot delete a resource with existing bookings
-            e.HasOne(b => b.Resource)
-             .WithMany(r => r.Bookings)
-             .HasForeignKey(b => b.ResourceId)
+            e.HasOne(r => r.Car)
+             .WithMany(c => c.Rentals)
+             .HasForeignKey(r => r.CarId)
              .OnDelete(DeleteBehavior.Restrict);
 
-            // Composite index speeds up time-overlap conflict queries
-            e.HasIndex(b => new { b.ResourceId, b.StartTime, b.EndTime })
-             .HasDatabaseName("IX_Booking_Resource_TimeRange");
+            e.HasIndex(r => new { r.CarId, r.PickupDate, r.ReturnDate })
+             .HasDatabaseName("IX_Rental_Car_DateRange");
         });
 
         // ── Payment ───────────────────────────────────────────────────────────
@@ -92,10 +98,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
              .HasConversion<string>()
              .HasMaxLength(20);
 
-            // One-to-one: cascade delete removes payment when booking is deleted
-            e.HasOne(p => p.Booking)
+            e.HasOne(p => p.Rental)
              .WithOne()
-             .HasForeignKey<Payment>(p => p.BookingId)
+             .HasForeignKey<Payment>(p => p.RentalId)
              .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -106,48 +111,67 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     private static void SeedData(ModelBuilder builder)
     {
         builder.Entity<Category>().HasData(
-            new Category { Id = 1, Name = "Meeting Rooms",     Description = "Rooms for meetings and conferences" },
-            new Category { Id = 2, Name = "Sports Facilities", Description = "Gyms, courts, and sports halls" },
-            new Category { Id = 3, Name = "Workspaces",        Description = "Hot desks and private offices" },
-            new Category { Id = 4, Name = "Equipment",         Description = "AV, cameras, and other loan equipment" }
+            new Category { Id = 1, Name = "Седан",      Description = "Комфортні седани для міських та міжміських поїздок" },
+            new Category { Id = 2, Name = "SUV",        Description = "Позашляховики та кросовери для будь-яких доріг" },
+            new Category { Id = 3, Name = "Хетчбек",    Description = "Компактні автомобілі для міста" },
+            new Category { Id = 4, Name = "Мінівен",    Description = "Просторі автомобілі для сімейних поїздок" },
+            new Category { Id = 5, Name = "Купе",       Description = "Спортивні автомобілі для задоволення від їзди" }
         );
 
-        builder.Entity<Resource>().HasData(
-            new Resource
+        builder.Entity<Car>().HasData(
+            new Car
             {
-                Id = 1, Name = "Conference Room A", Location = "Floor 2, East Wing",
-                Capacity = 10, CategoryId = 1, Status = ResourceStatus.Available,
-                Description = "Large conference room with projector and whiteboard."
+                Id = 1, Brand = "Toyota", Model = "Camry", Year = 2023,
+                LicensePlate = "AA1234BB", FuelType = FuelType.Petrol,
+                Transmission = Transmission.Automatic, Seats = 5,
+                PricePerDay = 1200m, Location = "Київ, вул. Хрещатик 10",
+                CategoryId = 1, Status = CarStatus.Available,
+                Description = "Комфортний седан з кліма-контролем та круїз-контролем."
             },
-            new Resource
+            new Car
             {
-                Id = 2, Name = "Board Room", Location = "Floor 4",
-                Capacity = 20, CategoryId = 1, Status = ResourceStatus.Available,
-                Description = "Executive board room with video conferencing."
+                Id = 2, Brand = "Honda", Model = "CR-V", Year = 2024,
+                LicensePlate = "AA5678CC", FuelType = FuelType.Hybrid,
+                Transmission = Transmission.Automatic, Seats = 5,
+                PricePerDay = 1800m, Location = "Київ, вул. Велика Васильківська 25",
+                CategoryId = 2, Status = CarStatus.Available,
+                Description = "Просторий гібридний кросовер з повним приводом."
             },
-            new Resource
+            new Car
             {
-                Id = 3, Name = "Squash Court 1", Location = "Sports Centre, Ground Floor",
-                Capacity = 2, CategoryId = 2, Status = ResourceStatus.Available,
-                Description = "Full-size squash court. Rackets available on request."
+                Id = 3, Brand = "Volkswagen", Model = "Golf", Year = 2023,
+                LicensePlate = "AA9012DD", FuelType = FuelType.Diesel,
+                Transmission = Transmission.Manual, Seats = 5,
+                PricePerDay = 900m, Location = "Львів, пр. Свободи 5",
+                CategoryId = 3, Status = CarStatus.Available,
+                Description = "Економний дизельний хетчбек. Ідеальний для міста."
             },
-            new Resource
+            new Car
             {
-                Id = 4, Name = "Hot Desk Zone A", Location = "Floor 1, Open Plan",
-                Capacity = 1, CategoryId = 3, Status = ResourceStatus.Available,
-                Description = "Quiet hot desk with power and USB-C docking station."
+                Id = 4, Brand = "Toyota", Model = "Sienna", Year = 2022,
+                LicensePlate = "BB3456EE", FuelType = FuelType.Hybrid,
+                Transmission = Transmission.Automatic, Seats = 7,
+                PricePerDay = 2200m, Location = "Київ, вул. Хрещатик 10",
+                CategoryId = 4, Status = CarStatus.Available,
+                Description = "Великий мінівен для сімейних подорожей. 7 місць."
             },
-            new Resource
+            new Car
             {
-                Id = 5, Name = "4K Projector Kit", Location = "IT Store, Floor 1",
-                Capacity = 1, CategoryId = 4, Status = ResourceStatus.Available,
-                Description = "Portable 4K projector with HDMI and carry case."
+                Id = 5, Brand = "BMW", Model = "4 Series", Year = 2024,
+                LicensePlate = "CC7890FF", FuelType = FuelType.Petrol,
+                Transmission = Transmission.Automatic, Seats = 4,
+                PricePerDay = 3500m, Location = "Одеса, Дерибасівська 15",
+                CategoryId = 5, Status = CarStatus.Available,
+                Description = "Спортивне купе з потужним двигуном та преміум-інтер'єром."
             },
-            new Resource
+            new Car
             {
-                Id = 6, Name = "Training Room B", Location = "Floor 3, West Wing",
-                Capacity = 30, CategoryId = 1, Status = ResourceStatus.UnderMaintenance,
-                Description = "Large training room. Currently being refurbished."
+                Id = 6, Brand = "Nissan", Model = "Leaf", Year = 2023,
+                LicensePlate = "DD1122GG", FuelType = FuelType.Electric,
+                Transmission = Transmission.Automatic, Seats = 5,
+                PricePerDay = 800m, Location = "Харків, вул. Сумська 20",
+                CategoryId = 3, Status = CarStatus.UnderMaintenance,
+                Description = "Електромобіль. Наразі на технічному обслуговуванні."
             }
         );
     }

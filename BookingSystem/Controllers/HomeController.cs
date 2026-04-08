@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookingSystem.Controllers;
 
-public class HomeController(IResourceService resourceService) : Controller
+public class HomeController(ICarService carService) : Controller
 {
     public async Task<IActionResult> Index()
     {
-        var resources = await resourceService.GetAvailableResourcesAsync();
-        return View(resources);
+        var cars = await carService.GetAvailableCarsAsync();
+        return View(cars);
     }
 
     public IActionResult Privacy() => View();
@@ -19,10 +19,6 @@ public class HomeController(IResourceService resourceService) : Controller
     public IActionResult Error() =>
         View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
-    /// <summary>
-    /// Handles non-exception HTTP status codes (404, 403, etc.)
-    /// triggered by UseStatusCodePagesWithReExecute.
-    /// </summary>
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult StatusCode(int code)
     {

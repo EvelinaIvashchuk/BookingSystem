@@ -1,0 +1,126 @@
+@startuml BookingSystem_StateDiagram
+skinparam stateFontSize 13
+skinparam stateBorderColor #555
+skinparam stateArrowColor #333
+skinparam stateBackgroundColor #FAFAFA
+skinparam shadowing false
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #888
+
+title Booking System — Діаграма станів\n«Життєвий цикл бронювання (Booking)»
+
+' ══════════════════════════════════════════════════════════════════
+' ПОЧАТКОВИЙ СТАН
+' ══════════════════════════════════════════════════════════════════
+
+[*] --> Validating : Користувач надсилає\nформу бронювання
+
+' ══════════════════════════════════════════════════════════════════
+' СТАН: Validating (проміжний — не зберігається в БД)
+' ══════════════════════════════════════════════════════════════════
+
+state Validating {
+    state "FluentValidation\n(UI-рівень)" as FV
+    state "BookingService\n(бізнес-рівень)" as BS
+
+    [*] --> FV : перевірка форми
+    FV --> BS  : валідація пройшла
+}
+
+note right of Validating
+  Перевірки:
+  • StartTime у майбутньому
+  • EndTime > StartTime
+  • Тривалість: 30хв – 8год
+  • Не більше 30 днів наперед
+  • Ресурс = Available
+  • Активних бронювань < 3
+  • Відсутність overlap
+end note
+
+' ══════════════════════════════════════════════════════════════════
+' ПЕРЕХОДИ З Validating
+' ══════════════════════════════════════════════════════════════════
+
+Validating --> [*]          : [валідація провалилась]\nПомилка → форма
+Validating --> Pending      : [всі перевірки пройдено]\nuow.CommitAsync()
+
+' ══════════════════════════════════════════════════════════════════
+' ОСНОВНІ СТАНИ (зберігаються в БД як BookingStatus)
+' ══════════════════════════════════════════════════════════════════
+
+state Pending {
+    Pending : entry / надіслати email «Booking Created»
+    Pending : Очікує рішення адміністратора
+}
+
+state Confirmed {
+    Confirmed : entry / надіслати email «Booking Confirmed»
+    Confirmed : Бронювання підтверджено адміністратором
+}
+
+state Cancelled {
+    Cancelled : entry / надіслати email «Booking Cancelled»
+    Cancelled : CancelledAt = UtcNow
+}
+
+state Rejected {
+    Rejected : entry / надіслати email «Booking Rejected»
+    Rejected : AdminNote = причина відхилення (обов'язково)
+}
+
+state Expired {
+    Expired : StartTime <= UtcNow\n(бронювання в минулому)
+}
+
+' ══════════════════════════════════════════════════════════════════
+' ПЕРЕХОДИ МІЖ СТАНАМИ
+' ══════════════════════════════════════════════════════════════════
+
+' Адміністратор підтверджує
+Pending --> Confirmed   : [Admin] Підтвердити\n[status = Pending]
+
+' Адміністратор відхиляє
+Pending --> Rejected    : [Admin] Відхилити\n[status = Pending,\nadminNote ≠ null]
+
+' Користувач скасовує
+Pending    --> Cancelled : [User] Скасувати\n[StartTime > UtcNow]
+Confirmed  --> Cancelled : [User] Скасувати\n[StartTime > UtcNow]
+
+' Бронювання «спливає» — час вже минув
+Pending   --> Expired    : [system]\nStartTime <= UtcNow
+Confirmed --> Expired    : [system]\nStartTime <= UtcNow
+
+' ══════════════════════════════════════════════════════════════════
+' ФІНАЛЬНІ СТАНИ
+' ══════════════════════════════════════════════════════════════════
+
+Cancelled --> [*]
+Rejected  --> [*]
+Expired   --> [*]
+
+' ══════════════════════════════════════════════════════════════════
+' ПРИМІТКИ
+' ══════════════════════════════════════════════════════════════════
+
+note bottom of Pending
+  Єдиний стан, з якого
+  можливий перехід у
+  Confirmed або Rejected
+end note
+
+note bottom of Cancelled
+  Неможливо скасувати
+  бронювання, яке вже
+  розпочалося або минуло
+  (StartTime <= UtcNow)
+end note
+
+note right of Rejected
+  AdminNote обов'язковий —
+  користувач отримує
+  причину відхилення
+  в email
+end note
+
+@enduml

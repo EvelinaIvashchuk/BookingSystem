@@ -1,0 +1,216 @@
+@startuml BookingSystem_SequenceDiagram
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceParticipantFontSize 12
+skinparam sequenceLifeLineBorderColor #555
+skinparam sequenceArrowColor #333
+skinparam sequenceParticipantBackgroundColor #FAFAFA
+skinparam sequenceParticipantBorderColor #555
+skinparam sequenceGroupBackgroundColor #FFFDE7
+skinparam sequenceGroupBorderColor #E67E22
+skinparam sequenceBoxBackgroundColor #F4F6F7
+skinparam sequenceBoxBorderColor #AAA
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #888
+skinparam shadowing false
+skinparam responseMessageBelowArrow true
+
+title Booking System — Діаграма послідовності\n«Створення бронювання: POST /Booking/Create»
+
+' ══════════════════════════════════════════════════════════════════
+' УЧАСНИКИ
+' ══════════════════════════════════════════════════════════════════
+
+actor       "Користувач"              as User
+participant "BookingController"       as Ctrl    #EBF5FB
+participant "IValidator\n<BookingCreateViewModel>" as Validator #FEF5E7
+participant "IMapper\n(AutoMapper)"   as Mapper  #F4ECF7
+participant "BookingService"          as Svc     #FEF9E7
+participant "UnitOfWork"              as UoW     #FDEBD0
+participant "ResourceRepository"      as ResRepo #F5EEF8
+participant "BookingRepository"       as BkRepo  #F5EEF8
+participant "ApplicationDbContext"    as DB      #FDEDEC
+participant "MockEmailService"        as Email   #EAFAF1
+
+' ══════════════════════════════════════════════════════════════════
+' 1. HTTP-запит
+' ══════════════════════════════════════════════════════════════════
+
+User -> Ctrl : POST /Booking/Create\n(BookingCreateViewModel vm)
+activate Ctrl
+
+' ══════════════════════════════════════════════════════════════════
+' 2. FluentValidation
+' ══════════════════════════════════════════════════════════════════
+
+group FluentValidation [UI-рівень]
+    Ctrl -> Validator : ValidateAsync(vm)
+    activate Validator
+    Validator --> Ctrl : ValidationResult
+    deactivate Validator
+
+    alt Валідація не пройшла
+        Ctrl -> Ctrl : AddToModelState(errors)\nRepopulateDisplayFields(vm)
+        Ctrl --> User : View(vm) з помилками
+    end
+end
+
+' ══════════════════════════════════════════════════════════════════
+' 3. AutoMapper: ViewModel → DTO
+' ══════════════════════════════════════════════════════════════════
+
+group AutoMapper [Перетворення типів]
+    Ctrl -> Mapper : Map<CreateBookingDto>(vm)
+    activate Mapper
+    Mapper --> Ctrl : CreateBookingDto dto
+    deactivate Mapper
+end
+
+' ══════════════════════════════════════════════════════════════════
+' 4. Виклик сервісу
+' ══════════════════════════════════════════════════════════════════
+
+Ctrl -> Svc : CreateBookingAsync(userId, dto)
+activate Svc
+
+' ── 4.1 Статична перевірка часів ─────────────────────────────────
+group Бізнес-валідація [BookingService]
+    Svc -> Svc : ValidateTimes(dto.StartTime, dto.EndTime)
+    note right of Svc
+      • StartTime > UtcNow
+      • EndTime > StartTime
+      • Тривалість: 30хв – 8год
+      • Не далі 30 днів наперед
+    end note
+
+    alt Часи невалідні
+        Svc --> Ctrl : ServiceResult.Fail("...")
+        Ctrl --> User : View з помилкою
+    end
+end
+
+' ── 4.2 Перевірка ресурсу ────────────────────────────────────────
+group Перевірка ресурсу [IUnitOfWork → ResourceRepository]
+    Svc -> UoW : uow.Resources.GetWithCategoryAsync(dto.ResourceId)
+    activate UoW
+    UoW -> ResRepo : GetWithCategoryAsync(id)
+    activate ResRepo
+    ResRepo -> DB : SELECT Resource + Category\nWHERE id = dto.ResourceId
+    activate DB
+    DB --> ResRepo : Resource entity
+    deactivate DB
+    ResRepo --> UoW : Resource
+    deactivate ResRepo
+    UoW --> Svc : Resource
+    deactivate UoW
+
+    alt Ресурс не знайдено
+        Svc --> Ctrl : ServiceResult.Fail("resource does not exist")
+        Ctrl --> User : View з помилкою
+    else Ресурс не Available
+        Svc --> Ctrl : ServiceResult.Fail("resource is not available")
+        Ctrl --> User : View з помилкою
+    end
+end
+
+' ── 4.3 Ліміт активних бронювань ─────────────────────────────────
+group Ліміт бронювань [IUnitOfWork → BookingRepository]
+    Svc -> UoW : uow.Bookings.GetActiveBookingCountAsync(userId)
+    activate UoW
+    UoW -> BkRepo : GetActiveBookingCountAsync(userId)
+    activate BkRepo
+    BkRepo -> DB : SELECT COUNT(*) FROM Bookings\nWHERE userId = ... AND\nstatus IN (Pending, Confirmed)
+    activate DB
+    DB --> BkRepo : int count
+    deactivate DB
+    BkRepo --> UoW : int count
+    deactivate BkRepo
+    UoW --> Svc : int count
+    deactivate UoW
+
+    alt count >= 3
+        Svc --> Ctrl : ServiceResult.Fail("max 3 active bookings")
+        Ctrl --> User : View з помилкою
+    end
+end
+
+' ── 4.4 Перевірка накладань ───────────────────────────────────────
+group Перевірка overlap [IUnitOfWork → BookingRepository]
+    Svc -> UoW : uow.Bookings.HasOverlapAsync\n(resourceId, start, end)
+    activate UoW
+    UoW -> BkRepo : HasOverlapAsync(resourceId, start, end)
+    activate BkRepo
+    BkRepo -> DB : SELECT EXISTS (\n  SELECT 1 FROM Bookings\n  WHERE resourceId = ...\n  AND StartTime < end\n  AND EndTime > start\n  AND status IN (Pending, Confirmed)\n)
+    activate DB
+    DB --> BkRepo : bool hasOverlap
+    deactivate DB
+    BkRepo --> UoW : bool hasOverlap
+    deactivate BkRepo
+    UoW --> Svc : bool hasOverlap
+    deactivate UoW
+
+    alt hasOverlap == true
+        Svc --> Ctrl : ServiceResult.Fail("already booked")
+        Ctrl --> User : View з помилкою
+    end
+end
+
+' ── 4.5 Збереження ───────────────────────────────────────────────
+group Збереження [IUnitOfWork.CommitAsync]
+    Svc -> UoW : uow.Bookings.AddAsync(booking)
+    activate UoW
+    UoW -> BkRepo : AddAsync(booking)
+    activate BkRepo
+    BkRepo -> DB : context.Bookings.AddAsync(booking)
+    activate DB
+    DB --> BkRepo : —
+    deactivate DB
+    BkRepo --> UoW : —
+    deactivate BkRepo
+
+    UoW -> DB : SaveChangesAsync()\n[CommitAsync]
+    activate DB
+    DB --> UoW : int (кількість змін)
+    deactivate DB
+    UoW --> Svc : —
+    deactivate UoW
+end
+
+' ── 4.6 Завантаження деталей ─────────────────────────────────────
+Svc -> UoW : uow.Bookings.GetWithDetailsAsync(booking.Id)
+activate UoW
+UoW -> BkRepo : GetWithDetailsAsync(id)
+activate BkRepo
+BkRepo -> DB : SELECT Booking + User + Resource\nWHERE id = booking.Id
+activate DB
+DB --> BkRepo : Booking (з навігаційними властивостями)
+deactivate DB
+BkRepo --> UoW : Booking
+deactivate BkRepo
+UoW --> Svc : Booking created
+deactivate UoW
+
+' ── 4.7 Email (fire-and-forget) ──────────────────────────────────
+group Email сповіщення [fire-and-forget]
+    Svc ->> Email : SendBookingCreatedAsync\n(email, name, resource, start, end)
+    activate Email
+    note right of Email
+      «fire-and-forget»:
+      _ = SafeSendEmailAsync(...)
+      Помилка лише логується.
+    end note
+    Email -->> Svc : (async, не блокує)
+    deactivate Email
+end
+
+Svc --> Ctrl : ServiceResult<Booking>.Ok(created)
+deactivate Svc
+
+' ══════════════════════════════════════════════════════════════════
+' 5. Відповідь користувачу
+' ══════════════════════════════════════════════════════════════════
+
+Ctrl -> Ctrl : TempData["Success"] = "..."
+Ctrl --> User : RedirectToAction(MyBookings)
+deactivate Ctrl
+
+@enduml

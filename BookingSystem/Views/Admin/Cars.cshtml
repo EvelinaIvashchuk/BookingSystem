@@ -1,0 +1,122 @@
+@model IEnumerable<Car>
+@{
+    ViewData["Title"] = "Manage Cars";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 mb-0">Manage Cars</h1>
+            <p class="text-muted small">View and manage all cars in the fleet.</p>
+        </div>
+        <a asp-action="CreateCar" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i> Add New Car
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Car</th>
+                            <th>Category</th>
+                            <th>Price/Day</th>
+                            <th>Seats</th>
+                            <th>Status</th>
+                            <th class="text-end pe-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                    No cars found.
+                                    <a asp-action="CreateCar" class="d-block mt-2">Add the first car</a>
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var c in Model)
+                        {
+                            <tr>
+                                <td class="ps-3">
+                                    <div class="fw-bold">@c.FullName</div>
+                                    <div class="text-muted small">@c.LicensePlate | @c.Location</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@c.Category?.Name</span>
+                                </td>
+                                <td class="fw-bold">@c.PricePerDay.ToString("N0") ₴</td>
+                                <td>@c.Seats</td>
+                                <td>
+                                    @if (c.Status == CarStatus.Available)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Available</span>
+                                    }
+                                    else if (c.Status == CarStatus.Rented)
+                                    {
+                                        <span class="badge bg-info-subtle text-info border border-info-subtle">Rented</span>
+                                    }
+                                    else if (c.Status == CarStatus.UnderMaintenance)
+                                    {
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Maintenance</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">@c.Status</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="EditCar" asp-route-id="@c.Id" class="btn btn-outline-primary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <div class="dropdown d-inline">
+                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                Status
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <form asp-action="SetCarStatus" method="post">
+                                                        <input type="hidden" name="carId" value="@c.Id" />
+                                                        <input type="hidden" name="status" value="@CarStatus.Available" />
+                                                        <button type="submit" class="dropdown-item @(c.Status == CarStatus.Available ? "disabled" : "")">Available</button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form asp-action="SetCarStatus" method="post">
+                                                        <input type="hidden" name="carId" value="@c.Id" />
+                                                        <input type="hidden" name="status" value="@CarStatus.Rented" />
+                                                        <button type="submit" class="dropdown-item @(c.Status == CarStatus.Rented ? "disabled" : "")">Rented</button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form asp-action="SetCarStatus" method="post">
+                                                        <input type="hidden" name="carId" value="@c.Id" />
+                                                        <input type="hidden" name="status" value="@CarStatus.UnderMaintenance" />
+                                                        <button type="submit" class="dropdown-item @(c.Status == CarStatus.UnderMaintenance ? "disabled" : "")">Under Maintenance</button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

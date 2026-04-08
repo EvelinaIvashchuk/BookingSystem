@@ -1,12 +1,12 @@
-﻿@model IEnumerable<Resource>
+@model IEnumerable<Car>
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="container py-5">
     <div class="text-center mb-5">
-        <h1 class="display-3 fw-bold">Welcome to BookingSystem</h1>
-        <p class="lead text-muted">A modern solution for managing and booking company resources efficiently.</p>
+        <h1 class="display-3 fw-bold">Welcome to CarRental</h1>
+        <p class="lead text-muted">Find and rent the perfect car for your trip. Fast, easy, reliable.</p>
         <hr class="mx-auto" style="width: 100px; border-width: 3px; border-color: var(--bs-primary);">
     </div>
 
@@ -14,28 +14,28 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100 text-center p-4">
                 <div class="display-6 text-primary mb-3">
-                    <i class="bi bi-calendar-check"></i>
+                    <i class="bi bi-search"></i>
                 </div>
-                <h4>Easy Booking</h4>
-                <p class="text-muted">Browse available rooms and equipment and book them in seconds.</p>
+                <h4>Search Cars</h4>
+                <p class="text-muted">Browse our fleet and find the perfect car for your needs.</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100 text-center p-4">
                 <div class="display-6 text-success mb-3">
-                    <i class="bi bi-shield-lock"></i>
+                    <i class="bi bi-calendar-check"></i>
                 </div>
-                <h4>Secure Admin</h4>
-                <p class="text-muted">Manage users, resources, and approve booking requests with ease.</p>
+                <h4>Easy Rental</h4>
+                <p class="text-muted">Pick your dates, submit a request, and get confirmed quickly.</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100 text-center p-4">
                 <div class="display-6 text-info mb-3">
-                    <i class="bi bi-graph-up"></i>
+                    <i class="bi bi-shield-check"></i>
                 </div>
-                <h4>Real-time Tracking</h4>
-                <p class="text-muted">Stay updated on resource availability and booking statuses.</p>
+                <h4>Secure & Reliable</h4>
+                <p class="text-muted">All cars are inspected and insured for your safety.</p>
             </div>
         </div>
     </div>
@@ -44,18 +44,19 @@
     {
         <div class="mt-5 pt-4">
             <div class="d-flex justify-content-between align-items-end mb-4">
-                <h2 class="h3 mb-0">Featured Resources</h2>
-                <a asp-controller="Resource" asp-action="Index" class="btn btn-link text-decoration-none">View all <i class="bi bi-arrow-right"></i></a>
+                <h2 class="h3 mb-0">Featured Cars</h2>
+                <a asp-controller="Car" asp-action="Index" class="btn btn-link text-decoration-none">View all <i class="bi bi-arrow-right"></i></a>
             </div>
             <div class="row row-cols-1 row-cols-md-3 g-4">
-                @foreach (var r in Model.Take(3))
+                @foreach (var c in Model.Take(3))
                 {
                     <div class="col">
                         <div class="card h-100 border-0 shadow-sm">
                             <div class="card-body">
-                                <h5 class="card-title">@r.Name</h5>
-                                <p class="card-text text-muted small">@r.Description</p>
-                                <a asp-controller="Resource" asp-action="Details" asp-route-id="@r.Id" class="stretched-link"></a>
+                                <h5 class="card-title">@c.FullName</h5>
+                                <p class="card-text text-muted small">@c.Description</p>
+                                <div class="fw-bold text-primary">@c.PricePerDay.ToString("N0") ₴/day</div>
+                                <a asp-controller="Car" asp-action="Details" asp-route-id="@c.Id" class="stretched-link"></a>
                             </div>
                         </div>
                     </div>
@@ -65,6 +66,6 @@
     }
 
     <div class="text-center mt-5">
-        <a asp-controller="Resource" asp-action="Index" class="btn btn-primary btn-lg px-5">Get Started</a>
+        <a asp-controller="Car" asp-action="Index" class="btn btn-primary btn-lg px-5">Browse Cars</a>
     </div>
 </div>

@@ -1,0 +1,181 @@
+@startuml BookingSystem_CollaborationDiagram
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #555
+skinparam arrowColor #333
+skinparam arrowFontSize 11
+skinparam shadowing false
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #888
+skinparam packageBackgroundColor #FDFEFE
+skinparam packageBorderColor #AAA
+
+title Booking System — Діаграма кооперації\n«Створення бронювання: об'єкти та пронумеровані повідомлення»
+
+' ══════════════════════════════════════════════════════════════════
+' ОБ'ЄКТИ (екземпляри класів)
+' ══════════════════════════════════════════════════════════════════
+
+object ":Користувач" as User #EBF5FB {
+    userId : string
+}
+
+object ":BookingController" as Ctrl #EAF7EA {
+    mapper    : IMapper
+    validator : IValidator<BookingCreateViewModel>
+}
+
+object ":BookingCreateViewModel" as VM #EBF5FB {
+    ResourceId : int
+    StartTime  : DateTime
+    EndTime    : DateTime
+    Purpose    : string?
+}
+
+object ":BookingCreateViewModelValidator" as Vld #FEF5E7 {
+    MinDurationMinutes = 30
+    MaxDurationHours   = 8
+    MaxAdvanceDays     = 30
+}
+
+object ":BookingMappingProfile\n(IMapper)" as Mpr #F4ECF7 {
+    BookingCreateViewModel\n→ CreateBookingDto
+}
+
+object ":CreateBookingDto" as Dto #E8F8F5 {
+    ResourceId : int
+    StartTime  : DateTime
+    EndTime    : DateTime
+    Purpose    : string?
+}
+
+object ":BookingService" as Svc #FEF9E7 {
+    MaxActiveBookings = 3
+}
+
+object ":UnitOfWork" as UoW #FDEBD0 {
+    Bookings  : IBookingRepository
+    Resources : IResourceRepository
+}
+
+object ":ResourceRepository" as ResRepo #F5EEF8 {
+}
+
+object ":BookingRepository" as BkRepo #F5EEF8 {
+}
+
+object ":ApplicationDbContext" as DB #FDEDEC {
+    Bookings  : DbSet<Booking>
+    Resources : DbSet<Resource>
+}
+
+object ":Booking" as BkEntity #FDEDEC {
+    Status    = Pending
+    CreatedAt = UtcNow
+}
+
+object ":MockEmailService" as Email #EAFAF1 {
+}
+
+' ══════════════════════════════════════════════════════════════════
+' ПОВІДОМЛЕННЯ З НУМЕРАЦІЄЮ
+' (Кооперативна діаграма: нумерація відображає порядок викликів)
+' ══════════════════════════════════════════════════════════════════
+
+' 1. Користувач надсилає форму
+User --> Ctrl : 1: POST Create(vm)
+
+' 2. Контролер прив'язує ViewModel
+Ctrl --> VM : 2: bind(HttpRequest)
+
+' 3. FluentValidation
+Ctrl --> Vld : 3: ValidateAsync(vm)
+Vld --> VM   : 3.1: перевірити поля
+
+note on link
+  3.1a: [fail] → повернути View
+  з помилками до Користувача
+end note
+
+' 4. AutoMapper
+Ctrl --> Mpr : 4: Map<CreateBookingDto>(vm)
+Mpr  --> Dto : 4.1: new CreateBookingDto(...)
+
+' 5. Виклик сервісу
+Ctrl --> Svc : 5: CreateBookingAsync(userId, dto)
+
+' 6. Статична перевірка часів
+Svc --> Svc : 6: ValidateTimes(start, end)
+
+note on link
+  6a: [fail] → ServiceResult.Fail
+end note
+
+' 7. Перевірка ресурсу
+Svc  --> UoW     : 7: uow.Resources.GetWithCategoryAsync(id)
+UoW  --> ResRepo : 7.1: GetWithCategoryAsync(id)
+ResRepo --> DB   : 7.2: SELECT Resource + Category
+DB --> ResRepo   : 7.3: Resource entity
+
+note on link
+  7a: [null] → Fail "does not exist"
+  7b: [!Available] → Fail "not available"
+end note
+
+' 8. Ліміт активних бронювань
+Svc  --> UoW     : 8: uow.Bookings.GetActiveBookingCountAsync(userId)
+UoW  --> BkRepo  : 8.1: GetActiveBookingCountAsync(userId)
+BkRepo --> DB    : 8.2: SELECT COUNT(*) Pending/Confirmed
+DB --> BkRepo    : 8.3: int count
+
+note on link
+  8a: [count >= 3] → Fail "max bookings"
+end note
+
+' 9. Перевірка overlap
+Svc  --> UoW     : 9: uow.Bookings.HasOverlapAsync(id, start, end)
+UoW  --> BkRepo  : 9.1: HasOverlapAsync(...)
+BkRepo --> DB    : 9.2: SELECT EXISTS overlap
+DB --> BkRepo    : 9.3: bool hasOverlap
+
+note on link
+  9a: [true] → Fail "already booked"
+end note
+
+' 10. Створення сутності
+Svc --> BkEntity : 10: new Booking { Status=Pending }
+
+' 11. Збереження
+Svc  --> UoW     : 11: uow.Bookings.AddAsync(booking)
+UoW  --> BkRepo  : 11.1: AddAsync(booking)
+BkRepo --> DB    : 11.2: context.Add(booking)
+Svc  --> UoW     : 12: uow.CommitAsync()
+UoW  --> DB      : 12.1: SaveChangesAsync()
+
+' 13. Завантаження з деталями
+Svc  --> UoW     : 13: uow.Bookings.GetWithDetailsAsync(id)
+UoW  --> BkRepo  : 13.1: GetWithDetailsAsync(id)
+BkRepo --> DB    : 13.2: SELECT + Include User, Resource
+DB --> BkRepo    : 13.3: Booking (повний)
+
+' 14. Email (fire-and-forget)
+Svc --> Email : 14: SendBookingCreatedAsync(...)\n«fire-and-forget»
+
+' 15. Відповідь
+Svc  --> Ctrl : 15: ServiceResult<Booking>.Ok(created)
+Ctrl --> User : 16: Redirect → MyBookings\n+ TempData["Success"]
+
+' ══════════════════════════════════════════════════════════════════
+' ЛЕГЕНДА
+' ══════════════════════════════════════════════════════════════════
+
+legend right
+  |= Позначення |= Значення |
+  | 1, 2, 3 ... | Порядок повідомлень |
+  | 3.1, 7.2 ... | Вкладений виклик |
+  | [fail] | Умовна гілка відмови |
+  | «fire-and-forget» | Асинхронний виклик без очікування |
+endlegend
+
+@enduml

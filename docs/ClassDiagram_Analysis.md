@@ -3,111 +3,201 @@
 ## 1. Розглянутий логічний ланцюжок
 
 ```
-BookingController → IBookingService → BookingService
-    → IBookingRepository → BookingRepository
-    → IGenericRepository<T> → GenericRepository<T>
-    → ApplicationDbContext → Booking (entity)
+BookingCreateViewModel
+    ↓  validates via
+IValidator<BookingCreateViewModel>  (FluentValidation)
+    ↓
+BookingController
+    ↓  maps via
+IMapper  (AutoMapper / BookingMappingProfile)
+    ↓  CreateBookingDto
+IBookingService
+    ↓
+BookingService
+    ↓  uow.Bookings / uow.Resources / uow.CommitAsync()
+IUnitOfWork
+    ↓
+UnitOfWork
+    ├── IBookingRepository  →  BookingRepository
+    │       ↓
+    │   IGenericRepository<T>  →  GenericRepository<T>
+    │       ↓
+    │   ApplicationDbContext  →  Booking (entity)
+    │
+    └── IResourceRepository  →  ResourceRepository
+            ↓
+        IGenericRepository<T>  →  GenericRepository<T>
+            ↓
+        ApplicationDbContext  →  Resource (entity)
 ```
 
-Допоміжні класи: `ServiceResult<T>`, `BookingCreateViewModel`,
-`PaginatedList<T>`, `ApplicationUser`, `Resource`, `IEmailService`, `MockEmailService`.
+Допоміжні класи: `ServiceResult<T>`, `PaginatedList<T>`,
+`ApplicationUser` (extends `IdentityUser`), `Category`,
+`IEmailService` / `MockEmailService`.
 
 ---
 
 ## 2. Реалізовані патерни та SOLID
 
-### Repository Pattern
-`IGenericRepository<T>` → `GenericRepository<T>` → `BookingRepository`
-- Абстрагує доступ до бази через інтерфейси
-- `BookingRepository` додає специфічні методи поверх базового CRUD
-- **Відповідність**: повна. Контролери не знають про EF Core.
+### 2.1 Repository Pattern
+`IGenericRepository<T>` → `GenericRepository<T>` → `BookingRepository` / `ResourceRepository`
 
-### Service Layer Pattern
+- `IGenericRepository<T>` визначає базовий CRUD-контракт.
+- `GenericRepository<T>` реалізує його поверх `ApplicationDbContext`.
+- `BookingRepository` та `ResourceRepository` успадковують `GenericRepository<T>`
+  і додають специфічні методи (overlap-перевірка, фільтрація за статусом тощо).
+- **Відповідність**: повна. Ні контролер, ні сервіс не знають про EF Core.
+
+### 2.2 Unit of Work Pattern
+`IUnitOfWork` → `UnitOfWork`
+
+- `UnitOfWork` об'єднує `IBookingRepository` та `IResourceRepository`
+  під єдиним `ApplicationDbContext`.
+- Єдиний `CommitAsync()` гарантує **атомарне збереження**: або обидва
+  репозиторії зберегли зміни, або жоден.
+- `BookingService` ніколи не викликає `SaveChangesAsync()` безпосередньо —
+  лише `uow.CommitAsync()`.
+
+### 2.3 DTO Pattern
+`CreateBookingDto` (вхідний) / `BookingDto` (вихідний)
+
+- `BookingCreateViewModel` (MVC-шар) і `CreateBookingDto` (сервісний шар) — **різні типи**.
+- Перетворення `ViewModel → DTO` відбувається в контролері через `IMapper`.
+- Сервіс не залежить від жодного MVC-специфічного типу.
+
+### 2.4 AutoMapper
+`BookingMappingProfile` : `Profile`
+
+- `BookingCreateViewModel → CreateBookingDto` — маппінг при виклику сервісу.
+- `Booking → BookingDto` — маппінг Entity → Data Transfer Object.
+- Логіка перетворення зосереджена в одному місці, не розкидана по контролерах.
+
+### 2.5 FluentValidation
+`BookingCreateViewModelValidator` : `AbstractValidator<BookingCreateViewModel>`
+
+Правила, що перевіряються перед передачею в сервіс:
+
+| Правило | Значення |
+|---|---|
+| `StartTime` > `UtcNow` | Час у майбутньому |
+| `EndTime` > `StartTime` | Коректний діапазон |
+| Тривалість ≥ 30 хв | Мінімальне бронювання |
+| Тривалість ≤ 8 год | Максимальне бронювання |
+| `StartTime` ≤ now + 30 днів | Не далі місяця наперед |
+| `Purpose.Length` ≤ 500 | Обмеження поля |
+
+- Помилки автоматично передаються в `ModelState` через `AddToModelState()`.
+- Сервіс не дублює ці перевірки (за винятком overlap та ліміту активних бронювань,
+  які потребують звернення до БД).
+
+### 2.6 Service Layer Pattern
 `IBookingService` → `BookingService`
-- Вся бізнес-логіка інкапсульована в сервісі
-- Контролер тільки передає дані та повертає View
 
-### Result Pattern (ServiceResult<T>)
-- Замість винятків для очікуваних відмов (`IsSuccess/Error`)
-- Уникає `try/catch` у контролері для бізнес-правил
+Бізнес-правила, що перевіряються в `BookingService`:
 
-### SOLID принципи
+| Правило | Де перевіряється |
+|---|---|
+| Ресурс існує та `Available` | БД через `uow.Resources` |
+| Кількість активних бронювань ≤ 3 | БД через `uow.Bookings` |
+| Відсутність overlap-перекриття | БД через `uow.Bookings` |
+| Не можна скасувати розпочате | Порівняння `StartTime` з `UtcNow` |
+| Статус-машина (Pending → Confirmed/Rejected) | Перевірка поточного статусу |
+
+### 2.7 Result Pattern
+`ServiceResult` / `ServiceResult<T>`
+
+- Очікувані відмови передаються через `IsSuccess = false` + `Error`.
+- Контролер не містить `try/catch` для бізнес-правил.
+- Винятки зарезервовані для інфраструктурних збоїв (мережа, БД).
+
+---
+
+## 3. SOLID-аналіз
 
 | Принцип | Реалізація | Оцінка |
 |---|---|---|
-| **S** — Single Responsibility | Кожен клас має одну відповідальність: Controller→HTTP, Service→бізнес-логіка, Repository→доступ до даних | ✅ |
-| **O** — Open/Closed | `GenericRepository<T>` розширюється без змін через спадкування (`BookingRepository`) | ✅ |
-| **L** — Liskov Substitution | `BookingRepository` повністю замінює `GenericRepository<T>` | ✅ |
-| **I** — Interface Segregation | `IBookingRepository` розширює `IGenericRepository<T>` — не змушує реалізовувати непотрібне | ✅ |
-| **D** — Dependency Inversion | `BookingController` залежить від `IBookingService`, а не `BookingService` | ✅ |
+| **S** — Single Responsibility | Controller → HTTP та прив'язка форми; Validator → правила UI-валідації; Mapper → перетворення типів; Service → бізнес-логіка; Repository → доступ до даних | ✅ |
+| **O** — Open/Closed | `GenericRepository<T>` розширюється без змін через спадкування; `BookingMappingProfile` додає маппінги без зміни існуючих | ✅ |
+| **L** — Liskov Substitution | `BookingRepository` повністю замінює `GenericRepository<T>`; `UnitOfWork` повністю замінює `IUnitOfWork` | ✅ |
+| **I** — Interface Segregation | `IBookingRepository` розширює `IGenericRepository<T>` лише специфічними методами; `IUnitOfWork` не містить зайвих методів | ✅ |
+| **D** — Dependency Inversion | `BookingController` залежить від `IBookingService`, `IMapper`, `IValidator<T>`; `BookingService` залежить від `IUnitOfWork`, `IEmailService` — все через інтерфейси | ✅ |
 
 ---
 
-## 3. Виявлені слабкі місця
+## 4. Повний потік запиту (POST /Booking/Create)
 
-### 3.1 Відсутній Unit of Work (UoW)
-**Проблема**: `BookingService.CreateBookingAsync` викликає кілька репозиторіїв і кожен має свій `SaveChangesAsync`. Якщо перший зберіг, а другий впав — дані неконсистентні.
-
-**Рішення**: Впровадити `IUnitOfWork` з єдиним `CommitAsync()`:
-```csharp
-public interface IUnitOfWork
-{
-    IBookingRepository Bookings { get; }
-    IResourceRepository Resources { get; }
-    Task<int> CommitAsync();
-}
 ```
-
-### 3.2 GenericRepository<T> приймає будь-який T
-**Проблема**: Немає обмеження типу — можна передати будь-який клас, навіть не-entity.
-
-**Рішення**: Додати constraint:
-```csharp
-public class GenericRepository<T> where T : class, IEntity
+[Browser] POST /Booking/Create
+    ↓
+BookingController.Create(BookingCreateViewModel vm)
+    ↓  1. validator.ValidateAsync(vm)
+IValidator<BookingCreateViewModel>          ← FluentValidation
+    ↓  якщо помилки → повернути View з ModelState
+    ↓  2. mapper.Map<CreateBookingDto>(vm)
+IMapper / BookingMappingProfile             ← AutoMapper
+    ↓  3. bookingService.CreateBookingAsync(userId, dto)
+BookingService
+    ↓  4. ValidateTimes(dto.StartTime, dto.EndTime)  [static]
+    ↓  5. uow.Resources.GetWithCategoryAsync(dto.ResourceId)
+IUnitOfWork → ResourceRepository → GenericRepository → ApplicationDbContext
+    ↓  6. uow.Bookings.GetActiveBookingCountAsync(userId)
+    ↓  7. uow.Bookings.HasOverlapAsync(...)
+IUnitOfWork → BookingRepository → GenericRepository → ApplicationDbContext
+    ↓  8. uow.Bookings.AddAsync(booking)
+    ↓  9. uow.CommitAsync()          ← єдина точка збереження
+    ↓  10. SafeSendEmailAsync(...)   ← fire-and-forget
+MockEmailService
+    ↓
+ServiceResult<Booking>.Ok(created)
+    ↓
+BookingController → TempData["Success"] → RedirectToAction(MyBookings)
 ```
-
-### 3.3 MockEmailService — fire-and-forget без обробки помилок
-**Проблема**: `SafeSendEmailAsync` проковтує всі помилки. У реальному проєкті email може мовчки не відправитись.
-
-**Рішення**: Для production — черга повідомлень (MassTransit / Hangfire). Для coursework рівня — прийнятно.
-
-### 3.4 Відсутній DTO між Controller і Service
-**Проблема**: `BookingCreateViewModel` (UI-шар) передається напряму в `IBookingService`. Це порушує розділення шарів — сервіс залежить від ViewModel.
-
-**Рішення**: Ввести окремий `CreateBookingDto`:
-```csharp
-// Services/Dtos/CreateBookingDto.cs
-public record CreateBookingDto(int ResourceId, DateTime StartTime, DateTime EndTime, string Purpose);
-```
-
-### 3.5 Відсутня валідація на рівні моделі для overlap
-**Проблема**: Перевірка перекриття бронювань (`HasOverlapAsync`) — тільки в сервісі. При прямому виклику репозиторія правило можна обійти.
-
-**Рішення**: Прийнятно для даної архітектури, оскільки репозиторій не публічний API.
 
 ---
 
-## 4. Можливі покращення структури
+## 5. Залишкові слабкі місця
 
-| # | Покращення | Пріоритет |
+### 5.1 `GenericRepository<T>` — відсутнє обмеження типу
+**Проблема**: `where T : class` присутнє неявно через EF Core, але явного
+`IEntity`-constraint немає. Можна передати будь-який клас.
+
+**Рішення**: Додати маркерний інтерфейс:
+```csharp
+public interface IEntity { int Id { get; } }
+public class GenericRepository<T> where T : class, IEntity { ... }
+```
+Для coursework-рівня — прийнятний компроміс.
+
+### 5.2 MockEmailService — fire-and-forget
+**Проблема**: `SafeSendEmailAsync` логує помилки, але не перевіряє доставку.
+У продакшн-середовищі email може мовчки не відправитись.
+
+**Рішення**: Черга повідомлень (Hangfire / MassTransit / IHostedService).
+Для навчального проєкту — прийнятно.
+
+### 5.3 Немає пагінації для адмін-панелі
+**Проблема**: `GetAllBookingsAsync()` повертає `IEnumerable<Booking>` без пагінації.
+При великій кількості записів — проблема продуктивності.
+
+**Рішення**: Додати `PaginatedList<T>` аналогічно до `MyBookings`.
+
+---
+
+## 6. Висновок
+
+Архітектура проєкту реалізує повний стек патернів coursework-рівня:
+
+| Патерн | Клас(и) | Статус |
 |---|---|---|
-| 1 | Впровадити `IUnitOfWork` для атомарності транзакцій | Високий |
-| 2 | Замінити `BookingCreateViewModel` на `CreateBookingDto` в сервісному шарі | Середній |
-| 3 | Додати `where T : class` constraint у `GenericRepository<T>` | Низький |
-| 4 | Впровадити FluentValidation для валідації ViewModel | Середній |
-| 5 | Додати AutoMapper для маппінгу ViewModel ↔ Entity ↔ DTO | Середній |
+| Repository | `IGenericRepository<T>`, `GenericRepository<T>`, `BookingRepository`, `ResourceRepository` | ✅ Реалізовано |
+| Unit of Work | `IUnitOfWork`, `UnitOfWork` | ✅ Реалізовано |
+| DTO | `CreateBookingDto`, `BookingDto` | ✅ Реалізовано |
+| AutoMapper | `BookingMappingProfile` : `Profile` | ✅ Реалізовано |
+| FluentValidation | `BookingCreateViewModelValidator` : `AbstractValidator<T>` | ✅ Реалізовано |
+| Service Layer | `IBookingService`, `BookingService` | ✅ Реалізовано |
+| Result Pattern | `ServiceResult<T>`, `ServiceResult` | ✅ Реалізовано |
+| Dependency Injection | Всі залежності через інтерфейси та конструктор | ✅ Реалізовано |
 
----
-
-## 5. Висновок
-
-Архітектура проєкту відповідає coursework-рівню та реалізує:
-- **Repository Pattern** з Generic базою та специфічними розширеннями
-- **Service Layer** з чітким відокремленням бізнес-логіки
-- **Result Pattern** замість exception-based flow
-- **Dependency Injection** через інтерфейси (всі залежності — через конструктор)
-- **SOLID** принципи — в цілому дотримані
-
-Головне архітектурне обмеження — відсутність UoW, що може призвести до
-неконсистентного стану при складних транзакціях. Для навчального проєкту
-це прийнятний компроміс.
+Кожен шар архітектури має чітко визначену відповідальність.
+Залежності між шарами спрямовані лише через інтерфейси (принцип DIP).
+Збереження даних є атомарним завдяки `UnitOfWork.CommitAsync()`.

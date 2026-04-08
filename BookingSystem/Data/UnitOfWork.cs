@@ -2,26 +2,16 @@ using BookingSystem.Data.Repositories;
 
 namespace BookingSystem.Data;
 
-/// <summary>
-/// Реалізація Unit of Work.
-/// Отримує репозиторії через DI та делегує збереження
-/// в ApplicationDbContext через CommitAsync().
-/// </summary>
 public sealed class UnitOfWork(
     ApplicationDbContext db,
-    IBookingRepository   bookings,
-    IResourceRepository  resources) : IUnitOfWork
+    IRentalRepository    rentals,
+    ICarRepository       cars) : IUnitOfWork
 {
-    /// <inheritdoc/>
-    public IBookingRepository  Bookings  { get; } = bookings;
+    public IRentalRepository Rentals { get; } = rentals;
+    public ICarRepository    Cars    { get; } = cars;
 
-    /// <inheritdoc/>
-    public IResourceRepository Resources { get; } = resources;
-
-    /// <inheritdoc/>
     public Task<int> CommitAsync(CancellationToken ct = default) =>
         db.SaveChangesAsync(ct);
 
-    /// <inheritdoc/>
     public ValueTask DisposeAsync() => db.DisposeAsync();
 }

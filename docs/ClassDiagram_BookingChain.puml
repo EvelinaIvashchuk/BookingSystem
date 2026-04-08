@@ -1,6 +1,6 @@
 @startuml BookingSystem_ClassDiagram
 skinparam classAttributeIconSize 0
-skinparam classFontSize 13
+skinparam classFontSize 12
 skinparam classBackgroundColor #FAFAFA
 skinparam classBorderColor #555
 skinparam interfaceBackgroundColor #E8F4FD
@@ -9,105 +9,181 @@ skinparam arrowColor #333
 skinparam stereotypeCBackgroundColor #F9E79F
 skinparam packageBackgroundColor #FDFEFE
 skinparam packageBorderColor #AAA
-skinparam noteBorderColor #AAA
+skinparam noteBorderColor #888
 skinparam noteBackgroundColor #FFFDE7
+skinparam shadowing false
 
-title Booking System — Class Diagram\n«Logical Chain: BookingController → BookingService → BookingRepository → GenericRepository → Booking»
+title Booking System — Діаграма класів\n«Ланцюжок: BookingController → BookingService → UnitOfWork → BookingRepository → GenericRepository → Booking»
 
-' ══════════════════════════════════════════════════
+' ══════════════════════════════════════════════════════════════════
 ' PACKAGE: ViewModels
-' ══════════════════════════════════════════════════
+' ══════════════════════════════════════════════════════════════════
 package "ViewModels" #EBF5FB {
 
     class BookingCreateViewModel {
-        + ResourceId : int
+        + ResourceId   : int
         + ResourceName : string
-        + Location : string
-        + Capacity : int
+        + Location     : string
+        + Capacity     : int
         + CategoryName : string
+        .. Валідується через FluentValidation ..
+        + StartTime : DateTime?
+        + EndTime   : DateTime?
+        + Purpose   : string?
+    }
+}
+
+' ══════════════════════════════════════════════════════════════════
+' PACKAGE: Validators (FluentValidation)
+' ══════════════════════════════════════════════════════════════════
+package "Validators" #FEF5E7 {
+
+    class BookingCreateViewModelValidator {
+        - MinDurationMinutes : int = 30  «const»
+        - MaxDurationHours   : int = 8   «const»
+        - MaxAdvanceDays     : int = 30  «const»
         --
-        + StartTime : DateTime?   «[Required]»
-        + EndTime : DateTime?     «[Required]»
-        + Purpose : string        «[Required][MaxLength(500)]»
+        + BookingCreateViewModelValidator()
+        .. Правила ..
+        # StartTime > UtcNow
+        # EndTime > StartTime
+        # Duration: 30хв – 8год
+        # Не більше 30 днів наперед
+        # Purpose.Length ≤ 500
     }
 
-    note right of BookingCreateViewModel
-      Передає дані форми
-      створення бронювання.
-      Поля відображення (ResourceName,
-      Location тощо) — read-only,
-      не прив'язані до бази.
+    note right of BookingCreateViewModelValidator
+      Реалізує AbstractValidator<T>.
+      Замінює DataAnnotations —
+      правила зосереджені в одному
+      місці, легко тестуються.
     end note
 }
 
-' ══════════════════════════════════════════════════
+' ══════════════════════════════════════════════════════════════════
+' PACKAGE: DTOs
+' ══════════════════════════════════════════════════════════════════
+package "Services / DTOs" #E8F8F5 {
+
+    class CreateBookingDto <<record>> {
+        + ResourceId : int
+        + StartTime  : DateTime
+        + EndTime    : DateTime
+        + Purpose    : string?
+    }
+
+    class BookingDto <<record>> {
+        + Id           : int
+        + ResourceId   : int
+        + ResourceName : string
+        + StartTime    : DateTime
+        + EndTime      : DateTime
+        + Purpose      : string?
+        + Status       : BookingStatus
+        + CreatedAt    : DateTime
+    }
+
+    note bottom of CreateBookingDto
+      Відокремлює сервісний шар
+      від MVC-специфічного ViewModel.
+      Controller → Service.
+    end note
+}
+
+' ══════════════════════════════════════════════════════════════════
+' PACKAGE: AutoMapper
+' ══════════════════════════════════════════════════════════════════
+package "Mappings" #F4ECF7 {
+
+    class BookingMappingProfile {
+        + BookingMappingProfile()
+        .. Маппінги ..
+        # BookingCreateViewModel → CreateBookingDto
+        # Booking → BookingDto
+    }
+
+    note right of BookingMappingProfile
+      Успадковує Profile (AutoMapper).
+      Реєструється через
+      AddAutoMapper() в Program.cs.
+    end note
+}
+
+' ══════════════════════════════════════════════════════════════════
 ' PACKAGE: Controllers
-' ══════════════════════════════════════════════════
+' ══════════════════════════════════════════════════════════════════
 package "Controllers" #EAF7EA {
 
     class BookingController {
         - _bookingService : IBookingService
-        - _userManager : UserManager<ApplicationUser>
+        - _resourceService : IResourceService
+        - _mapper : IMapper
+        - _validator : IValidator<BookingCreateViewModel>
         --
         + Create(resourceId: int) : Task<IActionResult>
         + Create(vm: BookingCreateViewModel) : Task<IActionResult>
         + MyBookings(page: int) : Task<IActionResult>
         + Details(id: int) : Task<IActionResult>
         + Cancel(id: int) : Task<IActionResult>
+        - RepopulateDisplayFields(vm) : Task
     }
 
     note right of BookingController
       «Authorize» — тільки
       автентифіковані користувачі.
-      Залежить від IBookingService
-      та UserManager через DI.
+      1. Валідує через IValidator
+      2. Маппить ViewModel→DTO
+         через IMapper
+      3. Передає DTO в IBookingService
     end note
 }
 
-' ══════════════════════════════════════════════════
-' PACKAGE: Services / Interfaces
-' ══════════════════════════════════════════════════
+' ══════════════════════════════════════════════════════════════════
+' PACKAGE: Services
+' ══════════════════════════════════════════════════════════════════
 package "Services" #FEF9E7 {
 
     interface IBookingService <<interface>> {
-        + CreateBookingAsync(userId: string, vm: BookingCreateViewModel) : Task<ServiceResult<Booking>>
-        + CancelBookingAsync(bookingId: int, userId: string, isAdmin: bool) : Task<ServiceResult>
-        + ConfirmBookingAsync(bookingId: int) : Task<ServiceResult>
-        + RejectBookingAsync(bookingId: int, note: string) : Task<ServiceResult>
-        + GetUserBookingsAsync(userId: string, page: int, pageSize: int) : Task<PaginatedList<Booking>>
-        + GetAllBookingsAsync(page: int, pageSize: int, statusFilter: BookingStatus?) : Task<PaginatedList<Booking>>
+        + CreateBookingAsync(userId: string, dto: CreateBookingDto) : Task<ServiceResult<Booking>>
+        + CancelBookingAsync(bookingId: int, userId: string) : Task<ServiceResult>
+        + ConfirmBookingAsync(bookingId: int, adminNote: string?) : Task<ServiceResult>
+        + RejectBookingAsync(bookingId: int, adminNote: string) : Task<ServiceResult>
+        + GetUserBookingsAsync(userId: string) : Task<IEnumerable<Booking>>
+        + GetAllBookingsAsync() : Task<IEnumerable<Booking>>
         + GetBookingByIdAsync(id: int) : Task<Booking?>
     }
 
     class BookingService {
-        - MaxActiveBookings : int = 3      «const»
-        - MinDurationMinutes : int = 30    «const»
-        - MaxDurationHours : int = 8       «const»
-        - MaxAdvanceDays : int = 30        «const»
+        - MaxActiveBookingsPerUser : int = 3   «const»
+        - MinDurationMinutes       : int = 30  «const»
+        - MaxDurationHours         : int = 8   «const»
+        - MaxAdvanceBookingDays    : int = 30  «const»
         --
-        - _bookingRepo : IBookingRepository
-        - _resourceRepo : IResourceRepository
+        - _uow          : IUnitOfWork
         - _emailService : IEmailService
+        - _logger       : ILogger<BookingService>
         --
-        + CreateBookingAsync(userId, vm) : Task<ServiceResult<Booking>>
-        + CancelBookingAsync(bookingId, userId, isAdmin) : Task<ServiceResult>
-        + ConfirmBookingAsync(bookingId) : Task<ServiceResult>
-        + RejectBookingAsync(bookingId, note) : Task<ServiceResult>
-        + GetUserBookingsAsync(userId, page, pageSize) : Task<PaginatedList<Booking>>
-        + GetAllBookingsAsync(page, pageSize, statusFilter) : Task<PaginatedList<Booking>>
+        + CreateBookingAsync(userId, dto) : Task<ServiceResult<Booking>>
+        + CancelBookingAsync(bookingId, userId) : Task<ServiceResult>
+        + ConfirmBookingAsync(bookingId, adminNote) : Task<ServiceResult>
+        + RejectBookingAsync(bookingId, adminNote) : Task<ServiceResult>
+        + GetUserBookingsAsync(userId) : Task<IEnumerable<Booking>>
+        + GetAllBookingsAsync() : Task<IEnumerable<Booking>>
         + GetBookingByIdAsync(id) : Task<Booking?>
-        - SafeSendEmailAsync(task: Task) : Task
+        - ValidateTimes(start, end) : ServiceResult
+        - SafeSendEmailAsync(action: Func<Task>) : Task
     }
 
     note right of BookingService
       Бізнес-правила:
-      • Тільки майбутні дати
+      • Час у майбутньому
       • EndTime > StartTime
       • Тривалість: 30хв – 8год
       • Не більше 30 днів наперед
-      • Ресурс має бути «Available»
+      • Ресурс = Available
       • Макс. 3 активних бронювання
       • Відсутність накладань (overlap)
+      Зберігає через uow.CommitAsync()
     end note
 
     class ServiceResult<T> {
@@ -128,27 +204,58 @@ package "Services" #FEF9E7 {
     }
 
     interface IEmailService <<interface>> {
-        + SendBookingConfirmationAsync(user: ApplicationUser, booking: Booking) : Task
-        + SendBookingCancellationAsync(user: ApplicationUser, booking: Booking) : Task
+        + SendBookingCreatedAsync(email, name, resource, start, end) : Task
+        + SendBookingCancelledAsync(email, name, resource, start, end) : Task
+        + SendBookingConfirmedAsync(email, name, resource, start, end) : Task
+        + SendBookingRejectedAsync(email, name, resource, note) : Task
     }
 
     class MockEmailService {
         - _logger : ILogger<MockEmailService>
         --
-        + SendBookingConfirmationAsync(user, booking) : Task
-        + SendBookingCancellationAsync(user, booking) : Task
+        + SendBookingCreatedAsync(...) : Task
+        + SendBookingCancelledAsync(...) : Task
+        + SendBookingConfirmedAsync(...) : Task
+        + SendBookingRejectedAsync(...) : Task
+    }
+}
+
+' ══════════════════════════════════════════════════════════════════
+' PACKAGE: Unit of Work
+' ══════════════════════════════════════════════════════════════════
+package "Data / Unit of Work" #FDEBD0 {
+
+    interface IUnitOfWork <<interface>> {
+        + Bookings  : IBookingRepository
+        + Resources : IResourceRepository
+        --
+        + CommitAsync(ct: CancellationToken) : Task<int>
     }
 
-    note bottom of MockEmailService
-      Записує листи у файл Logs/Emails/.
-      Не відправляє реальні emails.
-      Призначений для coursework-рівня.
+    class UnitOfWork {
+        - _db : ApplicationDbContext
+        --
+        + Bookings  : IBookingRepository
+        + Resources : IResourceRepository
+        --
+        + UnitOfWork(db, bookings, resources)
+        + CommitAsync(ct) : Task<int>
+        + DisposeAsync() : ValueTask
+    }
+
+    note right of IUnitOfWork
+      Координує репозиторії.
+      Єдиний CommitAsync() —
+      атомарне збереження.
+      Вирішує проблему часткового
+      збереження при роботі з
+      кількома репозиторіями.
     end note
 }
 
-' ══════════════════════════════════════════════════
-' PACKAGE: Repositories / Interfaces
-' ══════════════════════════════════════════════════
+' ══════════════════════════════════════════════════════════════════
+' PACKAGE: Repositories
+' ══════════════════════════════════════════════════════════════════
 package "Data / Repositories" #F5EEF8 {
 
     interface IGenericRepository<T> <<interface>> {
@@ -163,11 +270,17 @@ package "Data / Repositories" #F5EEF8 {
     }
 
     interface IBookingRepository <<interface>> {
-        + GetUserBookingsAsync(userId: string) : Task<IReadOnlyList<Booking>>
-        + GetAllWithDetailsAsync() : Task<IReadOnlyList<Booking>>
+        + GetUserBookingsAsync(userId: string) : Task<IEnumerable<Booking>>
+        + GetAllWithDetailsAsync() : Task<IEnumerable<Booking>>
         + GetWithDetailsAsync(id: int) : Task<Booking?>
-        + HasOverlapAsync(resourceId: int, start: DateTime, end: DateTime, excludeId: int) : Task<bool>
+        + HasOverlapAsync(resourceId, start, end) : Task<bool>
         + GetActiveBookingCountAsync(userId: string) : Task<int>
+    }
+
+    interface IResourceRepository <<interface>> {
+        + GetWithCategoryAsync(id: int) : Task<Resource?>
+        + GetAvailableWithCategoryAsync() : Task<IReadOnlyList<Resource>>
+        + IsBookableAsync(id: int) : Task<bool>
     }
 
     class GenericRepository<T> {
@@ -175,96 +288,97 @@ package "Data / Repositories" #F5EEF8 {
         --
         + GenericRepository(db: ApplicationDbContext)
         --
-        + GetByIdAsync(id: int) : Task<T?>
+        + GetByIdAsync(id) : Task<T?>
         + GetAllAsync() : Task<IReadOnlyList<T>>
         + FindAsync(predicate) : Task<IReadOnlyList<T>>
         + AnyAsync(predicate) : Task<bool>
-        + AddAsync(entity: T) : Task
-        + Update(entity: T) : void
-        + Delete(entity: T) : void
+        + AddAsync(entity) : Task
+        + Update(entity) : void
+        + Delete(entity) : void
         + SaveChangesAsync() : Task
     }
 
     class BookingRepository {
         + BookingRepository(db: ApplicationDbContext)
         --
-        + GetUserBookingsAsync(userId) : Task<IReadOnlyList<Booking>>
-        + GetAllWithDetailsAsync() : Task<IReadOnlyList<Booking>>
+        + GetUserBookingsAsync(userId) : Task<IEnumerable<Booking>>
+        + GetAllWithDetailsAsync() : Task<IEnumerable<Booking>>
         + GetWithDetailsAsync(id) : Task<Booking?>
-        + HasOverlapAsync(resourceId, start, end, excludeId) : Task<bool>
+        + HasOverlapAsync(resourceId, start, end) : Task<bool>
         + GetActiveBookingCountAsync(userId) : Task<int>
     }
 
-    note right of BookingRepository
-      HasOverlapAsync використовує
-      формулу перекриття інтервалів:
-      existingStart < newEnd
-      AND existingEnd > newStart
-    end note
+    class ResourceRepository {
+        + ResourceRepository(db: ApplicationDbContext)
+        --
+        + GetWithCategoryAsync(id) : Task<Resource?>
+        + GetAvailableWithCategoryAsync() : Task<IReadOnlyList<Resource>>
+        + IsBookableAsync(id) : Task<bool>
+    }
 
     class ApplicationDbContext {
-        + Bookings : DbSet<Booking>
-        + Resources : DbSet<Resource>
+        + Bookings   : DbSet<Booking>
+        + Resources  : DbSet<Resource>
         + Categories : DbSet<Category>
-        + Payments : DbSet<Payment>
+        + Payments   : DbSet<Payment>
         --
         + ApplicationDbContext(options)
         # OnModelCreating(builder) : void
     }
 }
 
-' ══════════════════════════════════════════════════
-' PACKAGE: Models (Entities)
-' ══════════════════════════════════════════════════
+' ══════════════════════════════════════════════════════════════════
+' PACKAGE: Entities
+' ══════════════════════════════════════════════════════════════════
 package "Models / Entities" #FDEDEC {
 
     class Booking {
-        + Id : int
-        + UserId : string          «FK»
-        + ResourceId : int         «FK»
-        + StartTime : DateTime?    «[Required]»
-        + EndTime : DateTime?      «[Required]»
-        + Purpose : string         «[Required][MaxLength(500)]»
-        + Status : BookingStatus
-        + CreatedAt : DateTime
+        + Id          : int
+        + UserId      : string      «FK»
+        + ResourceId  : int         «FK»
+        + StartTime   : DateTime?
+        + EndTime     : DateTime?
+        + Purpose     : string?
+        + Status      : BookingStatus
+        + CreatedAt   : DateTime
         + CancelledAt : DateTime?
-        + AdminNote : string?
+        + AdminNote   : string?
         --
-        + User : ApplicationUser   «navigation»
-        + Resource : Resource      «navigation»
+        + User     : ApplicationUser  «navigation»
+        + Resource : Resource         «navigation»
         --
-        + Duration : TimeSpan      «computed»
-        + CanBeCancelledByUser : bool  «computed»
+        + Duration             : TimeSpan  «computed»
+        + CanBeCancelledByUser : bool      «computed»
     }
 
     class ApplicationUser {
-        + FirstName : string       «[Required]»
-        + LastName : string        «[Required]»
-        + IsActive : bool
+        + FirstName : string
+        + LastName  : string
+        + IsActive  : bool
         + CreatedAt : DateTime
         --
         + Bookings : ICollection<Booking>  «navigation»
         --
-        + FullName : string        «computed»
+        + FullName : string  «computed»
     }
 
     class Resource {
-        + Id : int
-        + Name : string            «[Required][MaxLength(100)]»
+        + Id          : int
+        + Name        : string
         + Description : string?
-        + Location : string        «[Required]»
-        + Capacity : int
-        + Status : ResourceStatus
-        + ImageUrl : string?
-        + CategoryId : int         «FK»
+        + Location    : string
+        + Capacity    : int
+        + Status      : ResourceStatus
+        + ImageUrl    : string?
+        + CategoryId  : int  «FK»
         --
-        + Category : Category      «navigation»
+        + Category : Category              «navigation»
         + Bookings : ICollection<Booking>  «navigation»
     }
 
     class Category {
-        + Id : int
-        + Name : string            «[Required][Unique]»
+        + Id          : int
+        + Name        : string  «[Unique]»
         + Description : string?
         --
         + Resources : ICollection<Resource>  «navigation»
@@ -284,86 +398,114 @@ package "Models / Entities" #FDEDEC {
     }
 }
 
-' ══════════════════════════════════════════════════
-' PACKAGE: ASP.NET Identity (external)
-' ══════════════════════════════════════════════════
+' ══════════════════════════════════════════════════════════════════
+' PACKAGE: ASP.NET Core Identity (external)
+' ══════════════════════════════════════════════════════════════════
 package "ASP.NET Core Identity «external»" #F2F3F4 {
 
     class IdentityUser<TKey> <<abstract>> {
-        + Id : TKey
-        + UserName : string?
-        + Email : string?
+        + Id           : TKey
+        + UserName     : string?
+        + Email        : string?
         + PasswordHash : string?
         + EmailConfirmed : bool
-    }
-
-    class UserManager<TUser> {
-        + FindByIdAsync(id) : Task<TUser?>
-        + GetUserAsync(principal) : Task<TUser?>
-        + GetUserId(principal) : string?
-        + IsInRoleAsync(user, role) : Task<bool>
     }
 
     class IdentityDbContext<TUser> <<abstract>> {
         + Users : DbSet<TUser>
         + Roles : DbSet<IdentityRole>
-        ...
+    }
+
+    class AbstractValidator<T> <<abstract>> {
+        + ValidateAsync(instance: T) : Task<ValidationResult>
+        # RuleFor(...)
+    }
+
+    class Profile <<abstract>> {
+        # CreateMap<TSource, TDest>()
     }
 }
 
-' ══════════════════════════════════════════════════
-' HELPERS
-' ══════════════════════════════════════════════════
+' ══════════════════════════════════════════════════════════════════
+' PACKAGE: Helpers
+' ══════════════════════════════════════════════════════════════════
 package "Helpers" #EAFAF1 {
+
     class PaginatedList<T> {
-        + Items : IReadOnlyList<T>
-        + PageIndex : int
+        + Items      : IReadOnlyList<T>
+        + PageIndex  : int
         + TotalPages : int
         + TotalCount : int
         --
-        + HasPreviousPage : bool   «computed»
-        + HasNextPage : bool       «computed»
+        + HasPreviousPage : bool  «computed»
+        + HasNextPage     : bool  «computed»
         --
-        + {static} CreateAsync(source: IQueryable<T>, pageIndex, pageSize) : Task<PaginatedList<T>>
-        + {static} Create(source: IEnumerable<T>, pageIndex, pageSize) : PaginatedList<T>
+        + {static} CreateAsync(source: IQueryable<T>, page, size) : Task<PaginatedList<T>>
+        + {static} Create(source: IEnumerable<T>, page, size) : PaginatedList<T>
     }
 }
 
-' ══════════════════════════════════════════════════
-' RELATIONSHIPS
-' ══════════════════════════════════════════════════
+' ══════════════════════════════════════════════════════════════════
+' ВІДНОСИНИ
+' ══════════════════════════════════════════════════════════════════
 
-' Inheritance / Realization
-ApplicationUser --|> IdentityUser : «extends»
-ApplicationDbContext --|> IdentityDbContext : «extends»
-BookingService ..|> IBookingService : «implements»
-MockEmailService ..|> IEmailService : «implements»
-BookingRepository --|> GenericRepository : «extends»
-BookingRepository ..|> IBookingRepository : «implements»
-GenericRepository ..|> IGenericRepository : «implements»
-IBookingRepository --|> IGenericRepository : «extends»
+' Inheritance
+ApplicationUser       --|> IdentityUser         : «extends»
+ApplicationDbContext  --|> IdentityDbContext     : «extends»
+BookingCreateViewModelValidator --|> AbstractValidator : «extends»
+BookingMappingProfile --|> Profile               : «extends»
 
-' Dependencies (DI)
-BookingController ..> IBookingService : «uses»
-BookingController ..> UserManager : «uses»
-BookingService ..> IBookingRepository : «uses»
-BookingService ..> IEmailService : «uses»
-BookingService ..> ServiceResult : «creates»
-BookingService ..> ServiceResult : «creates»
-BookingController ..> BookingCreateViewModel : «binds»
-BookingController ..> PaginatedList : «uses»
+' Interface implementations
+BookingService     ..|> IBookingService          : «implements»
+MockEmailService   ..|> IEmailService            : «implements»
+UnitOfWork         ..|> IUnitOfWork              : «implements»
+BookingRepository  --|> GenericRepository        : «extends»
+BookingRepository  ..|> IBookingRepository       : «implements»
+ResourceRepository --|> GenericRepository        : «extends»
+ResourceRepository ..|> IResourceRepository      : «implements»
+GenericRepository  ..|> IGenericRepository       : «implements»
+IBookingRepository  --|> IGenericRepository      : «extends»
+IResourceRepository --|> IGenericRepository      : «extends»
 
-' Data layer
-GenericRepository --> ApplicationDbContext : «uses»
-ApplicationDbContext --> Booking : «DbSet»
-ApplicationDbContext --> Resource : «DbSet»
-ApplicationDbContext --> Category : «DbSet»
+' Controller dependencies (DI)
+BookingController ..> IBookingService            : «uses»
+BookingController ..> IMapper                    : «uses (AutoMapper)»
+BookingController ..> "IValidator<BookingCreateViewModel>" : «uses (FluentValidation)»
+BookingController ..> BookingCreateViewModel     : «binds form»
+
+' Validator
+BookingCreateViewModelValidator ..> BookingCreateViewModel : «validates»
+
+' Mapper
+BookingMappingProfile ..> BookingCreateViewModel : «maps from»
+BookingMappingProfile ..> CreateBookingDto       : «maps to»
+BookingMappingProfile ..> Booking                : «maps from»
+BookingMappingProfile ..> BookingDto             : «maps to»
+
+' Service dependencies
+BookingService ..> IUnitOfWork                   : «uses»
+BookingService ..> IEmailService                 : «uses»
+BookingService ..> CreateBookingDto              : «receives»
+BookingService ..> ServiceResult                 : «returns»
+
+' UnitOfWork
+UnitOfWork --> IBookingRepository                : «owns»
+UnitOfWork --> IResourceRepository               : «owns»
+UnitOfWork --> ApplicationDbContext              : «commits via»
+
+' Repository → DB
+GenericRepository --> ApplicationDbContext       : «uses»
+
+' DB → Entities
+ApplicationDbContext --> Booking                 : «DbSet»
+ApplicationDbContext --> Resource                : «DbSet»
+ApplicationDbContext --> Category                : «DbSet»
 
 ' Entity associations
-Booking "many" --> "1" ApplicationUser : userId (FK)
-Booking "many" --> "1" Resource : resourceId (FK)
-Resource "many" --> "1" Category : categoryId (FK)
-Booking --> BookingStatus : «uses»
-Resource --> ResourceStatus : «uses»
+Booking "many" --> "1" ApplicationUser           : userId FK
+Booking "many" --> "1" Resource                  : resourceId FK
+Resource "many" --> "1" Category                 : categoryId FK
+Booking --> BookingStatus                        : «uses»
+Resource --> ResourceStatus                      : «uses»
 
 @enduml

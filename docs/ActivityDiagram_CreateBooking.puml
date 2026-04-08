@@ -1,0 +1,218 @@
+@startuml BookingSystem_ActivityDiagram
+skinparam activityFontSize 12
+skinparam activityBorderColor #555
+skinparam activityBackgroundColor #FAFAFA
+skinparam activityArrowColor #333
+skinparam activityDiamondBackgroundColor #FEF9E7
+skinparam activityDiamondBorderColor #E67E22
+skinparam shadowing false
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #888
+skinparam swimlaneBackgroundColor #FDFEFE
+skinparam swimlaneBorderColor #AAA
+
+title Booking System — Діаграма активності\n«Процес створення та обробки бронювання»
+
+|#EBF5FB| Користувач (User) |
+|#FEF9E7| BookingController |
+|#E8F8F5| BookingService |
+|#F5EEF8| База даних (DB) |
+|#FDEBD0| Адміністратор (Admin) |
+
+' ══════════════════════════════════════════════════════════════════
+' ПОЧАТОК
+' ══════════════════════════════════════════════════════════════════
+
+|Користувач (User)|
+start
+
+:Відкрити сторінку ресурсу;
+:Натиснути «Забронювати»;
+
+|BookingController|
+:GET /Booking/Create?resourceId={id};
+
+:Завантажити ресурс через\nIResourceService;
+
+|База даних (DB)|
+:SELECT Resource WHERE id = {id};
+:Повернути Resource;
+
+|BookingController|
+
+if (Ресурс знайдено?) then (ні)
+    :Повернути 404 NotFound;
+    stop
+endif
+
+if (Resource.Status == Available?) then (ні)
+    :TempData["Error"]\n→ Redirect до деталей ресурсу;
+    stop
+endif
+
+:Відобразити форму бронювання\n(BookingCreateViewModel);
+
+' ══════════════════════════════════════════════════════════════════
+' ЗАПОВНЕННЯ ФОРМИ
+' ══════════════════════════════════════════════════════════════════
+
+|Користувач (User)|
+:Заповнити форму:\n- StartTime\n- EndTime\n- Purpose (опційно);
+:Натиснути «Підтвердити»;
+
+' ══════════════════════════════════════════════════════════════════
+' ВАЛІДАЦІЯ (FluentValidation)
+' ══════════════════════════════════════════════════════════════════
+
+|BookingController|
+:POST /Booking/Create;
+
+note right
+  IValidator<BookingCreateViewModel>
+  (FluentValidation)
+end note
+
+:Виконати validator.ValidateAsync(vm);
+
+if (Валідація пройшла?) then (ні)
+    :Додати помилки до ModelState\n(AddToModelState);
+    :RepopulateDisplayFields(vm);
+    :Повернути View з помилками;
+    |Користувач (User)|
+    :Виправити форму;
+    detach
+endif
+
+' ══════════════════════════════════════════════════════════════════
+' МАППІНГ (AutoMapper)
+' ══════════════════════════════════════════════════════════════════
+
+|BookingController|
+
+note right
+  IMapper / BookingMappingProfile
+  (AutoMapper)
+end note
+
+:mapper.Map<CreateBookingDto>(vm)\nViewModel → DTO;
+
+:bookingService.CreateBookingAsync\n(userId, dto);
+
+' ══════════════════════════════════════════════════════════════════
+' БІЗНЕС-ЛОГІКА (BookingService)
+' ══════════════════════════════════════════════════════════════════
+
+|BookingService|
+
+:ValidateTimes(start, end)\n[статична перевірка часів];
+
+if (Часи коректні?) then (ні)
+    :Повернути ServiceResult.Fail;
+    |BookingController|
+    :ModelState.AddModelError\n→ View з помилкою;
+    stop
+endif
+
+|База даних (DB)|
+:SELECT Resource + Category\nWHERE id = dto.ResourceId;
+:Повернути Resource;
+
+|BookingService|
+
+if (Ресурс Available?) then (ні)
+    :Повернути ServiceResult.Fail\n«resource is not available»;
+    stop
+endif
+
+|База даних (DB)|
+:SELECT COUNT(Bookings)\nWHERE userId = ... AND status IN\n(Pending, Confirmed);
+:Повернути activeCount;
+
+|BookingService|
+
+if (activeCount < 3?) then (ні)
+    :Повернути ServiceResult.Fail\n«you already have 3 active bookings»;
+    stop
+endif
+
+|База даних (DB)|
+:SELECT EXISTS Bookings\nWHERE resourceId = ...\nAND overlap(start, end);
+:Повернути hasOverlap;
+
+|BookingService|
+
+if (Накладань немає?) then (ні)
+    :Повернути ServiceResult.Fail\n«resource is already booked»;
+    stop
+endif
+
+' ══════════════════════════════════════════════════════════════════
+' ЗБЕРЕЖЕННЯ (UnitOfWork)
+' ══════════════════════════════════════════════════════════════════
+
+:Створити Booking\n{Status = Pending, CreatedAt = UtcNow};
+
+|База даних (DB)|
+:uow.Bookings.AddAsync(booking)\nuow.CommitAsync()\n→ INSERT INTO Bookings;
+:Повернути booking.Id;
+
+|BookingService|
+:GetWithDetailsAsync(booking.Id)\n(eager load User + Resource);
+
+|База даних (DB)|
+:SELECT Booking + User + Resource\nWHERE id = booking.Id;
+:Повернути повний об'єкт;
+
+' ══════════════════════════════════════════════════════════════════
+' EMAIL (fire-and-forget)
+' ══════════════════════════════════════════════════════════════════
+
+|BookingService|
+
+fork
+    :SafeSendEmailAsync\n→ SendBookingCreatedAsync\n(email, name, resource, start, end);
+    note right
+      Fire-and-forget.
+      Помилка лише логується,
+      не перериває потік.
+    end note
+fork again
+    :Повернути ServiceResult.Ok(booking);
+end fork
+
+' ══════════════════════════════════════════════════════════════════
+' ВІДПОВІДЬ КОНТРОЛЕРА
+' ══════════════════════════════════════════════════════════════════
+
+|BookingController|
+:TempData["Success"]\n→ RedirectToAction(MyBookings);
+
+|Користувач (User)|
+:Переглянути список\nсвоїх бронювань;
+
+' ══════════════════════════════════════════════════════════════════
+' АДМІН-ОБРОБКА
+' ══════════════════════════════════════════════════════════════════
+
+|Адміністратор (Admin)|
+:Відкрити панель адміністрування\n→ Переглянути Pending бронювання;
+
+if (Рішення адміністратора?) then (Підтвердити)
+    :POST /Admin/Booking/Confirm/{id}\n(з опційним AdminNote);
+    |BookingService|
+    :booking.Status = Confirmed\nuow.CommitAsync();
+    :SafeSendEmailAsync\n→ SendBookingConfirmedAsync;
+    |Адміністратор (Admin)|
+    :Бронювання підтверджено;
+else (Відхилити)
+    :POST /Admin/Booking/Reject/{id}\n(з обов'язковим AdminNote);
+    |BookingService|
+    :booking.Status = Rejected\nuow.CommitAsync();
+    :SafeSendEmailAsync\n→ SendBookingRejectedAsync;
+    |Адміністратор (Admin)|
+    :Бронювання відхилено;
+endif
+
+stop
+
+@enduml

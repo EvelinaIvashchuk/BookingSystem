@@ -1,0 +1,185 @@
+@startuml BookingSystem_DeploymentDiagram
+skinparam nodeFontSize 13
+skinparam nodeBackgroundColor #FAFAFA
+skinparam nodeBorderColor #555
+skinparam componentBackgroundColor #F4F6F7
+skinparam componentBorderColor #777
+skinparam databaseBackgroundColor #FADBD8
+skinparam databaseBorderColor #C0392B
+skinparam arrowColor #333
+skinparam arrowFontSize 11
+skinparam packageBackgroundColor #FDFEFE
+skinparam packageBorderColor #AAA
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #888
+skinparam shadowing false
+skinparam actorStyle awesome
+
+title Booking System — Діаграма розгортання\n«Фізична інфраструктура: Railway + GitHub + Client»
+
+' ══════════════════════════════════════════════════════════════════
+' ВУЗОЛ: Машина розробника
+' ══════════════════════════════════════════════════════════════════
+
+node "Машина розробника\n(Windows / macOS)" as DevMachine #EBF5FB {
+
+    component [.NET 9 SDK] as DotnetSDK
+    component [Docker Desktop] as Docker
+    component [Rider / VS Code\n(IDE)] as IDE
+    component [Git Client] as GitClient
+
+    artifact "BookingSystem.sln" as SLN
+    artifact "BookingSystem/Dockerfile" as Dockerfile
+    artifact "railway.toml" as RailwayToml
+    artifact "global.json\nnuget.config" as GlobalJson
+}
+
+' ══════════════════════════════════════════════════════════════════
+' ВУЗОЛ: GitHub
+' ══════════════════════════════════════════════════════════════════
+
+node "GitHub\n(Source Control)" as GitHub #E8F8F5 {
+    component [Git Repository\n«main branch»] as Repo
+    component [GitHub Webhook\n(push event)] as Webhook
+}
+
+' ══════════════════════════════════════════════════════════════════
+' ВУЗОЛ: Railway Cloud Platform
+' ══════════════════════════════════════════════════════════════════
+
+node "Railway Cloud Platform\n(railway.app)" as Railway #FEF9E7 {
+
+    ' ── Build Environment ────────────────────────────────────────
+    node "Build Agent\n(Docker Builder)" as BuildAgent #FEF5E7 {
+        component [Dockerfile Builder] as DockerBuilder
+        component [dotnet restore]     as DotnetRestore
+        component [dotnet publish\n-c Release] as DotnetPublish
+
+        artifact "Docker Image\n(mcr.microsoft.com/\ndotnet/aspnet:9.0)" as DockerImage
+    }
+
+    ' ── Web Service Container ────────────────────────────────────
+    node "Web Service Container\n(Linux, Docker Runtime)" as WebContainer #EAF7EA {
+
+        component [ASP.NET Core 9\nKestrel Web Server\n:8080] as Kestrel
+
+        package "BookingSystem Application" #FAFAFA {
+            component [BookingSystem.dll] as AppDll
+            component [Presentation Layer\n(Controllers, Views)] as PresentationL
+            component [Service Layer\n(BookingService, etc.)] as ServiceL
+            component [Data Layer\n(EF Core, Repositories)] as DataL
+            component [Serilog\n(Console Sink)] as SerilogApp
+        }
+
+        artifact "appsettings.json\n(env vars override)" as AppSettings
+
+        note right of Kestrel
+          PORT: 8080
+          EXPOSE 8080 (Dockerfile)
+          Railway проксує через
+          публічний HTTPS endpoint
+        end note
+    }
+
+    ' ── MySQL Service ─────────────────────────────────────────────
+    node "MySQL Service\n(Railway managed)" as MySQLNode #FADBD8 {
+        database "MySQL 8.0\nDatabase" as MySQLDB {
+            component [AspNetUsers\n(Identity)] as TblUsers
+            component [Bookings]               as TblBookings
+            component [Resources]              as TblResources
+            component [Categories]             as TblCategories
+        }
+
+        note right of MySQLDB
+          Змінні середовища:
+          MYSQLHOST
+          MYSQLPORT
+          MYSQLDATABASE
+          MYSQLUSER
+          MYSQLPASSWORD
+        end note
+    }
+
+    ' ── Railway Reverse Proxy ─────────────────────────────────────
+    component [Railway\nReverse Proxy\n(HTTPS → HTTP)] as Proxy #D5D8DC
+}
+
+' ══════════════════════════════════════════════════════════════════
+' ВУЗОЛ: Клієнт
+' ══════════════════════════════════════════════════════════════════
+
+node "Клієнт\n(Browser)" as Client #F5EEF8 {
+    component [Web Browser\n(Chrome / Firefox)] as Browser
+}
+
+node "Поштовий клієнт\n(Email Client)" as MailClient #EAFAF1 {
+    component [MockEmailService\n(Console Log)] as MockMail
+}
+
+' ══════════════════════════════════════════════════════════════════
+' ЗВ'ЯЗКИ: CI/CD Pipeline
+' ══════════════════════════════════════════════════════════════════
+
+DevMachine --> GitHub     : git push\n(SSH / HTTPS)
+GitHub      --> Railway   : Webhook trigger\n(push to main)
+
+GitHub --> BuildAgent     : git clone / checkout
+BuildAgent --> DockerBuilder : railway.toml\ndockerfilePath = "BookingSystem/Dockerfile"
+
+DockerBuilder --> DotnetRestore  : COPY .csproj\ndotnet restore
+DockerBuilder --> DotnetPublish  : COPY . .\ndotnet publish --no-restore
+DotnetPublish --> DockerImage    : /app/publish → image
+
+DockerImage --> WebContainer : docker run\n(deploy image)
+
+' ══════════════════════════════════════════════════════════════════
+' ЗВ'ЯЗКИ: Runtime
+' ══════════════════════════════════════════════════════════════════
+
+WebContainer --> MySQLNode  : TCP :3306\nPomelo EF Core\n(EnableRetryOnFailure)
+
+AppDll --> PresentationL
+AppDll --> ServiceL
+AppDll --> DataL
+DataL  --> MySQLNode : EF Core queries
+
+' ══════════════════════════════════════════════════════════════════
+' ЗВ'ЯЗКИ: Мережа
+' ══════════════════════════════════════════════════════════════════
+
+Browser    --> Proxy       : HTTPS :443\n(*.railway.app)
+Proxy      --> Kestrel     : HTTP :8080\n(internal network)
+Kestrel    --> AppDll      : обробка запиту
+
+' ══════════════════════════════════════════════════════════════════
+' ЗВ'ЯЗКИ: Логування
+' ══════════════════════════════════════════════════════════════════
+
+SerilogApp --> MockMail : Console.Log\n(fire-and-forget email)
+
+' ══════════════════════════════════════════════════════════════════
+' ПРИМІТКИ
+' ══════════════════════════════════════════════════════════════════
+
+note bottom of BuildAgent
+  builder = "dockerfile"
+  (railway.toml)
+  ENV NUGET_XMLDOC_MODE=skip
+  — прискорює restore
+end note
+
+note bottom of WebContainer
+  startCommand = "dotnet BookingSystem.dll"
+  healthcheckPath = "/"
+  healthcheckTimeout = 300s
+  restartPolicyType = "on_failure"
+end note
+
+note right of MySQLNode
+  Railway Internal Network:
+  WebContainer звертається
+  до MySQL через приватну
+  мережу Railway (без Internet)
+end note
+
+@enduml

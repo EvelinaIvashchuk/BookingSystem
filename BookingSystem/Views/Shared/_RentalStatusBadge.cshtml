@@ -1,0 +1,32 @@
+@model RentalStatus
+
+@switch (Model)
+{
+    case RentalStatus.Pending:
+        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+            <i class="bi bi-clock me-1"></i>Pending
+        </span>
+        break;
+
+    case RentalStatus.Confirmed:
+        <span class="badge bg-success-subtle text-success border border-success-subtle">
+            <i class="bi bi-check-circle me-1"></i>Confirmed
+        </span>
+        break;
+
+    case RentalStatus.Rejected:
+        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+            <i class="bi bi-x-circle me-1"></i>Rejected
+        </span>
+        break;
+
+    case RentalStatus.Cancelled:
+        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+            <i class="bi bi-dash-circle me-1"></i>Cancelled
+        </span>
+        break;
+
+    default:
+        <span class="badge bg-light text-dark border">@Model</span>
+        break;
+}

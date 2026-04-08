@@ -4,11 +4,11 @@ namespace BookingSystem.ViewModels;
 
 public class AdminDashboardViewModel
 {
-    public int TotalResources    { get; set; }
-    public int AvailableResources { get; set; }
-    public int TotalBookings     { get; set; }
-    public int PendingBookings   { get; set; }
-    public int TodaysBookings    { get; set; }
+    public int TotalCars        { get; set; }
+    public int AvailableCars    { get; set; }
+    public int TotalRentals     { get; set; }
+    public int PendingRentals   { get; set; }
+    public int TodaysRentals    { get; set; }
 
-    public IEnumerable<Booking> RecentPending { get; set; } = [];
+    public IEnumerable<Rental> RecentPending { get; set; } = [];
 }

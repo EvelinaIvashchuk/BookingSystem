@@ -1,4 +1,4 @@
-﻿@model AdminDashboardViewModel
+@model AdminDashboardViewModel
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
@@ -9,20 +9,19 @@
         <div class="text-muted small">@DateTime.Now.ToLongDateString()</div>
     </div>
 
-    <!-- Stats Row -->
     <div class="row g-4 mb-5">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body p-4 text-center">
-                    <div class="display-6 text-primary mb-2">@Model.TotalResources</div>
-                    <div class="text-uppercase text-muted small fw-bold">Total Resources</div>
+                    <div class="display-6 text-primary mb-2">@Model.TotalCars</div>
+                    <div class="text-uppercase text-muted small fw-bold">Total Cars</div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body p-4 text-center">
-                    <div class="display-6 text-success mb-2">@Model.AvailableResources</div>
+                    <div class="display-6 text-success mb-2">@Model.AvailableCars</div>
                     <div class="text-uppercase text-muted small fw-bold">Available Now</div>
                 </div>
             </div>
@@ -30,7 +29,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body p-4 text-center">
-                    <div class="display-6 text-warning mb-2">@Model.PendingBookings</div>
+                    <div class="display-6 text-warning mb-2">@Model.PendingRentals</div>
                     <div class="text-uppercase text-muted small fw-bold">Pending Requests</div>
                 </div>
             </div>
@@ -38,29 +37,28 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body p-4 text-center">
-                    <div class="display-6 text-info mb-2">@Model.TodaysBookings</div>
-                    <div class="text-uppercase text-muted small fw-bold">Bookings Today</div>
+                    <div class="display-6 text-info mb-2">@Model.TodaysRentals</div>
+                    <div class="text-uppercase text-muted small fw-bold">Pickups Today</div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <!-- Recent Pending Bookings -->
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">Recent Pending Requests</h5>
-                    <a asp-action="Bookings" asp-route-status="Pending" class="btn btn-sm btn-outline-primary">View All</a>
+                    <a asp-action="Rentals" asp-route-status="Pending" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="ps-3">Resource</th>
+                                    <th class="ps-3">Car</th>
                                     <th>User</th>
-                                    <th>Date & Time</th>
+                                    <th>Dates</th>
                                     <th class="text-end pe-3">Actions</th>
                                 </tr>
                             </thead>
@@ -71,30 +69,30 @@
                                         <td colspan="4" class="text-center py-4 text-muted small italic">No pending requests at the moment.</td>
                                     </tr>
                                 }
-                                @foreach (var b in Model.RecentPending)
+                                @foreach (var r in Model.RecentPending)
                                 {
                                     <tr>
                                         <td class="ps-3">
-                                            <div class="fw-semibold">@b.Resource?.Name</div>
-                                            <div class="text-muted extra-small">@b.Resource?.Location</div>
+                                            <div class="fw-semibold">@r.Car?.FullName</div>
+                                            <div class="text-muted extra-small">@r.Car?.Location</div>
                                         </td>
                                         <td>
-                                            <div class="small">@b.User?.UserName</div>
-                                            <div class="text-muted extra-small">@b.User?.Email</div>
+                                            <div class="small">@r.User?.UserName</div>
+                                            <div class="text-muted extra-small">@r.User?.Email</div>
                                         </td>
                                         <td>
-                                            <div class="small">@b.StartTime?.ToString("MMM dd, HH:mm")</div>
-                                            <div class="text-muted extra-small">@b.EndTime?.ToString("HH:mm") (@((b.EndTime - b.StartTime)?.TotalHours.ToString("0.0")) hrs)</div>
+                                            <div class="small">@r.PickupDate?.ToString("dd MMM") – @r.ReturnDate?.ToString("dd MMM yyyy")</div>
+                                            <div class="text-muted extra-small">@r.DurationDays day(s) | @r.TotalPrice.ToString("N0") ₴</div>
                                         </td>
                                         <td class="text-end pe-3">
                                             <div class="btn-group btn-group-sm">
-                                                <form asp-action="ConfirmBooking" method="post" class="d-inline">
-                                                    <input type="hidden" name="id" value="@b.Id" />
+                                                <form asp-action="ConfirmRental" method="post" class="d-inline">
+                                                    <input type="hidden" name="id" value="@r.Id" />
                                                     <button type="submit" class="btn btn-success" title="Approve">
                                                         <i class="bi bi-check-lg"></i>
                                                     </button>
                                                 </form>
-                                                <a asp-action="RejectBooking" asp-route-id="@b.Id" class="btn btn-outline-danger" title="Reject">
+                                                <a asp-action="RejectRental" asp-route-id="@r.Id" class="btn btn-outline-danger" title="Reject">
                                                     <i class="bi bi-x-lg"></i>
                                                 </a>
                                             </div>
@@ -108,7 +106,6 @@
             </div>
         </div>
 
-        <!-- Quick Links -->
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-bottom p-3">
@@ -116,14 +113,14 @@
                 </div>
                 <div class="card-body p-3">
                     <div class="d-grid gap-2">
-                        <a asp-action="CreateResource" class="btn btn-primary text-start">
-                            <i class="bi bi-plus-circle me-2"></i> Add New Resource
+                        <a asp-action="CreateCar" class="btn btn-primary text-start">
+                            <i class="bi bi-plus-circle me-2"></i> Add New Car
                         </a>
-                        <a asp-action="Resources" class="btn btn-outline-secondary text-start">
-                            <i class="bi bi-list-task me-2"></i> Manage All Resources
+                        <a asp-action="Cars" class="btn btn-outline-secondary text-start">
+                            <i class="bi bi-car-front me-2"></i> Manage All Cars
                         </a>
-                        <a asp-action="Bookings" class="btn btn-outline-secondary text-start">
-                            <i class="bi bi-calendar-event me-2"></i> Review All Bookings
+                        <a asp-action="Rentals" class="btn btn-outline-secondary text-start">
+                            <i class="bi bi-calendar-event me-2"></i> Review All Rentals
                         </a>
                         <a asp-action="Users" class="btn btn-outline-secondary text-start">
                             <i class="bi bi-people me-2"></i> Manage Users
@@ -131,7 +128,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="card border-0 shadow-sm bg-primary text-white">
                 <div class="card-body p-4">
                     <h6>System Status</h6>

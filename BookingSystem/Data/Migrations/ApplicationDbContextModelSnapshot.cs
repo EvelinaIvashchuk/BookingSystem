@@ -17,7 +17,7 @@ namespace BookingSystem.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.0-preview.2.25163.8")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -102,7 +102,7 @@ namespace BookingSystem.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("BookingSystem.Models.Booking", b =>
+            modelBuilder.Entity("BookingSystem.Models.Car", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,46 +110,167 @@ namespace BookingSystem.Data.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AdminNote")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
-                    b.Property<DateTime?>("CancelledAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Purpose")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<int>("ResourceId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("FuelType")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("LicensePlate")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<decimal>("PricePerDay")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Seats")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<string>("Transmission")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("CategoryId");
 
-                    b.HasIndex("ResourceId", "StartTime", "EndTime")
-                        .HasDatabaseName("IX_Booking_Resource_TimeRange");
+                    b.HasIndex("LicensePlate")
+                        .IsUnique();
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Cars");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Brand = "Toyota",
+                            CategoryId = 1,
+                            Description = "Комфортний седан з кліма-контролем та круїз-контролем.",
+                            FuelType = "Petrol",
+                            LicensePlate = "AA1234BB",
+                            Location = "Київ, вул. Хрещатик 10",
+                            Model = "Camry",
+                            PricePerDay = 1200m,
+                            Seats = 5,
+                            Status = "Available",
+                            Transmission = "Automatic",
+                            Year = 2023
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Brand = "Honda",
+                            CategoryId = 2,
+                            Description = "Просторий гібридний кросовер з повним приводом.",
+                            FuelType = "Hybrid",
+                            LicensePlate = "AA5678CC",
+                            Location = "Київ, вул. Велика Васильківська 25",
+                            Model = "CR-V",
+                            PricePerDay = 1800m,
+                            Seats = 5,
+                            Status = "Available",
+                            Transmission = "Automatic",
+                            Year = 2024
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Brand = "Volkswagen",
+                            CategoryId = 3,
+                            Description = "Економний дизельний хетчбек. Ідеальний для міста.",
+                            FuelType = "Diesel",
+                            LicensePlate = "AA9012DD",
+                            Location = "Львів, пр. Свободи 5",
+                            Model = "Golf",
+                            PricePerDay = 900m,
+                            Seats = 5,
+                            Status = "Available",
+                            Transmission = "Manual",
+                            Year = 2023
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Brand = "Toyota",
+                            CategoryId = 4,
+                            Description = "Великий мінівен для сімейних подорожей. 7 місць.",
+                            FuelType = "Hybrid",
+                            LicensePlate = "BB3456EE",
+                            Location = "Київ, вул. Хрещатик 10",
+                            Model = "Sienna",
+                            PricePerDay = 2200m,
+                            Seats = 7,
+                            Status = "Available",
+                            Transmission = "Automatic",
+                            Year = 2022
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Brand = "BMW",
+                            CategoryId = 5,
+                            Description = "Спортивне купе з потужним двигуном та преміум-інтер'єром.",
+                            FuelType = "Petrol",
+                            LicensePlate = "CC7890FF",
+                            Location = "Одеса, Дерибасівська 15",
+                            Model = "4 Series",
+                            PricePerDay = 3500m,
+                            Seats = 4,
+                            Status = "Available",
+                            Transmission = "Automatic",
+                            Year = 2024
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Brand = "Nissan",
+                            CategoryId = 3,
+                            Description = "Електромобіль. Наразі на технічному обслуговуванні.",
+                            FuelType = "Electric",
+                            LicensePlate = "DD1122GG",
+                            Location = "Харків, вул. Сумська 20",
+                            Model = "Leaf",
+                            PricePerDay = 800m,
+                            Seats = 5,
+                            Status = "UnderMaintenance",
+                            Transmission = "Automatic",
+                            Year = 2023
+                        });
                 });
 
             modelBuilder.Entity("BookingSystem.Models.Category", b =>
@@ -180,26 +301,32 @@ namespace BookingSystem.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "Rooms for meetings and conferences",
-                            Name = "Meeting Rooms"
+                            Description = "Комфортні седани для міських та міжміських поїздок",
+                            Name = "Седан"
                         },
                         new
                         {
                             Id = 2,
-                            Description = "Gyms, courts, and sports halls",
-                            Name = "Sports Facilities"
+                            Description = "Позашляховики та кросовери для будь-яких доріг",
+                            Name = "SUV"
                         },
                         new
                         {
                             Id = 3,
-                            Description = "Hot desks and private offices",
-                            Name = "Workspaces"
+                            Description = "Компактні автомобілі для міста",
+                            Name = "Хетчбек"
                         },
                         new
                         {
                             Id = 4,
-                            Description = "AV, cameras, and other loan equipment",
-                            Name = "Equipment"
+                            Description = "Просторі автомобілі для сімейних поїздок",
+                            Name = "Мінівен"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Спортивні автомобілі для задоволення від їзди",
+                            Name = "Купе"
                         });
                 });
 
@@ -214,14 +341,14 @@ namespace BookingSystem.Data.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("BookingId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("PaidAt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int>("RentalId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -234,13 +361,13 @@ namespace BookingSystem.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookingId")
+                    b.HasIndex("RentalId")
                         .IsUnique();
 
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("BookingSystem.Models.Resource", b =>
+            modelBuilder.Entity("BookingSystem.Models.Rental", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -248,102 +375,49 @@ namespace BookingSystem.Data.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
+                    b.Property<string>("AdminNote")
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Notes")
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                    b.Property<DateTime>("PickupDate")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("Resources");
+                    b.HasIndex("CarId", "PickupDate", "ReturnDate")
+                        .HasDatabaseName("IX_Rental_Car_DateRange");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Capacity = 10,
-                            CategoryId = 1,
-                            Description = "Large conference room with projector and whiteboard.",
-                            Location = "Floor 2, East Wing",
-                            Name = "Conference Room A",
-                            Status = "Available"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Capacity = 20,
-                            CategoryId = 1,
-                            Description = "Executive board room with video conferencing.",
-                            Location = "Floor 4",
-                            Name = "Board Room",
-                            Status = "Available"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Capacity = 2,
-                            CategoryId = 2,
-                            Description = "Full-size squash court. Rackets available on request.",
-                            Location = "Sports Centre, Ground Floor",
-                            Name = "Squash Court 1",
-                            Status = "Available"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Capacity = 1,
-                            CategoryId = 3,
-                            Description = "Quiet hot desk with power and USB-C docking station.",
-                            Location = "Floor 1, Open Plan",
-                            Name = "Hot Desk Zone A",
-                            Status = "Available"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Capacity = 1,
-                            CategoryId = 4,
-                            Description = "Portable 4K projector with HDMI and carry case.",
-                            Location = "IT Store, Floor 1",
-                            Name = "4K Projector Kit",
-                            Status = "Available"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Capacity = 30,
-                            CategoryId = 1,
-                            Description = "Large training room. Currently being refurbished.",
-                            Location = "Floor 3, West Wing",
-                            Name = "Training Room B",
-                            Status = "UnderMaintenance"
-                        });
+                    b.ToTable("Rentals");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -478,45 +552,45 @@ namespace BookingSystem.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BookingSystem.Models.Booking", b =>
-                {
-                    b.HasOne("BookingSystem.Models.Resource", "Resource")
-                        .WithMany("Bookings")
-                        .HasForeignKey("ResourceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BookingSystem.Models.ApplicationUser", "User")
-                        .WithMany("Bookings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Resource");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BookingSystem.Models.Payment", b =>
-                {
-                    b.HasOne("BookingSystem.Models.Booking", "Booking")
-                        .WithOne()
-                        .HasForeignKey("BookingSystem.Models.Payment", "BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-                });
-
-            modelBuilder.Entity("BookingSystem.Models.Resource", b =>
+            modelBuilder.Entity("BookingSystem.Models.Car", b =>
                 {
                     b.HasOne("BookingSystem.Models.Category", "Category")
-                        .WithMany("Resources")
+                        .WithMany("Cars")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("BookingSystem.Models.Payment", b =>
+                {
+                    b.HasOne("BookingSystem.Models.Rental", "Rental")
+                        .WithOne()
+                        .HasForeignKey("BookingSystem.Models.Payment", "RentalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rental");
+                });
+
+            modelBuilder.Entity("BookingSystem.Models.Rental", b =>
+                {
+                    b.HasOne("BookingSystem.Models.Car", "Car")
+                        .WithMany("Rentals")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BookingSystem.Models.ApplicationUser", "User")
+                        .WithMany("Rentals")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -572,17 +646,17 @@ namespace BookingSystem.Data.Migrations
 
             modelBuilder.Entity("BookingSystem.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("Bookings");
+                    b.Navigation("Rentals");
+                });
+
+            modelBuilder.Entity("BookingSystem.Models.Car", b =>
+                {
+                    b.Navigation("Rentals");
                 });
 
             modelBuilder.Entity("BookingSystem.Models.Category", b =>
                 {
-                    b.Navigation("Resources");
-                });
-
-            modelBuilder.Entity("BookingSystem.Models.Resource", b =>
-                {
-                    b.Navigation("Bookings");
+                    b.Navigation("Cars");
                 });
 #pragma warning restore 612, 618
         }

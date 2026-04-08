@@ -9,12 +9,6 @@ public static class DbSeeder
     public const string AdminRole = "Admin";
     public const string UserRole  = "User";
 
-    /// <summary>
-    /// Applies pending EF migrations (or creates the schema if none exist),
-    /// seeds roles, and creates the default admin account if absent.
-    /// Wraps everything in a top-level try/catch so a transient DB failure
-    /// does not crash the entire application on startup.
-    /// </summary>
     public static async Task SeedRolesAndAdminAsync(IServiceProvider services)
     {
         var logger = services.GetRequiredService<ILogger<ApplicationDbContext>>();
@@ -26,7 +20,6 @@ public static class DbSeeder
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var config      = services.GetRequiredService<IConfiguration>();
 
-            // ── Schema ───────────────────────────────────────────────────────────
             try
             {
                 var pending = await db.Database.GetPendingMigrationsAsync();
@@ -40,15 +33,13 @@ public static class DbSeeder
                 await db.Database.EnsureCreatedAsync();
             }
 
-            // ── Roles ────────────────────────────────────────────────────────────
             foreach (var role in new[] { AdminRole, UserRole })
             {
                 if (!await roleManager.RoleExistsAsync(role))
                     await roleManager.CreateAsync(new IdentityRole(role));
             }
 
-            // ── Admin account ────────────────────────────────────────────────────
-            var adminEmail    = config["Seed:AdminEmail"]    ?? "admin@bookingsystem.local";
+            var adminEmail    = config["Seed:AdminEmail"]    ?? "admin@carrental.local";
             var adminPassword = config["Seed:AdminPassword"] ?? "Admin@12345";
 
             if (await userManager.FindByEmailAsync(adminEmail) is null)
@@ -79,8 +70,6 @@ public static class DbSeeder
         }
         catch (Exception ex)
         {
-            // Log and continue — the app should still start even if seeding fails.
-            // On the next request EF will surface a proper connection error.
             logger.LogError(ex,
                 "Database seeding failed. The application will start without seeded data. " +
                 "Check the connection string and ensure MySQL is reachable.");

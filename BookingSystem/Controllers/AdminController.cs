@@ -13,59 +13,55 @@ namespace BookingSystem.Controllers;
 
 [Authorize(Roles = "Admin")]
 public class AdminController(
-    IBookingService  bookingService,
-    IResourceService resourceService,
-    IUserService     userService,
-    ApplicationDbContext db) : Controller   // DbContext used only for Category lookups
+    IRentalService  rentalService,
+    ICarService     carService,
+    IUserService    userService,
+    ApplicationDbContext db) : Controller
 {
     // ── Dashboard ─────────────────────────────────────────────────────────────
 
-    // GET /Admin
     public async Task<IActionResult> Index()
     {
-        var allBookings  = (await bookingService.GetAllBookingsAsync()).ToList();
-        var allResources = (await resourceService.GetAllResourcesAsync()).ToList();
-        var today        = DateTime.UtcNow.Date;
+        var allRentals = (await rentalService.GetAllRentalsAsync()).ToList();
+        var allCars    = (await carService.GetAllCarsAsync()).ToList();
+        var today      = DateTime.UtcNow.Date;
 
         var vm = new AdminDashboardViewModel
         {
-            TotalResources     = allResources.Count,
-            AvailableResources = allResources.Count(r => r.Status == ResourceStatus.Available),
-            TotalBookings      = allBookings.Count,
-            PendingBookings    = allBookings.Count(b => b.Status == BookingStatus.Pending),
-            TodaysBookings     = allBookings.Count(b =>
-                b.StartTime.HasValue && b.StartTime.Value.Date == today),
-            RecentPending      = allBookings
-                .Where(b => b.Status == BookingStatus.Pending)
+            TotalCars      = allCars.Count,
+            AvailableCars  = allCars.Count(c => c.Status == CarStatus.Available),
+            TotalRentals   = allRentals.Count,
+            PendingRentals = allRentals.Count(r => r.Status == RentalStatus.Pending),
+            TodaysRentals  = allRentals.Count(r =>
+                r.PickupDate.HasValue && r.PickupDate.Value.Date == today),
+            RecentPending  = allRentals
+                .Where(r => r.Status == RentalStatus.Pending)
                 .Take(10)
         };
 
         return View(vm);
     }
 
-    // ── Resource Management ───────────────────────────────────────────────────
+    // ── Car Management ────────────────────────────────────────────────────────
 
-    // GET /Admin/Resources
-    public async Task<IActionResult> Resources()
+    public async Task<IActionResult> Cars()
     {
-        var resources = await resourceService.GetAllResourcesAsync();
-        return View(resources);
+        var cars = await carService.GetAllCarsAsync();
+        return View(cars);
     }
 
-    // GET /Admin/CreateResource
-    public async Task<IActionResult> CreateResource()
+    public async Task<IActionResult> CreateCar()
     {
-        var vm = new ResourceFormViewModel
+        var vm = new CarFormViewModel
         {
             Categories = await GetCategorySelectListAsync()
         };
         return View(vm);
     }
 
-    // POST /Admin/CreateResource
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateResource(ResourceFormViewModel vm)
+    public async Task<IActionResult> CreateCar(CarFormViewModel vm)
     {
         if (!ModelState.IsValid)
         {
@@ -73,17 +69,23 @@ public class AdminController(
             return View(vm);
         }
 
-        var resource = new Resource
+        var car = new Car
         {
-            Name        = vm.Name.Trim(),
-            Description = vm.Description?.Trim(),
-            Location    = vm.Location.Trim(),
-            Capacity    = vm.Capacity,
-            CategoryId  = vm.CategoryId,
-            ImageUrl    = vm.ImageUrl?.Trim()
+            Brand        = vm.Brand.Trim(),
+            Model        = vm.Model.Trim(),
+            Year         = vm.Year,
+            LicensePlate = vm.LicensePlate.Trim().ToUpperInvariant(),
+            FuelType     = vm.FuelType,
+            Transmission = vm.Transmission,
+            Seats        = vm.Seats,
+            PricePerDay  = vm.PricePerDay,
+            Description  = vm.Description?.Trim(),
+            Location     = vm.Location.Trim(),
+            CategoryId   = vm.CategoryId,
+            ImageUrl     = vm.ImageUrl?.Trim()
         };
 
-        var result = await resourceService.CreateResourceAsync(resource);
+        var result = await carService.CreateCarAsync(car);
 
         if (!result.IsSuccess)
         {
@@ -92,36 +94,40 @@ public class AdminController(
             return View(vm);
         }
 
-        TempData["Success"] = $"Resource \"{result.Value!.Name}\" created successfully.";
-        return RedirectToAction(nameof(Resources));
+        TempData["Success"] = $"Car \"{result.Value!.FullName}\" created successfully.";
+        return RedirectToAction(nameof(Cars));
     }
 
-    // GET /Admin/EditResource/5
-    public async Task<IActionResult> EditResource(int id)
+    public async Task<IActionResult> EditCar(int id)
     {
-        var resource = await resourceService.GetResourceByIdAsync(id);
-        if (resource is null) return NotFound();
+        var car = await carService.GetCarByIdAsync(id);
+        if (car is null) return NotFound();
 
-        var vm = new ResourceFormViewModel
+        var vm = new CarFormViewModel
         {
-            Id          = resource.Id,
-            Name        = resource.Name,
-            Description = resource.Description,
-            Location    = resource.Location,
-            Capacity    = resource.Capacity,
-            CategoryId  = resource.CategoryId,
-            ImageUrl    = resource.ImageUrl,
-            Status      = resource.Status,
-            Categories  = await GetCategorySelectListAsync(resource.CategoryId)
+            Id           = car.Id,
+            Brand        = car.Brand,
+            Model        = car.Model,
+            Year         = car.Year,
+            LicensePlate = car.LicensePlate,
+            FuelType     = car.FuelType,
+            Transmission = car.Transmission,
+            Seats        = car.Seats,
+            PricePerDay  = car.PricePerDay,
+            Description  = car.Description,
+            Location     = car.Location,
+            CategoryId   = car.CategoryId,
+            ImageUrl     = car.ImageUrl,
+            Status       = car.Status,
+            Categories   = await GetCategorySelectListAsync(car.CategoryId)
         };
 
         return View(vm);
     }
 
-    // POST /Admin/EditResource
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditResource(ResourceFormViewModel vm)
+    public async Task<IActionResult> EditCar(CarFormViewModel vm)
     {
         if (!ModelState.IsValid)
         {
@@ -129,19 +135,25 @@ public class AdminController(
             return View(vm);
         }
 
-        var resource = new Resource
+        var car = new Car
         {
-            Id          = vm.Id,
-            Name        = vm.Name.Trim(),
-            Description = vm.Description?.Trim(),
-            Location    = vm.Location.Trim(),
-            Capacity    = vm.Capacity,
-            CategoryId  = vm.CategoryId,
-            ImageUrl    = vm.ImageUrl?.Trim(),
-            Status      = vm.Status
+            Id           = vm.Id,
+            Brand        = vm.Brand.Trim(),
+            Model        = vm.Model.Trim(),
+            Year         = vm.Year,
+            LicensePlate = vm.LicensePlate.Trim().ToUpperInvariant(),
+            FuelType     = vm.FuelType,
+            Transmission = vm.Transmission,
+            Seats        = vm.Seats,
+            PricePerDay  = vm.PricePerDay,
+            Description  = vm.Description?.Trim(),
+            Location     = vm.Location.Trim(),
+            CategoryId   = vm.CategoryId,
+            ImageUrl     = vm.ImageUrl?.Trim(),
+            Status       = vm.Status
         };
 
-        var result = await resourceService.UpdateResourceAsync(resource);
+        var result = await carService.UpdateCarAsync(car);
 
         if (!result.IsSuccess)
         {
@@ -150,94 +162,89 @@ public class AdminController(
             return View(vm);
         }
 
-        TempData["Success"] = "Resource updated successfully.";
-        return RedirectToAction(nameof(Resources));
+        TempData["Success"] = "Car updated successfully.";
+        return RedirectToAction(nameof(Cars));
     }
 
-    // POST /Admin/SetResourceStatus
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SetResourceStatus(int resourceId, ResourceStatus status)
+    public async Task<IActionResult> SetCarStatus(int carId, CarStatus status)
     {
-        var result = await resourceService.SetResourceStatusAsync(resourceId, status);
+        var result = await carService.SetCarStatusAsync(carId, status);
 
         if (result.IsSuccess)
-            TempData["Success"] = "Resource status updated.";
+            TempData["Success"] = "Car status updated.";
         else
             TempData["Error"] = result.Error;
 
-        return RedirectToAction(nameof(Resources));
+        return RedirectToAction(nameof(Cars));
     }
 
-    // ── Booking Management ────────────────────────────────────────────────────
+    // ── Rental Management ─────────────────────────────────────────────────────
 
-    // GET /Admin/Bookings?status=Pending&page=2
-    public async Task<IActionResult> Bookings(BookingStatus? status, int page = 1)
+    public async Task<IActionResult> Rentals(RentalStatus? status, int page = 1)
     {
-        var bookings = await bookingService.GetAllBookingsAsync();
+        var rentals = await rentalService.GetAllRentalsAsync();
 
         if (status.HasValue)
-            bookings = bookings.Where(b => b.Status == status.Value);
+            rentals = rentals.Where(r => r.Status == status.Value);
 
         ViewBag.FilterStatus = status;
-        var paged = PaginatedList<Booking>.Create(bookings, page, 15);
+        var paged = PaginatedList<Rental>.Create(rentals, page, 15);
         return View(paged);
     }
 
-    // POST /Admin/ConfirmBooking/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ConfirmBooking(int id, string? adminNote)
+    public async Task<IActionResult> ConfirmRental(int id, string? adminNote)
     {
-        var result = await bookingService.ConfirmBookingAsync(id, adminNote);
+        var result = await rentalService.ConfirmRentalAsync(id, adminNote);
 
         if (result.IsSuccess)
-            TempData["Success"] = "Booking confirmed.";
+            TempData["Success"] = "Rental confirmed.";
         else
             TempData["Error"] = result.Error;
 
-        return RedirectToAction(nameof(Bookings));
+        return RedirectToAction(nameof(Rentals));
     }
 
-    // GET /Admin/RejectBooking/5
-    public async Task<IActionResult> RejectBooking(int id)
+    public async Task<IActionResult> RejectRental(int id)
     {
-        var booking = await bookingService.GetBookingByIdAsync(id);
-        if (booking is null) return NotFound();
+        var rental = await rentalService.GetRentalByIdAsync(id);
+        if (rental is null) return NotFound();
 
-        if (booking.Status != BookingStatus.Pending)
+        if (rental.Status != RentalStatus.Pending)
         {
-            TempData["Error"] = "Only Pending bookings can be rejected.";
-            return RedirectToAction(nameof(Bookings));
+            TempData["Error"] = "Only Pending rentals can be rejected.";
+            return RedirectToAction(nameof(Rentals));
         }
 
         var vm = new AdminRejectViewModel
         {
-            BookingId    = booking.Id,
-            ResourceName = booking.Resource?.Name ?? string.Empty,
-            UserFullName = booking.User?.FullName ?? booking.UserId,
-            TimeSlot     = booking.StartTime.HasValue && booking.EndTime.HasValue
-                ? $"{booking.StartTime.Value:dd MMM yyyy HH:mm} – {booking.EndTime.Value:HH:mm}"
+            RentalId     = rental.Id,
+            CarName      = rental.Car?.FullName ?? string.Empty,
+            UserFullName = rental.User?.FullName ?? rental.UserId,
+            DateRange    = rental.PickupDate.HasValue && rental.ReturnDate.HasValue
+                ? $"{rental.PickupDate.Value:dd MMM yyyy} – {rental.ReturnDate.Value:dd MMM yyyy}"
                 : string.Empty
         };
 
         return View(vm);
     }
 
-    // POST /Admin/RejectBooking
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> RejectBooking(AdminRejectViewModel vm)
+    public async Task<IActionResult> RejectRental(AdminRejectViewModel vm)
     {
         if (!ModelState.IsValid)
             return View(vm);
 
-        var result = await bookingService.RejectBookingAsync(vm.BookingId, vm.AdminNote);
+        var result = await rentalService.RejectRentalAsync(vm.RentalId, vm.AdminNote);
 
         if (result.IsSuccess)
         {
-            TempData["Success"] = "Booking rejected.";
-            return RedirectToAction(nameof(Bookings));
+            TempData["Success"] = "Rental rejected.";
+            return RedirectToAction(nameof(Rentals));
         }
 
         ModelState.AddModelError(string.Empty, result.Error);
@@ -246,14 +253,12 @@ public class AdminController(
 
     // ── User Management ───────────────────────────────────────────────────────
 
-    // GET /Admin/Users
     public async Task<IActionResult> Users()
     {
         var usersWithRoles = await userService.GetAllUsersWithRolesAsync();
         return View(usersWithRoles);
     }
 
-    // POST /Admin/ToggleUserActive
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToggleUserActive(string userId, bool isActive)
@@ -268,7 +273,6 @@ public class AdminController(
         return RedirectToAction(nameof(Users));
     }
 
-    // POST /Admin/PromoteToAdmin
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> PromoteToAdmin(string userId)
@@ -282,8 +286,6 @@ public class AdminController(
 
         return RedirectToAction(nameof(Users));
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private async Task<IEnumerable<SelectListItem>> GetCategorySelectListAsync(int? selectedId = null)
     {

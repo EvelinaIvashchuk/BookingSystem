@@ -8,17 +8,17 @@ public class Payment
 {
     public int Id { get; set; }
 
-    // FK → Booking (one-to-one)
+    // FK → Rental (one-to-one)
     [Required]
-    public int BookingId { get; set; }
+    public int RentalId { get; set; }
 
-    [ForeignKey(nameof(BookingId))]
-    public Booking Booking { get; set; } = null!;
+    [ForeignKey(nameof(RentalId))]
+    public Rental Rental { get; set; } = null!;
 
     [Required]
     [Column(TypeName = "decimal(18,2)")]
     [Range(0.01, 99999.99, ErrorMessage = "Amount must be greater than zero.")]
-    [Display(Name = "Amount (£)")]
+    [Display(Name = "Amount (₴)")]
     public decimal Amount { get; set; }
 
     [Display(Name = "Payment Status")]

@@ -2,8 +2,8 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: bookingpass
-      MYSQL_DATABASE: BookingSystemDb
+      MYSQL_ROOT_PASSWORD: rentalpass
+      MYSQL_DATABASE: CarRentalDb
     ports:
       - "3307:3306"
     volumes:
@@ -14,15 +14,15 @@ services:
       timeout: 5s
       retries: 5
 
-  bookingsystem:
-    image: bookingsystem
+  carrental:
+    image: carrental
     build:
       context: .
       dockerfile: BookingSystem/Dockerfile
     ports:
       - "5000:8080"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=BookingSystemDb;User=root;Password=bookingpass;
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=CarRentalDb;User=root;Password=rentalpass;
     depends_on:
       mysql:
         condition: service_healthy

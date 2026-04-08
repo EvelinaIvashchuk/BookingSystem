@@ -43,23 +43,19 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
-        // Password policy
         options.Password.RequireDigit           = true;
         options.Password.RequiredLength         = 8;
         options.Password.RequireUppercase       = true;
         options.Password.RequireNonAlphanumeric = false;
 
-        // Lockout policy
         options.Lockout.DefaultLockoutTimeSpan  = TimeSpan.FromMinutes(10);
         options.Lockout.MaxFailedAccessAttempts = 5;
 
-        // User options
         options.User.RequireUniqueEmail = true;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// Redirect unauthenticated users to /Account/Login
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath        = "/Account/Login";
@@ -68,26 +64,23 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // ── Repositories ─────────────────────────────────────────────────────────────
-builder.Services.AddScoped<IBookingRepository,  BookingRepository>();
-builder.Services.AddScoped<IResourceRepository, ResourceRepository>();
+builder.Services.AddScoped<IRentalRepository, RentalRepository>();
+builder.Services.AddScoped<ICarRepository,    CarRepository>();
 
 // ── Unit of Work ─────────────────────────────────────────────────────────────
-// Координує репозиторії та фіксує зміни через єдиний CommitAsync().
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // ── Services ──────────────────────────────────────────────────────────────────
-builder.Services.AddScoped<IBookingService,  BookingService>();
-builder.Services.AddScoped<IResourceService, ResourceService>();
-builder.Services.AddScoped<IUserService,     UserService>();
-builder.Services.AddScoped<IEmailService,    MockEmailService>();
+builder.Services.AddScoped<IRentalService, RentalService>();
+builder.Services.AddScoped<ICarService,    CarService>();
+builder.Services.AddScoped<IUserService,   UserService>();
+builder.Services.AddScoped<IEmailService,  MockEmailService>();
 
 // ── AutoMapper ────────────────────────────────────────────────────────────────
-// Реєструє всі профілі маппінгу з поточної збірки.
-builder.Services.AddAutoMapper(typeof(BookingMappingProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(RentalMappingProfile).Assembly);
 
 // ── FluentValidation ──────────────────────────────────────────────────────────
-// Реєструє валідатори з поточної збірки.
-builder.Services.AddScoped<IValidator<BookingCreateViewModel>, BookingCreateViewModelValidator>();
+builder.Services.AddScoped<IValidator<RentalCreateViewModel>, RentalCreateViewModelValidator>();
 
 // ── MVC ───────────────────────────────────────────────────────────────────────
 builder.Services.AddControllersWithViews();
@@ -118,7 +111,7 @@ app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.UseAuthentication(); // Must come before UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

@@ -1,0 +1,111 @@
+@model CarFormViewModel
+@{
+    ViewData["Title"] = "Add New Car";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Cars">Cars</a></li>
+                    <li class="breadcrumb-item active">Create</li>
+                </ol>
+            </nav>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white p-4 border-0 rounded-top">
+                    <h2 class="h4 mb-0"><i class="bi bi-plus-circle me-2"></i> Add New Car</h2>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="CreateCar" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4">
+                                <label asp-for="Brand" class="form-label fw-bold"></label>
+                                <input asp-for="Brand" class="form-control form-control-lg" placeholder="e.g. Toyota" />
+                                <span asp-validation-for="Brand" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Model" class="form-label fw-bold"></label>
+                                <input asp-for="Model" class="form-control form-control-lg" placeholder="e.g. Camry" />
+                                <span asp-validation-for="Model" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Year" class="form-label fw-bold"></label>
+                                <input asp-for="Year" class="form-control form-control-lg" type="number" min="1990" max="2030" />
+                                <span asp-validation-for="Year" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4">
+                                <label asp-for="LicensePlate" class="form-label fw-bold"></label>
+                                <input asp-for="LicensePlate" class="form-control" placeholder="e.g. AA1234BB" />
+                                <span asp-validation-for="LicensePlate" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="CategoryId" class="form-label fw-bold"></label>
+                                <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select">
+                                    <option value="">-- Select --</option>
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="PricePerDay" class="form-label fw-bold"></label>
+                                <input asp-for="PricePerDay" class="form-control" type="number" step="0.01" min="0.01" />
+                                <span asp-validation-for="PricePerDay" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4">
+                                <label asp-for="FuelType" class="form-label fw-bold"></label>
+                                <select asp-for="FuelType" asp-items="Html.GetEnumSelectList<FuelType>()" class="form-select"></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Transmission" class="form-label fw-bold"></label>
+                                <select asp-for="Transmission" asp-items="Html.GetEnumSelectList<Transmission>()" class="form-select"></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Seats" class="form-label fw-bold"></label>
+                                <input asp-for="Seats" class="form-control" type="number" min="1" max="50" />
+                                <span asp-validation-for="Seats" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Location" class="form-label fw-bold"></label>
+                            <input asp-for="Location" class="form-control" placeholder="e.g. Kyiv, Khreshchatyk 10" />
+                            <span asp-validation-for="Location" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-bold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3"
+                                      placeholder="Describe the car features..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-5">
+                            <label asp-for="ImageUrl" class="form-label fw-bold">Image URL (Optional)</label>
+                            <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                            <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end pt-3 border-top">
+                            <a asp-action="Cars" class="btn btn-outline-secondary btn-lg px-4 me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">Save Car</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

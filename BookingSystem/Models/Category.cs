@@ -15,5 +15,5 @@ public class Category
     public string? Description { get; set; }
 
     // Navigation
-    public ICollection<Resource> Resources { get; set; } = [];
+    public ICollection<Car> Cars { get; set; } = [];
 }

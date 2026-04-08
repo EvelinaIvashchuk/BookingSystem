@@ -1,0 +1,153 @@
+@startuml BookingSystem_UseCaseDiagram
+skinparam actorStyle awesome
+skinparam usecaseBackgroundColor #FAFAFA
+skinparam usecaseBorderColor #555
+skinparam usecaseFontSize 12
+skinparam actorFontSize 13
+skinparam arrowColor #333
+skinparam packageBackgroundColor #FDFEFE
+skinparam packageBorderColor #AAA
+skinparam shadowing false
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #888
+
+title Booking System — Use Case Діаграма\n«Функціональні вимоги: ролі та прецеденти»
+
+' ══════════════════════════════════════════════════════════════════
+' АКТОРИ
+' ══════════════════════════════════════════════════════════════════
+
+actor "Гість\n(Guest)" as Guest
+actor "Користувач\n(User)" as User
+actor "Адміністратор\n(Admin)" as Admin
+actor "Email-сервіс\n(MockEmailService)" as EmailService
+
+' Ієрархія акторів: User успадковує можливості Guest
+Guest <|-- User   : «extends»
+User  <|-- Admin  : «extends»
+
+' ══════════════════════════════════════════════════════════════════
+' СИСТЕМА
+' ══════════════════════════════════════════════════════════════════
+
+rectangle "Booking System" {
+
+    ' ── Аутентифікація ──────────────────────────────────────────
+    package "Аутентифікація" {
+        usecase "Зареєструватися"         as UC_Register
+        usecase "Увійти в систему"        as UC_Login
+        usecase "Вийти з системи"         as UC_Logout
+        usecase "Перевірити облікові\nдані (Identity)" as UC_ValidateCreds
+    }
+
+    ' ── Перегляд ресурсів ────────────────────────────────────────
+    package "Перегляд ресурсів" {
+        usecase "Переглянути список\nресурсів"        as UC_ListResources
+        usecase "Переглянути деталі\nресурсу"         as UC_ResourceDetails
+        usecase "Фільтрувати ресурси\nза категорією"  as UC_FilterResources
+    }
+
+    ' ── Бронювання (User) ────────────────────────────────────────
+    package "Управління бронюванням" {
+        usecase "Створити бронювання"     as UC_CreateBooking
+        usecase "Переглянути мої\nбронювання"         as UC_MyBookings
+        usecase "Переглянути деталі\nбронювання"      as UC_BookingDetails
+        usecase "Скасувати бронювання"   as UC_CancelBooking
+        usecase "Перевірити доступність\nресурсу"     as UC_CheckAvailability
+        usecase "Перевірити відсутність\nнакладань"   as UC_CheckOverlap
+        usecase "Валідувати дані\nбронювання"         as UC_ValidateBooking
+        usecase "Надіслати email-\nсповіщення"        as UC_SendEmail
+    }
+
+    ' ── Адмін-панель ─────────────────────────────────────────────
+    package "Адміністрування" {
+        usecase "Переглянути всі\nбронювання"         as UC_AllBookings
+        usecase "Підтвердити\nбронювання"             as UC_ConfirmBooking
+        usecase "Відхилити\nбронювання"               as UC_RejectBooking
+        usecase "Управляти\nресурсами"                as UC_ManageResources
+        usecase "Управляти\nкористувачами"            as UC_ManageUsers
+        usecase "Переглянути\nстатистику"             as UC_ViewStats
+    }
+}
+
+' ══════════════════════════════════════════════════════════════════
+' ЗВ'ЯЗКИ: Guest
+' ══════════════════════════════════════════════════════════════════
+
+Guest --> UC_Register
+Guest --> UC_Login
+Guest --> UC_ListResources
+Guest --> UC_ResourceDetails
+
+' ══════════════════════════════════════════════════════════════════
+' ЗВ'ЯЗКИ: User
+' ══════════════════════════════════════════════════════════════════
+
+User --> UC_Logout
+User --> UC_CreateBooking
+User --> UC_MyBookings
+User --> UC_BookingDetails
+User --> UC_CancelBooking
+
+' ══════════════════════════════════════════════════════════════════
+' ЗВ'ЯЗКИ: Admin
+' ══════════════════════════════════════════════════════════════════
+
+Admin --> UC_AllBookings
+Admin --> UC_ConfirmBooking
+Admin --> UC_RejectBooking
+Admin --> UC_ManageResources
+Admin --> UC_ManageUsers
+Admin --> UC_ViewStats
+
+' ══════════════════════════════════════════════════════════════════
+' ЗВ'ЯЗКИ: Email-сервіс (зовнішній актор)
+' ══════════════════════════════════════════════════════════════════
+
+UC_SendEmail --> EmailService
+
+' ══════════════════════════════════════════════════════════════════
+' ЗАЛЕЖНОСТІ МІЖ ПРЕЦЕДЕНТАМИ
+' ══════════════════════════════════════════════════════════════════
+
+' <<include>> — обов'язкова включена поведінка
+UC_Login        ..> UC_ValidateCreds       : <<include>>
+UC_CreateBooking ..> UC_ValidateBooking    : <<include>>
+UC_CreateBooking ..> UC_CheckAvailability  : <<include>>
+UC_CheckAvailability ..> UC_CheckOverlap   : <<include>>
+UC_CreateBooking ..> UC_SendEmail          : <<include>>
+UC_CancelBooking ..> UC_SendEmail          : <<include>>
+UC_ConfirmBooking ..> UC_SendEmail         : <<include>>
+UC_RejectBooking ..> UC_SendEmail          : <<include>>
+
+' <<extend>> — необов'язкова розширена поведінка
+UC_FilterResources  ..> UC_ListResources   : <<extend>>
+UC_BookingDetails   ..> UC_MyBookings      : <<extend>>
+UC_CancelBooking    ..> UC_MyBookings      : <<extend>>
+
+' ══════════════════════════════════════════════════════════════════
+' ПРИМІТКИ
+' ══════════════════════════════════════════════════════════════════
+
+note right of UC_ValidateBooking
+  FluentValidation:
+  • StartTime у майбутньому
+  • EndTime > StartTime
+  • Тривалість: 30хв – 8год
+  • Не більше 30 днів наперед
+  • Purpose ≤ 500 символів
+end note
+
+note right of UC_CheckAvailability
+  BookingService:
+  • Ресурс існує та Available
+  • Активних бронювань ≤ 3
+  • Відсутність накладань
+end note
+
+note bottom of UC_ConfirmBooking
+  Тільки для Pending-бронювань.
+  Адмін може додати AdminNote.
+end note
+
+@enduml
