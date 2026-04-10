@@ -1,4 +1,5 @@
 using BookingSystem;
+using BookingSystem.Resources;
 using BookingSystem.Models;
 using BookingSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;

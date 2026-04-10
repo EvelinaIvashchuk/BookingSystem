@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using AutoMapper;
 using BookingSystem;
+using BookingSystem.Resources;
 using BookingSystem.Helpers;
 using BookingSystem.Models;
 using BookingSystem.Services.Dtos;

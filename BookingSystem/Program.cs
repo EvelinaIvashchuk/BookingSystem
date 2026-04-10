@@ -1,3 +1,4 @@
+using System.Linq;
 using BookingSystem;
 using BookingSystem.Data;
 using BookingSystem.Data.Repositories;
@@ -85,7 +86,7 @@ builder.Services.AddAutoMapper(typeof(RentalMappingProfile).Assembly);
 builder.Services.AddScoped<IValidator<RentalCreateViewModel>, RentalCreateViewModelValidator>();
 
 // ── Localization ──────────────────────────────────────────────────────────────
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddLocalization();
 
 // ── MVC ───────────────────────────────────────────────────────────────────────
 builder.Services.AddControllersWithViews()
@@ -93,7 +94,7 @@ builder.Services.AddControllersWithViews()
     .AddDataAnnotationsLocalization(options =>
     {
         options.DataAnnotationLocalizerProvider = (_, factory) =>
-            factory.Create(typeof(SharedResources));
+            factory.Create(typeof(BookingSystem.Resources.SharedResources));
     });
 
 var app = builder.Build();
@@ -120,11 +121,17 @@ app.UseStatusCodePagesWithReExecute("/Home/StatusCode", "?code={0}");
 app.UseSerilogRequestLogging();
 
 // ── Localization middleware ────────────────────────────────────────────────────
-var supportedCultures = new[] { "en", "uk" };
-app.UseRequestLocalization(new RequestLocalizationOptions()
-    .SetDefaultCulture("en")
+var supportedCultures = new[] { "uk", "en-US", "en" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("uk")
     .AddSupportedCultures(supportedCultures)
-    .AddSupportedUICultures(supportedCultures));
+    .AddSupportedUICultures(supportedCultures);
+
+// Прибираємо AcceptLanguageHeaderRequestCultureProvider, щоб мова браузера не перебивала дефолтну українську
+localizationOptions.RequestCultureProviders.Remove(
+    localizationOptions.RequestCultureProviders.OfType<AcceptLanguageHeaderRequestCultureProvider>().FirstOrDefault()!);
+
+app.UseRequestLocalization(localizationOptions);
 
 app.UseHttpsRedirection();
 app.UseRouting();

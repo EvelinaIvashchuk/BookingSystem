@@ -1,4 +1,4 @@
-namespace BookingSystem;
+namespace BookingSystem.Resources;
 
 /// <summary>
 /// Marker class for shared localization resources.

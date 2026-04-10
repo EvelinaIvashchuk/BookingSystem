@@ -12,6 +12,7 @@
   <data name="Nav_Register" xml:space="preserve"><value>Реєстрація</value></data>
   <data name="Nav_Logout" xml:space="preserve"><value>Вийти</value></data>
   <data name="Nav_Privacy" xml:space="preserve"><value>Конфіденційність</value></data>
+  <data name="Nav_ChangeLanguage" xml:space="preserve"><value>Змінити мову</value></data>
   <data name="Lang_Code" xml:space="preserve"><value>UA</value></data>
   <data name="Lang_Other" xml:space="preserve"><value>EN</value></data>
   <data name="Lang_Other_Culture" xml:space="preserve"><value>en</value></data>

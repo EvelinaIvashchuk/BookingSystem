@@ -1,4 +1,5 @@
 using BookingSystem;
+using BookingSystem.Resources;
 using BookingSystem.ViewModels;
 using FluentValidation;
 using Microsoft.Extensions.Localization;

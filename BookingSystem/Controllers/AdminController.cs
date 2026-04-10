@@ -1,4 +1,5 @@
 using BookingSystem;
+using BookingSystem.Resources;
 using BookingSystem.Data;
 using BookingSystem.Enums;
 using BookingSystem.Helpers;

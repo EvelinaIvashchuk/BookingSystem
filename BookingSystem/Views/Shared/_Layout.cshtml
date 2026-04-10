@@ -46,16 +46,21 @@
                 </ul>
 
                 <ul class="navbar-nav ms-auto align-items-center">
-                    @* Language switcher *@
+                    @* Language switcher Slider *@
                     <li class="nav-item me-3">
-                        <form asp-controller="Language" asp-action="Set" method="post" class="d-inline">
+                        <form id="langForm" asp-controller="Language" asp-action="Set" method="post" class="d-inline">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
-                            <input type="hidden" name="culture" value="@L["Lang_Other_Culture"]" />
-                            <button type="submit" class="btn btn-outline-secondary btn-sm px-2 py-1 fw-semibold"
-                                    title="Switch language">
-                                @L["Lang_Code"] / @L["Lang_Other"]
-                            </button>
+                            <input type="hidden" id="cultureInput" name="culture" value="" />
+                            
+                            <div class="lang-switcher-container" title="@L["Nav_ChangeLanguage"]">
+                                <input type="checkbox" id="langToggle" class="lang-input" @(!System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("uk") ? "checked" : "")>
+                                <label for="langToggle" class="lang-flag-label flag-ua">🇺🇦</label>
+                                <label for="langToggle" class="lang-switch">
+                                    <span class="lang-slider"></span>
+                                </label>
+                                <label for="langToggle" class="lang-flag-label flag-en">🇺🇸</label>
+                            </div>
                         </form>
                     </li>
 
@@ -103,5 +108,12 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
+<script>
+    document.getElementById('langToggle').addEventListener('change', function() {
+        const culture = this.checked ? 'en-US' : 'uk';
+        document.getElementById('cultureInput').value = culture;
+        document.getElementById('langForm').submit();
+    });
+</script>
 </body>
 </html>
