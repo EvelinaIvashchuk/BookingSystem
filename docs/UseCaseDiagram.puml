@@ -1,4 +1,4 @@
-@startuml BookingSystem_UseCaseDiagram
+@startuml CarRentalSystem_UseCaseDiagram
 skinparam actorStyle awesome
 skinparam usecaseBackgroundColor #FAFAFA
 skinparam usecaseBorderColor #555
@@ -11,7 +11,7 @@ skinparam shadowing false
 skinparam noteBackgroundColor #FFFDE7
 skinparam noteBorderColor #888
 
-title Booking System — Use Case Діаграма\n«Функціональні вимоги: ролі та прецеденти»
+title Car Rental System — Use Case Діаграма\n«Функціональні вимоги: ролі та прецеденти»
 
 ' ══════════════════════════════════════════════════════════════════
 ' АКТОРИ
@@ -30,7 +30,7 @@ User  <|-- Admin  : «extends»
 ' СИСТЕМА
 ' ══════════════════════════════════════════════════════════════════
 
-rectangle "Booking System" {
+rectangle "Car Rental System" {
 
     ' ── Аутентифікація ──────────────────────────────────────────
     package "Аутентифікація" {
@@ -40,33 +40,34 @@ rectangle "Booking System" {
         usecase "Перевірити облікові\nдані (Identity)" as UC_ValidateCreds
     }
 
-    ' ── Перегляд ресурсів ────────────────────────────────────────
-    package "Перегляд ресурсів" {
-        usecase "Переглянути список\nресурсів"        as UC_ListResources
-        usecase "Переглянути деталі\nресурсу"         as UC_ResourceDetails
-        usecase "Фільтрувати ресурси\nза категорією"  as UC_FilterResources
+    ' ── Перегляд автомобілів ─────────────────────────────────────
+    package "Перегляд автомобілів" {
+        usecase "Переглянути список\nавтомобілів"         as UC_ListCars
+        usecase "Переглянути деталі\nавтомобіля"          as UC_CarDetails
+        usecase "Фільтрувати автомобілі\nза категорією"   as UC_FilterCars
     }
 
-    ' ── Бронювання (User) ────────────────────────────────────────
-    package "Управління бронюванням" {
-        usecase "Створити бронювання"     as UC_CreateBooking
-        usecase "Переглянути мої\nбронювання"         as UC_MyBookings
-        usecase "Переглянути деталі\nбронювання"      as UC_BookingDetails
-        usecase "Скасувати бронювання"   as UC_CancelBooking
-        usecase "Перевірити доступність\nресурсу"     as UC_CheckAvailability
-        usecase "Перевірити відсутність\nнакладань"   as UC_CheckOverlap
-        usecase "Валідувати дані\nбронювання"         as UC_ValidateBooking
-        usecase "Надіслати email-\nсповіщення"        as UC_SendEmail
+    ' ── Оренда (User) ───────────────────────────────────────────
+    package "Управління орендою" {
+        usecase "Створити оренду"              as UC_CreateRental
+        usecase "Переглянути мої\nоренди"      as UC_MyRentals
+        usecase "Переглянути деталі\nоренди"   as UC_RentalDetails
+        usecase "Скасувати оренду"             as UC_CancelRental
+        usecase "Перевірити доступність\nавтомобіля"      as UC_CheckAvailability
+        usecase "Перевірити відсутність\nнакладань"        as UC_CheckOverlap
+        usecase "Валідувати дані\nоренди"                  as UC_ValidateRental
+        usecase "Розрахувати\nвартість оренди"             as UC_CalculatePrice
+        usecase "Надіслати email-\nсповіщення"             as UC_SendEmail
     }
 
     ' ── Адмін-панель ─────────────────────────────────────────────
     package "Адміністрування" {
-        usecase "Переглянути всі\nбронювання"         as UC_AllBookings
-        usecase "Підтвердити\nбронювання"             as UC_ConfirmBooking
-        usecase "Відхилити\nбронювання"               as UC_RejectBooking
-        usecase "Управляти\nресурсами"                as UC_ManageResources
-        usecase "Управляти\nкористувачами"            as UC_ManageUsers
-        usecase "Переглянути\nстатистику"             as UC_ViewStats
+        usecase "Переглянути всі\nоренди"      as UC_AllRentals
+        usecase "Підтвердити\nоренду"          as UC_ConfirmRental
+        usecase "Відхилити\nоренду"            as UC_RejectRental
+        usecase "Управляти\nавтомобілями"      as UC_ManageCars
+        usecase "Управляти\nкористувачами"     as UC_ManageUsers
+        usecase "Переглянути\nстатистику"      as UC_ViewStats
     }
 }
 
@@ -76,27 +77,27 @@ rectangle "Booking System" {
 
 Guest --> UC_Register
 Guest --> UC_Login
-Guest --> UC_ListResources
-Guest --> UC_ResourceDetails
+Guest --> UC_ListCars
+Guest --> UC_CarDetails
 
 ' ══════════════════════════════════════════════════════════════════
 ' ЗВ'ЯЗКИ: User
 ' ══════════════════════════════════════════════════════════════════
 
 User --> UC_Logout
-User --> UC_CreateBooking
-User --> UC_MyBookings
-User --> UC_BookingDetails
-User --> UC_CancelBooking
+User --> UC_CreateRental
+User --> UC_MyRentals
+User --> UC_RentalDetails
+User --> UC_CancelRental
 
 ' ══════════════════════════════════════════════════════════════════
 ' ЗВ'ЯЗКИ: Admin
 ' ══════════════════════════════════════════════════════════════════
 
-Admin --> UC_AllBookings
-Admin --> UC_ConfirmBooking
-Admin --> UC_RejectBooking
-Admin --> UC_ManageResources
+Admin --> UC_AllRentals
+Admin --> UC_ConfirmRental
+Admin --> UC_RejectRental
+Admin --> UC_ManageCars
 Admin --> UC_ManageUsers
 Admin --> UC_ViewStats
 
@@ -111,42 +112,50 @@ UC_SendEmail --> EmailService
 ' ══════════════════════════════════════════════════════════════════
 
 ' <<include>> — обов'язкова включена поведінка
-UC_Login        ..> UC_ValidateCreds       : <<include>>
-UC_CreateBooking ..> UC_ValidateBooking    : <<include>>
-UC_CreateBooking ..> UC_CheckAvailability  : <<include>>
-UC_CheckAvailability ..> UC_CheckOverlap   : <<include>>
-UC_CreateBooking ..> UC_SendEmail          : <<include>>
-UC_CancelBooking ..> UC_SendEmail          : <<include>>
-UC_ConfirmBooking ..> UC_SendEmail         : <<include>>
-UC_RejectBooking ..> UC_SendEmail          : <<include>>
+UC_Login          ..> UC_ValidateCreds       : <<include>>
+UC_CreateRental   ..> UC_ValidateRental      : <<include>>
+UC_CreateRental   ..> UC_CheckAvailability   : <<include>>
+UC_CreateRental   ..> UC_CalculatePrice      : <<include>>
+UC_CheckAvailability ..> UC_CheckOverlap     : <<include>>
+UC_CreateRental   ..> UC_SendEmail           : <<include>>
+UC_CancelRental   ..> UC_SendEmail           : <<include>>
+UC_ConfirmRental  ..> UC_SendEmail           : <<include>>
+UC_RejectRental   ..> UC_SendEmail           : <<include>>
 
 ' <<extend>> — необов'язкова розширена поведінка
-UC_FilterResources  ..> UC_ListResources   : <<extend>>
-UC_BookingDetails   ..> UC_MyBookings      : <<extend>>
-UC_CancelBooking    ..> UC_MyBookings      : <<extend>>
+UC_FilterCars     ..> UC_ListCars            : <<extend>>
+UC_RentalDetails  ..> UC_MyRentals           : <<extend>>
+UC_CancelRental   ..> UC_MyRentals           : <<extend>>
 
 ' ══════════════════════════════════════════════════════════════════
 ' ПРИМІТКИ
 ' ══════════════════════════════════════════════════════════════════
 
-note right of UC_ValidateBooking
+note right of UC_ValidateRental
   FluentValidation:
-  • StartTime у майбутньому
-  • EndTime > StartTime
-  • Тривалість: 30хв – 8год
-  • Не більше 30 днів наперед
-  • Purpose ≤ 500 символів
+  • PickupDate не в минулому
+  • ReturnDate > PickupDate
+  • Тривалість: 1 день – 30 днів
+  • Не більше 60 днів наперед
+  • Notes ≤ 500 символів
 end note
 
 note right of UC_CheckAvailability
-  BookingService:
-  • Ресурс існує та Available
-  • Активних бронювань ≤ 3
-  • Відсутність накладань
+  RentalService:
+  • Автомобіль існує та Available
+  • Активних оренд ≤ 3
+  • Відсутність накладань по датах
 end note
 
-note bottom of UC_ConfirmBooking
-  Тільки для Pending-бронювань.
+note right of UC_CalculatePrice
+  RentalService:
+  TotalPrice =
+  (ReturnDate - PickupDate).Days
+  × car.PricePerDay
+end note
+
+note bottom of UC_ConfirmRental
+  Тільки для Pending-оренд.
   Адмін може додати AdminNote.
 end note
 

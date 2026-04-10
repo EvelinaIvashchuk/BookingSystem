@@ -1,4 +1,4 @@
-@startuml BookingSystem_ComponentDiagram
+@startuml CarRentalSystem_ComponentDiagram
 skinparam componentFontSize 12
 skinparam componentBackgroundColor #FAFAFA
 skinparam componentBorderColor #555
@@ -12,7 +12,7 @@ skinparam noteBorderColor #888
 skinparam shadowing false
 skinparam defaultTextAlignment center
 
-title Booking System — Діаграма компонентів\n«Логічна структура системи та залежності між компонентами»
+title Car Rental System — Діаграма компонентів\n«Логічна структура системи та залежності між компонентами»
 
 ' ══════════════════════════════════════════════════════════════════
 ' ЗОВНІШНІ АКТОРИ
@@ -25,27 +25,27 @@ actor "Адміністратор\n(Browser)"  as Admin
 ' СИСТЕМА
 ' ══════════════════════════════════════════════════════════════════
 
-package "BookingSystem (.NET 9 Web Application)" #F4F6F7 {
+package "CarRentalSystem (.NET 9 Web Application)" #F4F6F7 {
 
     ' ── PRESENTATION LAYER ──────────────────────────────────────
     package "Presentation Layer" #EBF5FB {
 
-        component [BookingController]  as BkCtrl  #ABEBC6
-        component [AdminController]    as AdCtrl  #ABEBC6
-        component [AccountController]  as AccCtrl #ABEBC6
-        component [ResourceController] as ResCtrl #ABEBC6
-        component [HomeController]     as HmCtrl  #ABEBC6
+        component [RentalController]   as RentCtrl #ABEBC6
+        component [AdminController]    as AdCtrl   #ABEBC6
+        component [AccountController]  as AccCtrl  #ABEBC6
+        component [CarController]      as CarCtrl  #ABEBC6
+        component [HomeController]     as HmCtrl   #ABEBC6
 
         component [Razor Views\n(.cshtml)] as Views #D6EAF8
 
         package "ViewModels" #EBF5FB {
-            component [BookingCreateViewModel] as BkVM
-            component [LoginViewModel]         as LgVM
-            component [RegisterViewModel]      as RgVM
+            component [RentalCreateViewModel] as RentVM
+            component [LoginViewModel]        as LgVM
+            component [RegisterViewModel]     as RgVM
         }
 
         package "Validators\n(FluentValidation)" #FEF5E7 {
-            component [BookingCreateViewModelValidator] as BkVld
+            component [RentalCreateViewModelValidator] as RentVld
         }
 
         package "Helpers" #EAFAF1 {
@@ -56,18 +56,18 @@ package "BookingSystem (.NET 9 Web Application)" #F4F6F7 {
     ' ── SERVICE LAYER ────────────────────────────────────────────
     package "Service Layer" #FEF9E7 {
 
-        component [BookingService]  as BkSvc  #FAD7A0
-        component [ResourceService] as ResSvc #FAD7A0
-        component [UserService]     as UsrSvc #FAD7A0
+        component [RentalService]    as RentSvc  #FAD7A0
+        component [CarService]       as CarSvc   #FAD7A0
+        component [UserService]      as UsrSvc   #FAD7A0
         component [MockEmailService] as EmailSvc #FAD7A0
 
         package "DTOs" #E8F8F5 {
-            component [CreateBookingDto] as CrDto
-            component [BookingDto]       as BkDto
+            component [CreateRentalDto] as CrDto
+            component [RentalDto]       as RentDto
         }
 
         package "Mappings\n(AutoMapper)" #F4ECF7 {
-            component [BookingMappingProfile] as BkMap
+            component [RentalMappingProfile] as RentMap
         }
 
         package "Results" #EAFAF1 {
@@ -75,8 +75,8 @@ package "BookingSystem (.NET 9 Web Application)" #F4F6F7 {
         }
 
         ' Інтерфейси сервісів
-        interface "IBookingService"  as IBkSvc
-        interface "IResourceService" as IResSvc
+        interface "IRentalService"   as IRentSvc
+        interface "ICarService"      as ICarSvc
         interface "IUserService"     as IUsrSvc
         interface "IEmailService"    as IEmailSvc
     }
@@ -91,12 +91,12 @@ package "BookingSystem (.NET 9 Web Application)" #F4F6F7 {
 
         package "Repositories" #F5EEF8 {
             component [GenericRepository<T>]  as GnRepo
-            component [BookingRepository]     as BkRepo
-            component [ResourceRepository]    as ResRepo
+            component [RentalRepository]      as RentRepo
+            component [CarRepository]         as CarRepo
 
             interface "IGenericRepository<T>"  as IGnRepo
-            interface "IBookingRepository"     as IBkRepo
-            interface "IResourceRepository"    as IResRepo
+            interface "IRentalRepository"      as IRentRepo
+            interface "ICarRepository"         as ICarRepo
         }
 
         component [ApplicationDbContext\n(EF Core)] as DbCtx #D2B4DE
@@ -138,74 +138,74 @@ package "NuGet пакети «external»" #F2F3F4 {
 ' ЗВ'ЯЗКИ: Актори → Контролери
 ' ══════════════════════════════════════════════════════════════════
 
-User  --> BkCtrl  : HTTP GET/POST
-User  --> ResCtrl : HTTP GET
-User  --> AccCtrl : HTTP GET/POST
-Admin --> AdCtrl  : HTTP GET/POST
+User  --> RentCtrl : HTTP GET/POST
+User  --> CarCtrl  : HTTP GET
+User  --> AccCtrl  : HTTP GET/POST
+Admin --> AdCtrl   : HTTP GET/POST
 
 ' ══════════════════════════════════════════════════════════════════
 ' ЗВ'ЯЗКИ: Presentation Layer
 ' ══════════════════════════════════════════════════════════════════
 
-BkCtrl  --> Views   : повертає View
-BkCtrl  ..> IBkSvc  : «uses»
-BkCtrl  ..> IResSvc : «uses»
-BkCtrl  ..> BkVld   : «validates»
-BkCtrl  ..> BkMap   : «maps via IMapper»
-BkCtrl  ..> BkVM    : «binds»
+RentCtrl  --> Views    : повертає View
+RentCtrl  ..> IRentSvc : «uses»
+RentCtrl  ..> ICarSvc  : «uses»
+RentCtrl  ..> RentVld  : «validates»
+RentCtrl  ..> RentMap  : «maps via IMapper»
+RentCtrl  ..> RentVM   : «binds»
 
-AdCtrl  ..> IBkSvc  : «uses»
-AdCtrl  ..> IResSvc : «uses»
+AdCtrl    ..> IRentSvc : «uses»
+AdCtrl    ..> ICarSvc  : «uses»
 
-ResCtrl ..> IResSvc : «uses»
-AccCtrl ..> IdentitySvc : «uses»
+CarCtrl   ..> ICarSvc  : «uses»
+AccCtrl   ..> IdentitySvc : «uses»
 
-BkVld   ..> FV      : «extends AbstractValidator»
-BkMap   ..> AM      : «extends Profile»
+RentVld   ..> FV       : «extends AbstractValidator»
+RentMap   ..> AM       : «extends Profile»
 
 ' ══════════════════════════════════════════════════════════════════
 ' ЗВ'ЯЗКИ: Service Layer
 ' ══════════════════════════════════════════════════════════════════
 
-BkSvc   ..|> IBkSvc    : «implements»
-ResSvc  ..|> IResSvc   : «implements»
-UsrSvc  ..|> IUsrSvc   : «implements»
-EmailSvc ..|> IEmailSvc : «implements»
+RentSvc   ..|> IRentSvc   : «implements»
+CarSvc    ..|> ICarSvc    : «implements»
+UsrSvc    ..|> IUsrSvc    : «implements»
+EmailSvc  ..|> IEmailSvc  : «implements»
 
-BkSvc   ..> IUoW       : «uses»
-BkSvc   ..> IEmailSvc  : «uses»
-BkSvc   ..> CrDto      : «receives»
-BkSvc   ..> SR         : «returns»
+RentSvc   ..> IUoW        : «uses»
+RentSvc   ..> IEmailSvc   : «uses»
+RentSvc   ..> CrDto       : «receives»
+RentSvc   ..> SR          : «returns»
 
 ' ══════════════════════════════════════════════════════════════════
 ' ЗВ'ЯЗКИ: Data Layer
 ' ══════════════════════════════════════════════════════════════════
 
-UoW    ..|> IUoW       : «implements»
-UoW    --> IBkRepo     : «owns»
-UoW    --> IResRepo    : «owns»
-UoW    --> DbCtx       : «CommitAsync»
+UoW       ..|> IUoW       : «implements»
+UoW       --> IRentRepo   : «owns»
+UoW       --> ICarRepo    : «owns»
+UoW       --> DbCtx       : «CommitAsync»
 
-BkRepo  --|> GnRepo    : «extends»
-BkRepo  ..|> IBkRepo   : «implements»
-ResRepo --|> GnRepo    : «extends»
-ResRepo ..|> IResRepo  : «implements»
-GnRepo  ..|> IGnRepo   : «implements»
-IBkRepo --|> IGnRepo   : «extends»
-IResRepo --|> IGnRepo  : «extends»
+RentRepo  --|> GnRepo     : «extends»
+RentRepo  ..|> IRentRepo  : «implements»
+CarRepo   --|> GnRepo     : «extends»
+CarRepo   ..|> ICarRepo   : «implements»
+GnRepo    ..|> IGnRepo    : «implements»
+IRentRepo --|> IGnRepo    : «extends»
+ICarRepo  --|> IGnRepo    : «extends»
 
-GnRepo  --> DbCtx      : «uses»
-DbCtx   --> MySQL      : «Pomelo EF Core»
-DbCtx   ..> Pomelo     : «driver»
+GnRepo    --> DbCtx       : «uses»
+DbCtx     --> MySQL       : «Pomelo EF Core»
+DbCtx     ..> Pomelo      : «driver»
 
 ' ══════════════════════════════════════════════════════════════════
 ' ЗВ'ЯЗКИ: Infrastructure
 ' ══════════════════════════════════════════════════════════════════
 
-IdentitySvc --> DbCtx      : «stores users/roles»
+IdentitySvc --> DbCtx       : «stores users/roles»
 Seeder      --> IdentitySvc : «seeds roles + admin»
-Serilog   ..> SerilogPkg : «uses»
-AppSettings --> DbCtx  : «ConnectionString»
+Serilog     ..> SerilogPkg  : «uses»
+AppSettings --> DbCtx       : «ConnectionString»
 
 ' ══════════════════════════════════════════════════════════════════
 ' ПРИМІТКИ
@@ -213,13 +213,13 @@ AppSettings --> DbCtx  : «ConnectionString»
 
 note bottom of UoW
   Єдина точка CommitAsync().
-  Координує BookingRepository
-  та ResourceRepository.
+  Координує RentalRepository
+  та CarRepository.
 end note
 
-note right of BkVld
+note right of RentVld
   Замінює DataAnnotations.
-  Правила: часи, тривалість,
+  Правила: дати, тривалість,
   кількість символів.
 end note
 

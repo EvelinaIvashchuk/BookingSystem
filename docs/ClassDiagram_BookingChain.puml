@@ -1,4 +1,4 @@
-@startuml BookingSystem_ClassDiagram
+@startuml CarRentalSystem_ClassDiagram
 skinparam classAttributeIconSize 0
 skinparam classFontSize 12
 skinparam classBackgroundColor #FAFAFA
@@ -13,23 +13,23 @@ skinparam noteBorderColor #888
 skinparam noteBackgroundColor #FFFDE7
 skinparam shadowing false
 
-title Booking System — Діаграма класів\n«Ланцюжок: BookingController → BookingService → UnitOfWork → BookingRepository → GenericRepository → Booking»
+title Car Rental System — Діаграма класів\n«Ланцюжок: RentalController → RentalService → UnitOfWork → RentalRepository → GenericRepository → Rental»
 
 ' ══════════════════════════════════════════════════════════════════
 ' PACKAGE: ViewModels
 ' ══════════════════════════════════════════════════════════════════
 package "ViewModels" #EBF5FB {
 
-    class BookingCreateViewModel {
-        + ResourceId   : int
-        + ResourceName : string
+    class RentalCreateViewModel {
+        + CarId        : int
+        + CarName      : string
         + Location     : string
-        + Capacity     : int
+        + PricePerDay  : decimal
         + CategoryName : string
         .. Валідується через FluentValidation ..
-        + StartTime : DateTime?
-        + EndTime   : DateTime?
-        + Purpose   : string?
+        + PickupDate : DateTime?
+        + ReturnDate : DateTime?
+        + Notes      : string?
     }
 }
 
@@ -38,21 +38,21 @@ package "ViewModels" #EBF5FB {
 ' ══════════════════════════════════════════════════════════════════
 package "Validators" #FEF5E7 {
 
-    class BookingCreateViewModelValidator {
-        - MinDurationMinutes : int = 30  «const»
-        - MaxDurationHours   : int = 8   «const»
-        - MaxAdvanceDays     : int = 30  «const»
+    class RentalCreateViewModelValidator {
+        - MinDurationDays  : int = 1   «const»
+        - MaxDurationDays  : int = 30  «const»
+        - MaxAdvanceDays   : int = 60  «const»
         --
-        + BookingCreateViewModelValidator()
+        + RentalCreateViewModelValidator()
         .. Правила ..
-        # StartTime > UtcNow
-        # EndTime > StartTime
-        # Duration: 30хв – 8год
-        # Не більше 30 днів наперед
-        # Purpose.Length ≤ 500
+        # PickupDate >= UtcNow.Date
+        # ReturnDate > PickupDate
+        # Duration: 1 день – 30 днів
+        # Не більше 60 днів наперед
+        # Notes.Length ≤ 500
     }
 
-    note right of BookingCreateViewModelValidator
+    note right of RentalCreateViewModelValidator
       Реалізує AbstractValidator<T>.
       Замінює DataAnnotations —
       правила зосереджені в одному
@@ -65,25 +65,26 @@ package "Validators" #FEF5E7 {
 ' ══════════════════════════════════════════════════════════════════
 package "Services / DTOs" #E8F8F5 {
 
-    class CreateBookingDto <<record>> {
-        + ResourceId : int
-        + StartTime  : DateTime
-        + EndTime    : DateTime
-        + Purpose    : string?
+    class CreateRentalDto <<record>> {
+        + CarId       : int
+        + PickupDate  : DateTime
+        + ReturnDate  : DateTime
+        + Notes       : string?
     }
 
-    class BookingDto <<record>> {
-        + Id           : int
-        + ResourceId   : int
-        + ResourceName : string
-        + StartTime    : DateTime
-        + EndTime      : DateTime
-        + Purpose      : string?
-        + Status       : BookingStatus
-        + CreatedAt    : DateTime
+    class RentalDto <<record>> {
+        + Id          : int
+        + CarId       : int
+        + CarName     : string
+        + PickupDate  : DateTime
+        + ReturnDate  : DateTime
+        + TotalPrice  : decimal
+        + Notes       : string?
+        + Status      : RentalStatus
+        + CreatedAt   : DateTime
     }
 
-    note bottom of CreateBookingDto
+    note bottom of CreateRentalDto
       Відокремлює сервісний шар
       від MVC-специфічного ViewModel.
       Controller → Service.
@@ -95,14 +96,14 @@ package "Services / DTOs" #E8F8F5 {
 ' ══════════════════════════════════════════════════════════════════
 package "Mappings" #F4ECF7 {
 
-    class BookingMappingProfile {
-        + BookingMappingProfile()
+    class RentalMappingProfile {
+        + RentalMappingProfile()
         .. Маппінги ..
-        # BookingCreateViewModel → CreateBookingDto
-        # Booking → BookingDto
+        # RentalCreateViewModel → CreateRentalDto
+        # Rental → RentalDto
     }
 
-    note right of BookingMappingProfile
+    note right of RentalMappingProfile
       Успадковує Profile (AutoMapper).
       Реєструється через
       AddAutoMapper() в Program.cs.
@@ -114,27 +115,27 @@ package "Mappings" #F4ECF7 {
 ' ══════════════════════════════════════════════════════════════════
 package "Controllers" #EAF7EA {
 
-    class BookingController {
-        - _bookingService : IBookingService
-        - _resourceService : IResourceService
-        - _mapper : IMapper
-        - _validator : IValidator<BookingCreateViewModel>
+    class RentalController {
+        - _rentalService : IRentalService
+        - _carService    : ICarService
+        - _mapper        : IMapper
+        - _validator     : IValidator<RentalCreateViewModel>
         --
-        + Create(resourceId: int) : Task<IActionResult>
-        + Create(vm: BookingCreateViewModel) : Task<IActionResult>
-        + MyBookings(page: int) : Task<IActionResult>
+        + Create(carId: int) : Task<IActionResult>
+        + Create(vm: RentalCreateViewModel) : Task<IActionResult>
+        + MyRentals(page: int) : Task<IActionResult>
         + Details(id: int) : Task<IActionResult>
         + Cancel(id: int) : Task<IActionResult>
         - RepopulateDisplayFields(vm) : Task
     }
 
-    note right of BookingController
+    note right of RentalController
       «Authorize» — тільки
       автентифіковані користувачі.
       1. Валідує через IValidator
       2. Маппить ViewModel→DTO
          через IMapper
-      3. Передає DTO в IBookingService
+      3. Передає DTO в IRentalService
     end note
 }
 
@@ -143,46 +144,47 @@ package "Controllers" #EAF7EA {
 ' ══════════════════════════════════════════════════════════════════
 package "Services" #FEF9E7 {
 
-    interface IBookingService <<interface>> {
-        + CreateBookingAsync(userId: string, dto: CreateBookingDto) : Task<ServiceResult<Booking>>
-        + CancelBookingAsync(bookingId: int, userId: string) : Task<ServiceResult>
-        + ConfirmBookingAsync(bookingId: int, adminNote: string?) : Task<ServiceResult>
-        + RejectBookingAsync(bookingId: int, adminNote: string) : Task<ServiceResult>
-        + GetUserBookingsAsync(userId: string) : Task<IEnumerable<Booking>>
-        + GetAllBookingsAsync() : Task<IEnumerable<Booking>>
-        + GetBookingByIdAsync(id: int) : Task<Booking?>
+    interface IRentalService <<interface>> {
+        + CreateRentalAsync(userId: string, dto: CreateRentalDto) : Task<ServiceResult<Rental>>
+        + CancelRentalAsync(rentalId: int, userId: string) : Task<ServiceResult>
+        + ConfirmRentalAsync(rentalId: int, adminNote: string?) : Task<ServiceResult>
+        + RejectRentalAsync(rentalId: int, adminNote: string) : Task<ServiceResult>
+        + GetUserRentalsAsync(userId: string) : Task<IEnumerable<Rental>>
+        + GetAllRentalsAsync() : Task<IEnumerable<Rental>>
+        + GetRentalByIdAsync(id: int) : Task<Rental?>
     }
 
-    class BookingService {
-        - MaxActiveBookingsPerUser : int = 3   «const»
-        - MinDurationMinutes       : int = 30  «const»
-        - MaxDurationHours         : int = 8   «const»
-        - MaxAdvanceBookingDays    : int = 30  «const»
+    class RentalService {
+        - MaxActiveRentalsPerUser : int = 3   «const»
+        - MinDurationDays         : int = 1   «const»
+        - MaxDurationDays         : int = 30  «const»
+        - MaxAdvanceBookingDays   : int = 60  «const»
         --
         - _uow          : IUnitOfWork
         - _emailService : IEmailService
-        - _logger       : ILogger<BookingService>
+        - _logger       : ILogger<RentalService>
         --
-        + CreateBookingAsync(userId, dto) : Task<ServiceResult<Booking>>
-        + CancelBookingAsync(bookingId, userId) : Task<ServiceResult>
-        + ConfirmBookingAsync(bookingId, adminNote) : Task<ServiceResult>
-        + RejectBookingAsync(bookingId, adminNote) : Task<ServiceResult>
-        + GetUserBookingsAsync(userId) : Task<IEnumerable<Booking>>
-        + GetAllBookingsAsync() : Task<IEnumerable<Booking>>
-        + GetBookingByIdAsync(id) : Task<Booking?>
-        - ValidateTimes(start, end) : ServiceResult
+        + CreateRentalAsync(userId, dto) : Task<ServiceResult<Rental>>
+        + CancelRentalAsync(rentalId, userId) : Task<ServiceResult>
+        + ConfirmRentalAsync(rentalId, adminNote) : Task<ServiceResult>
+        + RejectRentalAsync(rentalId, adminNote) : Task<ServiceResult>
+        + GetUserRentalsAsync(userId) : Task<IEnumerable<Rental>>
+        + GetAllRentalsAsync() : Task<IEnumerable<Rental>>
+        + GetRentalByIdAsync(id) : Task<Rental?>
+        - ValidateDates(pickupDate, returnDate) : ServiceResult
         - SafeSendEmailAsync(action: Func<Task>) : Task
     }
 
-    note right of BookingService
+    note right of RentalService
       Бізнес-правила:
-      • Час у майбутньому
-      • EndTime > StartTime
-      • Тривалість: 30хв – 8год
-      • Не більше 30 днів наперед
-      • Ресурс = Available
-      • Макс. 3 активних бронювання
+      • PickupDate у майбутньому
+      • ReturnDate > PickupDate
+      • Тривалість: 1 день – 30 днів
+      • Не більше 60 днів наперед
+      • Автомобіль = Available
+      • Макс. 3 активних оренди
       • Відсутність накладань (overlap)
+      • TotalPrice = днів × PricePerDay
       Зберігає через uow.CommitAsync()
     end note
 
@@ -204,19 +206,19 @@ package "Services" #FEF9E7 {
     }
 
     interface IEmailService <<interface>> {
-        + SendBookingCreatedAsync(email, name, resource, start, end) : Task
-        + SendBookingCancelledAsync(email, name, resource, start, end) : Task
-        + SendBookingConfirmedAsync(email, name, resource, start, end) : Task
-        + SendBookingRejectedAsync(email, name, resource, note) : Task
+        + SendRentalCreatedAsync(email, name, car, pickupDate, returnDate, totalPrice) : Task
+        + SendRentalCancelledAsync(email, name, car, pickupDate, returnDate) : Task
+        + SendRentalConfirmedAsync(email, name, car, pickupDate, returnDate) : Task
+        + SendRentalRejectedAsync(email, name, car, note) : Task
     }
 
     class MockEmailService {
         - _logger : ILogger<MockEmailService>
         --
-        + SendBookingCreatedAsync(...) : Task
-        + SendBookingCancelledAsync(...) : Task
-        + SendBookingConfirmedAsync(...) : Task
-        + SendBookingRejectedAsync(...) : Task
+        + SendRentalCreatedAsync(...) : Task
+        + SendRentalCancelledAsync(...) : Task
+        + SendRentalConfirmedAsync(...) : Task
+        + SendRentalRejectedAsync(...) : Task
     }
 }
 
@@ -226,8 +228,8 @@ package "Services" #FEF9E7 {
 package "Data / Unit of Work" #FDEBD0 {
 
     interface IUnitOfWork <<interface>> {
-        + Bookings  : IBookingRepository
-        + Resources : IResourceRepository
+        + Rentals : IRentalRepository
+        + Cars    : ICarRepository
         --
         + CommitAsync(ct: CancellationToken) : Task<int>
     }
@@ -235,10 +237,10 @@ package "Data / Unit of Work" #FDEBD0 {
     class UnitOfWork {
         - _db : ApplicationDbContext
         --
-        + Bookings  : IBookingRepository
-        + Resources : IResourceRepository
+        + Rentals : IRentalRepository
+        + Cars    : ICarRepository
         --
-        + UnitOfWork(db, bookings, resources)
+        + UnitOfWork(db, rentals, cars)
         + CommitAsync(ct) : Task<int>
         + DisposeAsync() : ValueTask
     }
@@ -269,18 +271,19 @@ package "Data / Repositories" #F5EEF8 {
         + SaveChangesAsync() : Task
     }
 
-    interface IBookingRepository <<interface>> {
-        + GetUserBookingsAsync(userId: string) : Task<IEnumerable<Booking>>
-        + GetAllWithDetailsAsync() : Task<IEnumerable<Booking>>
-        + GetWithDetailsAsync(id: int) : Task<Booking?>
-        + HasOverlapAsync(resourceId, start, end) : Task<bool>
-        + GetActiveBookingCountAsync(userId: string) : Task<int>
+    interface IRentalRepository <<interface>> {
+        + GetUserRentalsAsync(userId: string) : Task<IEnumerable<Rental>>
+        + GetAllWithDetailsAsync() : Task<IEnumerable<Rental>>
+        + GetWithDetailsAsync(id: int) : Task<Rental?>
+        + HasOverlapAsync(carId, pickupDate, returnDate, excludeRentalId?) : Task<bool>
+        + GetActiveRentalCountAsync(userId: string) : Task<int>
     }
 
-    interface IResourceRepository <<interface>> {
-        + GetWithCategoryAsync(id: int) : Task<Resource?>
-        + GetAvailableWithCategoryAsync() : Task<IReadOnlyList<Resource>>
-        + IsBookableAsync(id: int) : Task<bool>
+    interface ICarRepository <<interface>> {
+        + GetAllWithCategoryAsync() : Task<IEnumerable<Car>>
+        + GetAvailableWithCategoryAsync() : Task<IReadOnlyList<Car>>
+        + GetWithCategoryAsync(id: int) : Task<Car?>
+        + IsRentableAsync(id: int) : Task<bool>
     }
 
     class GenericRepository<T> {
@@ -298,27 +301,28 @@ package "Data / Repositories" #F5EEF8 {
         + SaveChangesAsync() : Task
     }
 
-    class BookingRepository {
-        + BookingRepository(db: ApplicationDbContext)
+    class RentalRepository {
+        + RentalRepository(db: ApplicationDbContext)
         --
-        + GetUserBookingsAsync(userId) : Task<IEnumerable<Booking>>
-        + GetAllWithDetailsAsync() : Task<IEnumerable<Booking>>
-        + GetWithDetailsAsync(id) : Task<Booking?>
-        + HasOverlapAsync(resourceId, start, end) : Task<bool>
-        + GetActiveBookingCountAsync(userId) : Task<int>
+        + GetUserRentalsAsync(userId) : Task<IEnumerable<Rental>>
+        + GetAllWithDetailsAsync() : Task<IEnumerable<Rental>>
+        + GetWithDetailsAsync(id) : Task<Rental?>
+        + HasOverlapAsync(carId, pickupDate, returnDate, excludeRentalId?) : Task<bool>
+        + GetActiveRentalCountAsync(userId) : Task<int>
     }
 
-    class ResourceRepository {
-        + ResourceRepository(db: ApplicationDbContext)
+    class CarRepository {
+        + CarRepository(db: ApplicationDbContext)
         --
-        + GetWithCategoryAsync(id) : Task<Resource?>
-        + GetAvailableWithCategoryAsync() : Task<IReadOnlyList<Resource>>
-        + IsBookableAsync(id) : Task<bool>
+        + GetAllWithCategoryAsync() : Task<IEnumerable<Car>>
+        + GetAvailableWithCategoryAsync() : Task<IReadOnlyList<Car>>
+        + GetWithCategoryAsync(id) : Task<Car?>
+        + IsRentableAsync(id) : Task<bool>
     }
 
     class ApplicationDbContext {
-        + Bookings   : DbSet<Booking>
-        + Resources  : DbSet<Resource>
+        + Cars       : DbSet<Car>
+        + Rentals    : DbSet<Rental>
         + Categories : DbSet<Category>
         + Payments   : DbSet<Payment>
         --
@@ -332,23 +336,59 @@ package "Data / Repositories" #F5EEF8 {
 ' ══════════════════════════════════════════════════════════════════
 package "Models / Entities" #FDEDEC {
 
-    class Booking {
+    class Rental {
         + Id          : int
         + UserId      : string      «FK»
-        + ResourceId  : int         «FK»
-        + StartTime   : DateTime?
-        + EndTime     : DateTime?
-        + Purpose     : string?
-        + Status      : BookingStatus
+        + CarId       : int         «FK»
+        + PickupDate  : DateTime
+        + ReturnDate  : DateTime
+        + TotalPrice  : decimal
+        + Notes       : string?
+        + Status      : RentalStatus
         + CreatedAt   : DateTime
         + CancelledAt : DateTime?
         + AdminNote   : string?
         --
-        + User     : ApplicationUser  «navigation»
-        + Resource : Resource         «navigation»
+        + User    : ApplicationUser  «navigation»
+        + Car     : Car              «navigation»
+        + Payment : Payment?         «navigation»
         --
-        + Duration             : TimeSpan  «computed»
-        + CanBeCancelledByUser : bool      «computed»
+        + DurationDays             : double  «computed»
+        + CanBeCancelledByUser     : bool    «computed»
+    }
+
+    class Car {
+        + Id           : int
+        + Brand        : string
+        + Model        : string
+        + Year         : int
+        + LicensePlate : string      «[Unique]»
+        + FuelType     : FuelType
+        + Transmission : Transmission
+        + Seats        : int
+        + PricePerDay  : decimal
+        + Description  : string?
+        + Location     : string
+        + Status       : CarStatus
+        + ImageUrl     : string?
+        + CategoryId   : int         «FK»
+        --
+        + Category : Category              «navigation»
+        + Rentals  : ICollection<Rental>   «navigation»
+        --
+        + FullName : string  «computed (Brand Model (Year))»
+    }
+
+    class Payment {
+        + Id                   : int
+        + RentalId             : int      «FK (one-to-one)»
+        + Amount               : decimal
+        + Status               : PaymentStatus
+        + PaidAt               : DateTime?
+        + TransactionReference : string?
+        + CreatedAt            : DateTime
+        --
+        + Rental : Rental  «navigation»
     }
 
     class ApplicationUser {
@@ -357,23 +397,9 @@ package "Models / Entities" #FDEDEC {
         + IsActive  : bool
         + CreatedAt : DateTime
         --
-        + Bookings : ICollection<Booking>  «navigation»
+        + Rentals : ICollection<Rental>  «navigation»
         --
         + FullName : string  «computed»
-    }
-
-    class Resource {
-        + Id          : int
-        + Name        : string
-        + Description : string?
-        + Location    : string
-        + Capacity    : int
-        + Status      : ResourceStatus
-        + ImageUrl    : string?
-        + CategoryId  : int  «FK»
-        --
-        + Category : Category              «navigation»
-        + Bookings : ICollection<Booking>  «navigation»
     }
 
     class Category {
@@ -381,20 +407,38 @@ package "Models / Entities" #FDEDEC {
         + Name        : string  «[Unique]»
         + Description : string?
         --
-        + Resources : ICollection<Resource>  «navigation»
+        + Cars : ICollection<Car>  «navigation»
     }
 
-    enum BookingStatus <<enumeration>> {
+    enum RentalStatus <<enumeration>> {
         Pending
         Confirmed
         Cancelled
         Rejected
     }
 
-    enum ResourceStatus <<enumeration>> {
+    enum CarStatus <<enumeration>> {
         Available
+        Rented
         UnderMaintenance
-        Retired
+    }
+
+    enum FuelType <<enumeration>> {
+        Petrol
+        Diesel
+        Electric
+        Hybrid
+    }
+
+    enum Transmission <<enumeration>> {
+        Manual
+        Automatic
+    }
+
+    enum PaymentStatus <<enumeration>> {
+        Unpaid
+        Paid
+        Refunded
     }
 }
 
@@ -450,62 +494,67 @@ package "Helpers" #EAFAF1 {
 ' ══════════════════════════════════════════════════════════════════
 
 ' Inheritance
-ApplicationUser       --|> IdentityUser         : «extends»
-ApplicationDbContext  --|> IdentityDbContext     : «extends»
-BookingCreateViewModelValidator --|> AbstractValidator : «extends»
-BookingMappingProfile --|> Profile               : «extends»
+ApplicationUser      --|> IdentityUser          : «extends»
+ApplicationDbContext --|> IdentityDbContext      : «extends»
+RentalCreateViewModelValidator --|> AbstractValidator : «extends»
+RentalMappingProfile --|> Profile               : «extends»
 
 ' Interface implementations
-BookingService     ..|> IBookingService          : «implements»
+RentalService      ..|> IRentalService           : «implements»
 MockEmailService   ..|> IEmailService            : «implements»
 UnitOfWork         ..|> IUnitOfWork              : «implements»
-BookingRepository  --|> GenericRepository        : «extends»
-BookingRepository  ..|> IBookingRepository       : «implements»
-ResourceRepository --|> GenericRepository        : «extends»
-ResourceRepository ..|> IResourceRepository      : «implements»
+RentalRepository   --|> GenericRepository        : «extends»
+RentalRepository   ..|> IRentalRepository        : «implements»
+CarRepository      --|> GenericRepository        : «extends»
+CarRepository      ..|> ICarRepository           : «implements»
 GenericRepository  ..|> IGenericRepository       : «implements»
-IBookingRepository  --|> IGenericRepository      : «extends»
-IResourceRepository --|> IGenericRepository      : «extends»
+IRentalRepository  --|> IGenericRepository       : «extends»
+ICarRepository     --|> IGenericRepository       : «extends»
 
 ' Controller dependencies (DI)
-BookingController ..> IBookingService            : «uses»
-BookingController ..> IMapper                    : «uses (AutoMapper)»
-BookingController ..> "IValidator<BookingCreateViewModel>" : «uses (FluentValidation)»
-BookingController ..> BookingCreateViewModel     : «binds form»
+RentalController ..> IRentalService              : «uses»
+RentalController ..> IMapper                     : «uses (AutoMapper)»
+RentalController ..> "IValidator<RentalCreateViewModel>" : «uses (FluentValidation)»
+RentalController ..> RentalCreateViewModel       : «binds form»
 
 ' Validator
-BookingCreateViewModelValidator ..> BookingCreateViewModel : «validates»
+RentalCreateViewModelValidator ..> RentalCreateViewModel : «validates»
 
 ' Mapper
-BookingMappingProfile ..> BookingCreateViewModel : «maps from»
-BookingMappingProfile ..> CreateBookingDto       : «maps to»
-BookingMappingProfile ..> Booking                : «maps from»
-BookingMappingProfile ..> BookingDto             : «maps to»
+RentalMappingProfile ..> RentalCreateViewModel   : «maps from»
+RentalMappingProfile ..> CreateRentalDto         : «maps to»
+RentalMappingProfile ..> Rental                  : «maps from»
+RentalMappingProfile ..> RentalDto               : «maps to»
 
 ' Service dependencies
-BookingService ..> IUnitOfWork                   : «uses»
-BookingService ..> IEmailService                 : «uses»
-BookingService ..> CreateBookingDto              : «receives»
-BookingService ..> ServiceResult                 : «returns»
+RentalService ..> IUnitOfWork                    : «uses»
+RentalService ..> IEmailService                  : «uses»
+RentalService ..> CreateRentalDto                : «receives»
+RentalService ..> ServiceResult                  : «returns»
 
 ' UnitOfWork
-UnitOfWork --> IBookingRepository                : «owns»
-UnitOfWork --> IResourceRepository               : «owns»
+UnitOfWork --> IRentalRepository                 : «owns»
+UnitOfWork --> ICarRepository                    : «owns»
 UnitOfWork --> ApplicationDbContext              : «commits via»
 
 ' Repository → DB
 GenericRepository --> ApplicationDbContext       : «uses»
 
 ' DB → Entities
-ApplicationDbContext --> Booking                 : «DbSet»
-ApplicationDbContext --> Resource                : «DbSet»
+ApplicationDbContext --> Rental                  : «DbSet»
+ApplicationDbContext --> Car                     : «DbSet»
 ApplicationDbContext --> Category                : «DbSet»
+ApplicationDbContext --> Payment                 : «DbSet»
 
 ' Entity associations
-Booking "many" --> "1" ApplicationUser           : userId FK
-Booking "many" --> "1" Resource                  : resourceId FK
-Resource "many" --> "1" Category                 : categoryId FK
-Booking --> BookingStatus                        : «uses»
-Resource --> ResourceStatus                      : «uses»
+Rental "many" --> "1" ApplicationUser            : userId FK
+Rental "many" --> "1" Car                        : carId FK
+Car "many" --> "1" Category                      : categoryId FK
+Rental "0..1" --> "1" Payment                    : one-to-one
+Rental --> RentalStatus                          : «uses»
+Car --> CarStatus                                : «uses»
+Car --> FuelType                                 : «uses»
+Car --> Transmission                             : «uses»
+Payment --> PaymentStatus                        : «uses»
 
 @enduml

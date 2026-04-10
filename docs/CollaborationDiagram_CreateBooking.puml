@@ -1,4 +1,4 @@
-@startuml BookingSystem_CollaborationDiagram
+@startuml CarRentalSystem_CollaborationDiagram
 skinparam classAttributeIconSize 0
 skinparam classFontSize 12
 skinparam classBackgroundColor #FAFAFA
@@ -11,7 +11,7 @@ skinparam noteBorderColor #888
 skinparam packageBackgroundColor #FDFEFE
 skinparam packageBorderColor #AAA
 
-title Booking System — Діаграма кооперації\n«Створення бронювання: об'єкти та пронумеровані повідомлення»
+title Car Rental System — Діаграма кооперації\n«Створення оренди: об'єкти та пронумеровані повідомлення»
 
 ' ══════════════════════════════════════════════════════════════════
 ' ОБ'ЄКТИ (екземпляри класів)
@@ -21,57 +21,58 @@ object ":Користувач" as User #EBF5FB {
     userId : string
 }
 
-object ":BookingController" as Ctrl #EAF7EA {
+object ":RentalController" as Ctrl #EAF7EA {
     mapper    : IMapper
-    validator : IValidator<BookingCreateViewModel>
+    validator : IValidator<RentalCreateViewModel>
 }
 
-object ":BookingCreateViewModel" as VM #EBF5FB {
-    ResourceId : int
-    StartTime  : DateTime
-    EndTime    : DateTime
-    Purpose    : string?
+object ":RentalCreateViewModel" as VM #EBF5FB {
+    CarId      : int
+    PickupDate : DateTime
+    ReturnDate : DateTime
+    Notes      : string?
 }
 
-object ":BookingCreateViewModelValidator" as Vld #FEF5E7 {
-    MinDurationMinutes = 30
-    MaxDurationHours   = 8
-    MaxAdvanceDays     = 30
+object ":RentalCreateViewModelValidator" as Vld #FEF5E7 {
+    MinDurationDays = 1
+    MaxDurationDays = 30
+    MaxAdvanceDays  = 60
 }
 
-object ":BookingMappingProfile\n(IMapper)" as Mpr #F4ECF7 {
-    BookingCreateViewModel\n→ CreateBookingDto
+object ":RentalMappingProfile\n(IMapper)" as Mpr #F4ECF7 {
+    RentalCreateViewModel\n→ CreateRentalDto
 }
 
-object ":CreateBookingDto" as Dto #E8F8F5 {
-    ResourceId : int
-    StartTime  : DateTime
-    EndTime    : DateTime
-    Purpose    : string?
+object ":CreateRentalDto" as Dto #E8F8F5 {
+    CarId      : int
+    PickupDate : DateTime
+    ReturnDate : DateTime
+    Notes      : string?
 }
 
-object ":BookingService" as Svc #FEF9E7 {
-    MaxActiveBookings = 3
+object ":RentalService" as Svc #FEF9E7 {
+    MaxActiveRentals = 3
 }
 
 object ":UnitOfWork" as UoW #FDEBD0 {
-    Bookings  : IBookingRepository
-    Resources : IResourceRepository
+    Rentals : IRentalRepository
+    Cars    : ICarRepository
 }
 
-object ":ResourceRepository" as ResRepo #F5EEF8 {
+object ":CarRepository" as CarRepo #F5EEF8 {
 }
 
-object ":BookingRepository" as BkRepo #F5EEF8 {
+object ":RentalRepository" as RentRepo #F5EEF8 {
 }
 
 object ":ApplicationDbContext" as DB #FDEDEC {
-    Bookings  : DbSet<Booking>
-    Resources : DbSet<Resource>
+    Cars    : DbSet<Car>
+    Rentals : DbSet<Rental>
 }
 
-object ":Booking" as BkEntity #FDEDEC {
+object ":Rental" as RentEntity #FDEDEC {
     Status    = Pending
+    TotalPrice = calculated
     CreatedAt = UtcNow
 }
 
@@ -99,72 +100,75 @@ note on link
 end note
 
 ' 4. AutoMapper
-Ctrl --> Mpr : 4: Map<CreateBookingDto>(vm)
-Mpr  --> Dto : 4.1: new CreateBookingDto(...)
+Ctrl --> Mpr : 4: Map<CreateRentalDto>(vm)
+Mpr  --> Dto : 4.1: new CreateRentalDto(...)
 
 ' 5. Виклик сервісу
-Ctrl --> Svc : 5: CreateBookingAsync(userId, dto)
+Ctrl --> Svc : 5: CreateRentalAsync(userId, dto)
 
-' 6. Статична перевірка часів
-Svc --> Svc : 6: ValidateTimes(start, end)
+' 6. Статична перевірка дат
+Svc --> Svc : 6: ValidateDates(pickupDate, returnDate)
 
 note on link
   6a: [fail] → ServiceResult.Fail
 end note
 
-' 7. Перевірка ресурсу
-Svc  --> UoW     : 7: uow.Resources.GetWithCategoryAsync(id)
-UoW  --> ResRepo : 7.1: GetWithCategoryAsync(id)
-ResRepo --> DB   : 7.2: SELECT Resource + Category
-DB --> ResRepo   : 7.3: Resource entity
+' 7. Перевірка автомобіля
+Svc  --> UoW     : 7: uow.Cars.GetWithCategoryAsync(id)
+UoW  --> CarRepo : 7.1: GetWithCategoryAsync(id)
+CarRepo --> DB   : 7.2: SELECT Car + Category
+DB --> CarRepo   : 7.3: Car entity
 
 note on link
   7a: [null] → Fail "does not exist"
   7b: [!Available] → Fail "not available"
 end note
 
-' 8. Ліміт активних бронювань
-Svc  --> UoW     : 8: uow.Bookings.GetActiveBookingCountAsync(userId)
-UoW  --> BkRepo  : 8.1: GetActiveBookingCountAsync(userId)
-BkRepo --> DB    : 8.2: SELECT COUNT(*) Pending/Confirmed
-DB --> BkRepo    : 8.3: int count
+' 8. Ліміт активних оренд
+Svc  --> UoW      : 8: uow.Rentals.GetActiveRentalCountAsync(userId)
+UoW  --> RentRepo : 8.1: GetActiveRentalCountAsync(userId)
+RentRepo --> DB   : 8.2: SELECT COUNT(*) Pending/Confirmed
+DB --> RentRepo   : 8.3: int count
 
 note on link
-  8a: [count >= 3] → Fail "max bookings"
+  8a: [count >= 3] → Fail "max rentals"
 end note
 
 ' 9. Перевірка overlap
-Svc  --> UoW     : 9: uow.Bookings.HasOverlapAsync(id, start, end)
-UoW  --> BkRepo  : 9.1: HasOverlapAsync(...)
-BkRepo --> DB    : 9.2: SELECT EXISTS overlap
-DB --> BkRepo    : 9.3: bool hasOverlap
+Svc  --> UoW      : 9: uow.Rentals.HasOverlapAsync(id, pickupDate, returnDate)
+UoW  --> RentRepo : 9.1: HasOverlapAsync(...)
+RentRepo --> DB   : 9.2: SELECT EXISTS overlap by dates
+DB --> RentRepo   : 9.3: bool hasOverlap
 
 note on link
   9a: [true] → Fail "already booked"
 end note
 
-' 10. Створення сутності
-Svc --> BkEntity : 10: new Booking { Status=Pending }
+' 10. Розрахунок вартості
+Svc --> Svc : 10: TotalPrice =\n(ReturnDate - PickupDate).Days\n× car.PricePerDay
 
-' 11. Збереження
-Svc  --> UoW     : 11: uow.Bookings.AddAsync(booking)
-UoW  --> BkRepo  : 11.1: AddAsync(booking)
-BkRepo --> DB    : 11.2: context.Add(booking)
-Svc  --> UoW     : 12: uow.CommitAsync()
-UoW  --> DB      : 12.1: SaveChangesAsync()
+' 11. Створення сутності
+Svc --> RentEntity : 11: new Rental { Status=Pending,\nTotalPrice=totalPrice }
 
-' 13. Завантаження з деталями
-Svc  --> UoW     : 13: uow.Bookings.GetWithDetailsAsync(id)
-UoW  --> BkRepo  : 13.1: GetWithDetailsAsync(id)
-BkRepo --> DB    : 13.2: SELECT + Include User, Resource
-DB --> BkRepo    : 13.3: Booking (повний)
+' 12. Збереження
+Svc  --> UoW      : 12: uow.Rentals.AddAsync(rental)
+UoW  --> RentRepo : 12.1: AddAsync(rental)
+RentRepo --> DB   : 12.2: context.Add(rental)
+Svc  --> UoW      : 13: uow.CommitAsync()
+UoW  --> DB       : 13.1: SaveChangesAsync()
 
-' 14. Email (fire-and-forget)
-Svc --> Email : 14: SendBookingCreatedAsync(...)\n«fire-and-forget»
+' 14. Завантаження з деталями
+Svc  --> UoW      : 14: uow.Rentals.GetWithDetailsAsync(id)
+UoW  --> RentRepo : 14.1: GetWithDetailsAsync(id)
+RentRepo --> DB   : 14.2: SELECT + Include User, Car
+DB --> RentRepo   : 14.3: Rental (повний)
 
-' 15. Відповідь
-Svc  --> Ctrl : 15: ServiceResult<Booking>.Ok(created)
-Ctrl --> User : 16: Redirect → MyBookings\n+ TempData["Success"]
+' 15. Email (fire-and-forget)
+Svc --> Email : 15: SendRentalCreatedAsync(...)\n«fire-and-forget»
+
+' 16. Відповідь
+Svc  --> Ctrl : 16: ServiceResult<Rental>.Ok(created)
+Ctrl --> User : 17: Redirect → MyRentals\n+ TempData["Success"]
 
 ' ══════════════════════════════════════════════════════════════════
 ' ЛЕГЕНДА

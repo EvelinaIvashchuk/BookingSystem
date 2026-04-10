@@ -1,4 +1,4 @@
-@startuml BookingSystem_DeploymentDiagram
+@startuml CarRentalSystem_DeploymentDiagram
 skinparam nodeFontSize 13
 skinparam nodeBackgroundColor #FAFAFA
 skinparam nodeBorderColor #555
@@ -15,7 +15,7 @@ skinparam noteBorderColor #888
 skinparam shadowing false
 skinparam actorStyle awesome
 
-title Booking System — Діаграма розгортання\n«Фізична інфраструктура: Railway + GitHub + Client»
+title Car Rental System — Діаграма розгортання\n«Фізична інфраструктура: Railway + GitHub + Client»
 
 ' ══════════════════════════════════════════════════════════════════
 ' ВУЗОЛ: Машина розробника
@@ -28,8 +28,8 @@ node "Машина розробника\n(Windows / macOS)" as DevMachine #EBF5F
     component [Rider / VS Code\n(IDE)] as IDE
     component [Git Client] as GitClient
 
-    artifact "BookingSystem.sln" as SLN
-    artifact "BookingSystem/Dockerfile" as Dockerfile
+    artifact "CarRentalSystem.sln" as SLN
+    artifact "CarRentalSystem/Dockerfile" as Dockerfile
     artifact "railway.toml" as RailwayToml
     artifact "global.json\nnuget.config" as GlobalJson
 }
@@ -63,10 +63,10 @@ node "Railway Cloud Platform\n(railway.app)" as Railway #FEF9E7 {
 
         component [ASP.NET Core 9\nKestrel Web Server\n:8080] as Kestrel
 
-        package "BookingSystem Application" #FAFAFA {
-            component [BookingSystem.dll] as AppDll
+        package "CarRentalSystem Application" #FAFAFA {
+            component [CarRentalSystem.dll] as AppDll
             component [Presentation Layer\n(Controllers, Views)] as PresentationL
-            component [Service Layer\n(BookingService, etc.)] as ServiceL
+            component [Service Layer\n(RentalService, CarService, etc.)] as ServiceL
             component [Data Layer\n(EF Core, Repositories)] as DataL
             component [Serilog\n(Console Sink)] as SerilogApp
         }
@@ -85,9 +85,10 @@ node "Railway Cloud Platform\n(railway.app)" as Railway #FEF9E7 {
     node "MySQL Service\n(Railway managed)" as MySQLNode #FADBD8 {
         database "MySQL 8.0\nDatabase" as MySQLDB {
             component [AspNetUsers\n(Identity)] as TblUsers
-            component [Bookings]               as TblBookings
-            component [Resources]              as TblResources
+            component [Rentals]                as TblRentals
+            component [Cars]                   as TblCars
             component [Categories]             as TblCategories
+            component [Payments]               as TblPayments
         }
 
         note right of MySQLDB
@@ -124,7 +125,7 @@ DevMachine --> GitHub     : git push\n(SSH / HTTPS)
 GitHub      --> Railway   : Webhook trigger\n(push to main)
 
 GitHub --> BuildAgent     : git clone / checkout
-BuildAgent --> DockerBuilder : railway.toml\ndockerfilePath = "BookingSystem/Dockerfile"
+BuildAgent --> DockerBuilder : railway.toml\ndockerfilePath = "CarRentalSystem/Dockerfile"
 
 DockerBuilder --> DotnetRestore  : COPY .csproj\ndotnet restore
 DockerBuilder --> DotnetPublish  : COPY . .\ndotnet publish --no-restore
@@ -169,7 +170,7 @@ note bottom of BuildAgent
 end note
 
 note bottom of WebContainer
-  startCommand = "dotnet BookingSystem.dll"
+  startCommand = "dotnet CarRentalSystem.dll"
   healthcheckPath = "/"
   healthcheckTimeout = 300s
   restartPolicyType = "on_failure"

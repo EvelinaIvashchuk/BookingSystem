@@ -1,38 +1,38 @@
-# Аналіз діаграми класів — BookingSystem
+# Аналіз діаграми класів — Car Rental System
 
 ## 1. Розглянутий логічний ланцюжок
 
 ```
-BookingCreateViewModel
+RentalCreateViewModel
     ↓  validates via
-IValidator<BookingCreateViewModel>  (FluentValidation)
+IValidator<RentalCreateViewModel>  (FluentValidation)
     ↓
-BookingController
+RentalController
     ↓  maps via
-IMapper  (AutoMapper / BookingMappingProfile)
-    ↓  CreateBookingDto
-IBookingService
+IMapper  (AutoMapper / RentalMappingProfile)
+    ↓  CreateRentalDto
+IRentalService
     ↓
-BookingService
-    ↓  uow.Bookings / uow.Resources / uow.CommitAsync()
+RentalService
+    ↓  uow.Rentals / uow.Cars / uow.CommitAsync()
 IUnitOfWork
     ↓
 UnitOfWork
-    ├── IBookingRepository  →  BookingRepository
+    ├── IRentalRepository  →  RentalRepository
     │       ↓
     │   IGenericRepository<T>  →  GenericRepository<T>
     │       ↓
-    │   ApplicationDbContext  →  Booking (entity)
+    │   ApplicationDbContext  →  Rental (entity)
     │
-    └── IResourceRepository  →  ResourceRepository
+    └── ICarRepository  →  CarRepository
             ↓
         IGenericRepository<T>  →  GenericRepository<T>
             ↓
-        ApplicationDbContext  →  Resource (entity)
+        ApplicationDbContext  →  Car (entity)
 ```
 
 Допоміжні класи: `ServiceResult<T>`, `PaginatedList<T>`,
-`ApplicationUser` (extends `IdentityUser`), `Category`,
+`ApplicationUser` (extends `IdentityUser`), `Category`, `Payment`,
 `IEmailService` / `MockEmailService`.
 
 ---
@@ -40,68 +40,69 @@ UnitOfWork
 ## 2. Реалізовані патерни та SOLID
 
 ### 2.1 Repository Pattern
-`IGenericRepository<T>` → `GenericRepository<T>` → `BookingRepository` / `ResourceRepository`
+`IGenericRepository<T>` → `GenericRepository<T>` → `RentalRepository` / `CarRepository`
 
 - `IGenericRepository<T>` визначає базовий CRUD-контракт.
 - `GenericRepository<T>` реалізує його поверх `ApplicationDbContext`.
-- `BookingRepository` та `ResourceRepository` успадковують `GenericRepository<T>`
-  і додають специфічні методи (overlap-перевірка, фільтрація за статусом тощо).
+- `RentalRepository` та `CarRepository` успадковують `GenericRepository<T>`
+  і додають специфічні методи (overlap-перевірка за датами, фільтрація за статусом тощо).
 - **Відповідність**: повна. Ні контролер, ні сервіс не знають про EF Core.
 
 ### 2.2 Unit of Work Pattern
 `IUnitOfWork` → `UnitOfWork`
 
-- `UnitOfWork` об'єднує `IBookingRepository` та `IResourceRepository`
+- `UnitOfWork` об'єднує `IRentalRepository` та `ICarRepository`
   під єдиним `ApplicationDbContext`.
 - Єдиний `CommitAsync()` гарантує **атомарне збереження**: або обидва
   репозиторії зберегли зміни, або жоден.
-- `BookingService` ніколи не викликає `SaveChangesAsync()` безпосередньо —
+- `RentalService` ніколи не викликає `SaveChangesAsync()` безпосередньо —
   лише `uow.CommitAsync()`.
 
 ### 2.3 DTO Pattern
-`CreateBookingDto` (вхідний) / `BookingDto` (вихідний)
+`CreateRentalDto` (вхідний) / `RentalDto` (вихідний)
 
-- `BookingCreateViewModel` (MVC-шар) і `CreateBookingDto` (сервісний шар) — **різні типи**.
+- `RentalCreateViewModel` (MVC-шар) і `CreateRentalDto` (сервісний шар) — **різні типи**.
 - Перетворення `ViewModel → DTO` відбувається в контролері через `IMapper`.
 - Сервіс не залежить від жодного MVC-специфічного типу.
 
 ### 2.4 AutoMapper
-`BookingMappingProfile` : `Profile`
+`RentalMappingProfile` : `Profile`
 
-- `BookingCreateViewModel → CreateBookingDto` — маппінг при виклику сервісу.
-- `Booking → BookingDto` — маппінг Entity → Data Transfer Object.
+- `RentalCreateViewModel → CreateRentalDto` — маппінг при виклику сервісу.
+- `Rental → RentalDto` — маппінг Entity → Data Transfer Object.
 - Логіка перетворення зосереджена в одному місці, не розкидана по контролерах.
 
 ### 2.5 FluentValidation
-`BookingCreateViewModelValidator` : `AbstractValidator<BookingCreateViewModel>`
+`RentalCreateViewModelValidator` : `AbstractValidator<RentalCreateViewModel>`
 
 Правила, що перевіряються перед передачею в сервіс:
 
 | Правило | Значення |
 |---|---|
-| `StartTime` > `UtcNow` | Час у майбутньому |
-| `EndTime` > `StartTime` | Коректний діапазон |
-| Тривалість ≥ 30 хв | Мінімальне бронювання |
-| Тривалість ≤ 8 год | Максимальне бронювання |
-| `StartTime` ≤ now + 30 днів | Не далі місяця наперед |
-| `Purpose.Length` ≤ 500 | Обмеження поля |
+| `PickupDate` >= `UtcNow.Date` | Дата не в минулому |
+| `ReturnDate` > `PickupDate` | Коректний діапазон |
+| Тривалість ≥ 1 день | Мінімальна оренда |
+| Тривалість ≤ 30 днів | Максимальна оренда |
+| `PickupDate` ≤ now + 60 днів | Не далі двох місяців наперед |
+| `Notes.Length` ≤ 500 | Обмеження поля |
 
 - Помилки автоматично передаються в `ModelState` через `AddToModelState()`.
-- Сервіс не дублює ці перевірки (за винятком overlap та ліміту активних бронювань,
+- Сервіс не дублює ці перевірки (за винятком overlap та ліміту активних оренд,
   які потребують звернення до БД).
 
 ### 2.6 Service Layer Pattern
-`IBookingService` → `BookingService`
+`IRentalService` → `RentalService`
 
-Бізнес-правила, що перевіряються в `BookingService`:
+Бізнес-правила, що перевіряються в `RentalService`:
 
 | Правило | Де перевіряється |
 |---|---|
-| Ресурс існує та `Available` | БД через `uow.Resources` |
-| Кількість активних бронювань ≤ 3 | БД через `uow.Bookings` |
-| Відсутність overlap-перекриття | БД через `uow.Bookings` |
-| Не можна скасувати розпочате | Порівняння `StartTime` з `UtcNow` |
+| Автомобіль існує та `Available` | БД через `uow.Cars` |
+| Кількість активних оренд ≤ 3 | БД через `uow.Rentals` |
+| Відсутність overlap-перекриття за датами | БД через `uow.Rentals` |
+| Не можна скасувати розпочату оренду | Порівняння `PickupDate` з `UtcNow` |
 | Статус-машина (Pending → Confirmed/Rejected) | Перевірка поточного статусу |
+| TotalPrice = кількість днів × PricePerDay | Обчислення в сервісі |
 
 ### 2.7 Result Pattern
 `ServiceResult` / `ServiceResult<T>`
@@ -117,40 +118,41 @@ UnitOfWork
 | Принцип | Реалізація | Оцінка |
 |---|---|---|
 | **S** — Single Responsibility | Controller → HTTP та прив'язка форми; Validator → правила UI-валідації; Mapper → перетворення типів; Service → бізнес-логіка; Repository → доступ до даних | ✅ |
-| **O** — Open/Closed | `GenericRepository<T>` розширюється без змін через спадкування; `BookingMappingProfile` додає маппінги без зміни існуючих | ✅ |
-| **L** — Liskov Substitution | `BookingRepository` повністю замінює `GenericRepository<T>`; `UnitOfWork` повністю замінює `IUnitOfWork` | ✅ |
-| **I** — Interface Segregation | `IBookingRepository` розширює `IGenericRepository<T>` лише специфічними методами; `IUnitOfWork` не містить зайвих методів | ✅ |
-| **D** — Dependency Inversion | `BookingController` залежить від `IBookingService`, `IMapper`, `IValidator<T>`; `BookingService` залежить від `IUnitOfWork`, `IEmailService` — все через інтерфейси | ✅ |
+| **O** — Open/Closed | `GenericRepository<T>` розширюється без змін через спадкування; `RentalMappingProfile` додає маппінги без зміни існуючих | ✅ |
+| **L** — Liskov Substitution | `RentalRepository` повністю замінює `GenericRepository<T>`; `UnitOfWork` повністю замінює `IUnitOfWork` | ✅ |
+| **I** — Interface Segregation | `IRentalRepository` розширює `IGenericRepository<T>` лише специфічними методами; `IUnitOfWork` не містить зайвих методів | ✅ |
+| **D** — Dependency Inversion | `RentalController` залежить від `IRentalService`, `IMapper`, `IValidator<T>`; `RentalService` залежить від `IUnitOfWork`, `IEmailService` — все через інтерфейси | ✅ |
 
 ---
 
-## 4. Повний потік запиту (POST /Booking/Create)
+## 4. Повний потік запиту (POST /Rental/Create)
 
 ```
-[Browser] POST /Booking/Create
+[Browser] POST /Rental/Create
     ↓
-BookingController.Create(BookingCreateViewModel vm)
+RentalController.Create(RentalCreateViewModel vm)
     ↓  1. validator.ValidateAsync(vm)
-IValidator<BookingCreateViewModel>          ← FluentValidation
+IValidator<RentalCreateViewModel>          ← FluentValidation
     ↓  якщо помилки → повернути View з ModelState
-    ↓  2. mapper.Map<CreateBookingDto>(vm)
-IMapper / BookingMappingProfile             ← AutoMapper
-    ↓  3. bookingService.CreateBookingAsync(userId, dto)
-BookingService
-    ↓  4. ValidateTimes(dto.StartTime, dto.EndTime)  [static]
-    ↓  5. uow.Resources.GetWithCategoryAsync(dto.ResourceId)
-IUnitOfWork → ResourceRepository → GenericRepository → ApplicationDbContext
-    ↓  6. uow.Bookings.GetActiveBookingCountAsync(userId)
-    ↓  7. uow.Bookings.HasOverlapAsync(...)
-IUnitOfWork → BookingRepository → GenericRepository → ApplicationDbContext
-    ↓  8. uow.Bookings.AddAsync(booking)
-    ↓  9. uow.CommitAsync()          ← єдина точка збереження
-    ↓  10. SafeSendEmailAsync(...)   ← fire-and-forget
+    ↓  2. mapper.Map<CreateRentalDto>(vm)
+IMapper / RentalMappingProfile             ← AutoMapper
+    ↓  3. rentalService.CreateRentalAsync(userId, dto)
+RentalService
+    ↓  4. ValidateDates(dto.PickupDate, dto.ReturnDate)  [статична]
+    ↓  5. uow.Cars.GetWithCategoryAsync(dto.CarId)
+IUnitOfWork → CarRepository → GenericRepository → ApplicationDbContext
+    ↓  6. uow.Rentals.GetActiveRentalCountAsync(userId)
+    ↓  7. uow.Rentals.HasOverlapAsync(...)
+IUnitOfWork → RentalRepository → GenericRepository → ApplicationDbContext
+    ↓  8. TotalPrice = (ReturnDate - PickupDate).TotalDays × car.PricePerDay
+    ↓  9. uow.Rentals.AddAsync(rental)
+    ↓  10. uow.CommitAsync()         ← єдина точка збереження
+    ↓  11. SafeSendEmailAsync(...)   ← fire-and-forget
 MockEmailService
     ↓
-ServiceResult<Booking>.Ok(created)
+ServiceResult<Rental>.Ok(created)
     ↓
-BookingController → TempData["Success"] → RedirectToAction(MyBookings)
+RentalController → TempData["Success"] → RedirectToAction(MyRentals)
 ```
 
 ---
@@ -176,10 +178,10 @@ public class GenericRepository<T> where T : class, IEntity { ... }
 Для навчального проєкту — прийнятно.
 
 ### 5.3 Немає пагінації для адмін-панелі
-**Проблема**: `GetAllBookingsAsync()` повертає `IEnumerable<Booking>` без пагінації.
+**Проблема**: `GetAllRentalsAsync()` повертає `IEnumerable<Rental>` без пагінації.
 При великій кількості записів — проблема продуктивності.
 
-**Рішення**: Додати `PaginatedList<T>` аналогічно до `MyBookings`.
+**Рішення**: Додати `PaginatedList<T>` аналогічно до `MyRentals`.
 
 ---
 
@@ -189,12 +191,12 @@ public class GenericRepository<T> where T : class, IEntity { ... }
 
 | Патерн | Клас(и) | Статус |
 |---|---|---|
-| Repository | `IGenericRepository<T>`, `GenericRepository<T>`, `BookingRepository`, `ResourceRepository` | ✅ Реалізовано |
+| Repository | `IGenericRepository<T>`, `GenericRepository<T>`, `RentalRepository`, `CarRepository` | ✅ Реалізовано |
 | Unit of Work | `IUnitOfWork`, `UnitOfWork` | ✅ Реалізовано |
-| DTO | `CreateBookingDto`, `BookingDto` | ✅ Реалізовано |
-| AutoMapper | `BookingMappingProfile` : `Profile` | ✅ Реалізовано |
-| FluentValidation | `BookingCreateViewModelValidator` : `AbstractValidator<T>` | ✅ Реалізовано |
-| Service Layer | `IBookingService`, `BookingService` | ✅ Реалізовано |
+| DTO | `CreateRentalDto`, `RentalDto` | ✅ Реалізовано |
+| AutoMapper | `RentalMappingProfile` : `Profile` | ✅ Реалізовано |
+| FluentValidation | `RentalCreateViewModelValidator` : `AbstractValidator<T>` | ✅ Реалізовано |
+| Service Layer | `IRentalService`, `RentalService` | ✅ Реалізовано |
 | Result Pattern | `ServiceResult<T>`, `ServiceResult` | ✅ Реалізовано |
 | Dependency Injection | Всі залежності через інтерфейси та конструктор | ✅ Реалізовано |
 

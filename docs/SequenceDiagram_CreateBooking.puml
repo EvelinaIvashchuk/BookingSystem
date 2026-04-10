@@ -1,4 +1,4 @@
-@startuml BookingSystem_SequenceDiagram
+@startuml CarRentalSystem_SequenceDiagram
 skinparam sequenceArrowThickness 1.5
 skinparam sequenceParticipantFontSize 12
 skinparam sequenceLifeLineBorderColor #555
@@ -14,20 +14,20 @@ skinparam noteBorderColor #888
 skinparam shadowing false
 skinparam responseMessageBelowArrow true
 
-title Booking System — Діаграма послідовності\n«Створення бронювання: POST /Booking/Create»
+title Car Rental System — Діаграма послідовності\n«Створення оренди: POST /Rental/Create»
 
 ' ══════════════════════════════════════════════════════════════════
 ' УЧАСНИКИ
 ' ══════════════════════════════════════════════════════════════════
 
 actor       "Користувач"              as User
-participant "BookingController"       as Ctrl    #EBF5FB
-participant "IValidator\n<BookingCreateViewModel>" as Validator #FEF5E7
+participant "RentalController"        as Ctrl    #EBF5FB
+participant "IValidator\n<RentalCreateViewModel>" as Validator #FEF5E7
 participant "IMapper\n(AutoMapper)"   as Mapper  #F4ECF7
-participant "BookingService"          as Svc     #FEF9E7
+participant "RentalService"           as Svc     #FEF9E7
 participant "UnitOfWork"              as UoW     #FDEBD0
-participant "ResourceRepository"      as ResRepo #F5EEF8
-participant "BookingRepository"       as BkRepo  #F5EEF8
+participant "CarRepository"           as CarRepo #F5EEF8
+participant "RentalRepository"        as RentRepo #F5EEF8
 participant "ApplicationDbContext"    as DB      #FDEDEC
 participant "MockEmailService"        as Email   #EAFAF1
 
@@ -35,7 +35,7 @@ participant "MockEmailService"        as Email   #EAFAF1
 ' 1. HTTP-запит
 ' ══════════════════════════════════════════════════════════════════
 
-User -> Ctrl : POST /Booking/Create\n(BookingCreateViewModel vm)
+User -> Ctrl : POST /Rental/Create\n(RentalCreateViewModel vm)
 activate Ctrl
 
 ' ══════════════════════════════════════════════════════════════════
@@ -59,9 +59,9 @@ end
 ' ══════════════════════════════════════════════════════════════════
 
 group AutoMapper [Перетворення типів]
-    Ctrl -> Mapper : Map<CreateBookingDto>(vm)
+    Ctrl -> Mapper : Map<CreateRentalDto>(vm)
     activate Mapper
-    Mapper --> Ctrl : CreateBookingDto dto
+    Mapper --> Ctrl : CreateRentalDto dto
     deactivate Mapper
 end
 
@@ -69,82 +69,82 @@ end
 ' 4. Виклик сервісу
 ' ══════════════════════════════════════════════════════════════════
 
-Ctrl -> Svc : CreateBookingAsync(userId, dto)
+Ctrl -> Svc : CreateRentalAsync(userId, dto)
 activate Svc
 
-' ── 4.1 Статична перевірка часів ─────────────────────────────────
-group Бізнес-валідація [BookingService]
-    Svc -> Svc : ValidateTimes(dto.StartTime, dto.EndTime)
+' ── 4.1 Статична перевірка дат ───────────────────────────────────
+group Бізнес-валідація [RentalService]
+    Svc -> Svc : ValidateDates(dto.PickupDate, dto.ReturnDate)
     note right of Svc
-      • StartTime > UtcNow
-      • EndTime > StartTime
-      • Тривалість: 30хв – 8год
-      • Не далі 30 днів наперед
+      • PickupDate не в минулому
+      • ReturnDate > PickupDate
+      • Тривалість: 1 день – 30 днів
+      • Не далі 60 днів наперед
     end note
 
-    alt Часи невалідні
+    alt Дати невалідні
         Svc --> Ctrl : ServiceResult.Fail("...")
         Ctrl --> User : View з помилкою
     end
 end
 
-' ── 4.2 Перевірка ресурсу ────────────────────────────────────────
-group Перевірка ресурсу [IUnitOfWork → ResourceRepository]
-    Svc -> UoW : uow.Resources.GetWithCategoryAsync(dto.ResourceId)
+' ── 4.2 Перевірка автомобіля ─────────────────────────────────────
+group Перевірка автомобіля [IUnitOfWork → CarRepository]
+    Svc -> UoW : uow.Cars.GetWithCategoryAsync(dto.CarId)
     activate UoW
-    UoW -> ResRepo : GetWithCategoryAsync(id)
-    activate ResRepo
-    ResRepo -> DB : SELECT Resource + Category\nWHERE id = dto.ResourceId
+    UoW -> CarRepo : GetWithCategoryAsync(id)
+    activate CarRepo
+    CarRepo -> DB : SELECT Car + Category\nWHERE id = dto.CarId
     activate DB
-    DB --> ResRepo : Resource entity
+    DB --> CarRepo : Car entity
     deactivate DB
-    ResRepo --> UoW : Resource
-    deactivate ResRepo
-    UoW --> Svc : Resource
+    CarRepo --> UoW : Car
+    deactivate CarRepo
+    UoW --> Svc : Car
     deactivate UoW
 
-    alt Ресурс не знайдено
-        Svc --> Ctrl : ServiceResult.Fail("resource does not exist")
+    alt Автомобіль не знайдено
+        Svc --> Ctrl : ServiceResult.Fail("car does not exist")
         Ctrl --> User : View з помилкою
-    else Ресурс не Available
-        Svc --> Ctrl : ServiceResult.Fail("resource is not available")
+    else Автомобіль не Available
+        Svc --> Ctrl : ServiceResult.Fail("car is not available")
         Ctrl --> User : View з помилкою
     end
 end
 
-' ── 4.3 Ліміт активних бронювань ─────────────────────────────────
-group Ліміт бронювань [IUnitOfWork → BookingRepository]
-    Svc -> UoW : uow.Bookings.GetActiveBookingCountAsync(userId)
+' ── 4.3 Ліміт активних оренд ─────────────────────────────────────
+group Ліміт оренд [IUnitOfWork → RentalRepository]
+    Svc -> UoW : uow.Rentals.GetActiveRentalCountAsync(userId)
     activate UoW
-    UoW -> BkRepo : GetActiveBookingCountAsync(userId)
-    activate BkRepo
-    BkRepo -> DB : SELECT COUNT(*) FROM Bookings\nWHERE userId = ... AND\nstatus IN (Pending, Confirmed)
+    UoW -> RentRepo : GetActiveRentalCountAsync(userId)
+    activate RentRepo
+    RentRepo -> DB : SELECT COUNT(*) FROM Rentals\nWHERE userId = ... AND\nstatus IN (Pending, Confirmed)
     activate DB
-    DB --> BkRepo : int count
+    DB --> RentRepo : int count
     deactivate DB
-    BkRepo --> UoW : int count
-    deactivate BkRepo
+    RentRepo --> UoW : int count
+    deactivate RentRepo
     UoW --> Svc : int count
     deactivate UoW
 
     alt count >= 3
-        Svc --> Ctrl : ServiceResult.Fail("max 3 active bookings")
+        Svc --> Ctrl : ServiceResult.Fail("max 3 active rentals")
         Ctrl --> User : View з помилкою
     end
 end
 
 ' ── 4.4 Перевірка накладань ───────────────────────────────────────
-group Перевірка overlap [IUnitOfWork → BookingRepository]
-    Svc -> UoW : uow.Bookings.HasOverlapAsync\n(resourceId, start, end)
+group Перевірка overlap [IUnitOfWork → RentalRepository]
+    Svc -> UoW : uow.Rentals.HasOverlapAsync\n(carId, pickupDate, returnDate)
     activate UoW
-    UoW -> BkRepo : HasOverlapAsync(resourceId, start, end)
-    activate BkRepo
-    BkRepo -> DB : SELECT EXISTS (\n  SELECT 1 FROM Bookings\n  WHERE resourceId = ...\n  AND StartTime < end\n  AND EndTime > start\n  AND status IN (Pending, Confirmed)\n)
+    UoW -> RentRepo : HasOverlapAsync(carId, pickupDate, returnDate)
+    activate RentRepo
+    RentRepo -> DB : SELECT EXISTS (\n  SELECT 1 FROM Rentals\n  WHERE carId = ...\n  AND PickupDate < returnDate\n  AND ReturnDate > pickupDate\n  AND status IN (Pending, Confirmed)\n)
     activate DB
-    DB --> BkRepo : bool hasOverlap
+    DB --> RentRepo : bool hasOverlap
     deactivate DB
-    BkRepo --> UoW : bool hasOverlap
-    deactivate BkRepo
+    RentRepo --> UoW : bool hasOverlap
+    deactivate RentRepo
     UoW --> Svc : bool hasOverlap
     deactivate UoW
 
@@ -154,18 +154,20 @@ group Перевірка overlap [IUnitOfWork → BookingRepository]
     end
 end
 
-' ── 4.5 Збереження ───────────────────────────────────────────────
+' ── 4.5 Розрахунок вартості та збереження ────────────────────────
 group Збереження [IUnitOfWork.CommitAsync]
-    Svc -> UoW : uow.Bookings.AddAsync(booking)
+    Svc -> Svc : TotalPrice =\n(ReturnDate - PickupDate).Days\n× car.PricePerDay
+
+    Svc -> UoW : uow.Rentals.AddAsync(rental)
     activate UoW
-    UoW -> BkRepo : AddAsync(booking)
-    activate BkRepo
-    BkRepo -> DB : context.Bookings.AddAsync(booking)
+    UoW -> RentRepo : AddAsync(rental)
+    activate RentRepo
+    RentRepo -> DB : context.Rentals.AddAsync(rental)
     activate DB
-    DB --> BkRepo : —
+    DB --> RentRepo : —
     deactivate DB
-    BkRepo --> UoW : —
-    deactivate BkRepo
+    RentRepo --> UoW : —
+    deactivate RentRepo
 
     UoW -> DB : SaveChangesAsync()\n[CommitAsync]
     activate DB
@@ -176,22 +178,22 @@ group Збереження [IUnitOfWork.CommitAsync]
 end
 
 ' ── 4.6 Завантаження деталей ─────────────────────────────────────
-Svc -> UoW : uow.Bookings.GetWithDetailsAsync(booking.Id)
+Svc -> UoW : uow.Rentals.GetWithDetailsAsync(rental.Id)
 activate UoW
-UoW -> BkRepo : GetWithDetailsAsync(id)
-activate BkRepo
-BkRepo -> DB : SELECT Booking + User + Resource\nWHERE id = booking.Id
+UoW -> RentRepo : GetWithDetailsAsync(id)
+activate RentRepo
+RentRepo -> DB : SELECT Rental + User + Car\nWHERE id = rental.Id
 activate DB
-DB --> BkRepo : Booking (з навігаційними властивостями)
+DB --> RentRepo : Rental (з навігаційними властивостями)
 deactivate DB
-BkRepo --> UoW : Booking
-deactivate BkRepo
-UoW --> Svc : Booking created
+RentRepo --> UoW : Rental
+deactivate RentRepo
+UoW --> Svc : Rental created
 deactivate UoW
 
 ' ── 4.7 Email (fire-and-forget) ──────────────────────────────────
 group Email сповіщення [fire-and-forget]
-    Svc ->> Email : SendBookingCreatedAsync\n(email, name, resource, start, end)
+    Svc ->> Email : SendRentalCreatedAsync\n(email, name, car, pickupDate, returnDate, totalPrice)
     activate Email
     note right of Email
       «fire-and-forget»:
@@ -202,7 +204,7 @@ group Email сповіщення [fire-and-forget]
     deactivate Email
 end
 
-Svc --> Ctrl : ServiceResult<Booking>.Ok(created)
+Svc --> Ctrl : ServiceResult<Rental>.Ok(created)
 deactivate Svc
 
 ' ══════════════════════════════════════════════════════════════════
@@ -210,7 +212,7 @@ deactivate Svc
 ' ══════════════════════════════════════════════════════════════════
 
 Ctrl -> Ctrl : TempData["Success"] = "..."
-Ctrl --> User : RedirectToAction(MyBookings)
+Ctrl --> User : RedirectToAction(MyRentals)
 deactivate Ctrl
 
 @enduml
