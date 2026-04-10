@@ -1,17 +1,15 @@
 @{
-    ViewData["Title"] = "Forbidden";
+    ViewData["Title"] = L["Error_Forbidden_Title"].Value;
 }
 
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 text-center">
             <div class="display-1 fw-bold text-warning mb-3">403</div>
-            <h2 class="h3 fw-bold mb-2">Forbidden</h2>
-            <p class="text-muted mb-4">
-                You don't have permission to access this page.
-            </p>
+            <h2 class="h3 fw-bold mb-2">@L["Error_Forbidden_Title"]</h2>
+            <p class="text-muted mb-4">@L["Error_Forbidden_Desc"]</p>
             <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4">
-                <i class="bi bi-house me-1"></i> Go Home
+                <i class="bi bi-house me-1"></i> @L["Common_GoHome"]
             </a>
         </div>
     </div>

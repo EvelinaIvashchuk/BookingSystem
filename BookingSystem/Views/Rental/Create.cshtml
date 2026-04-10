@@ -1,6 +1,6 @@
 @model RentalCreateViewModel
 @{
-    ViewData["Title"] = "Rent " + Model.CarName;
+    ViewData["Title"] = L["Car_RentNow"].Value + " " + Model.CarName;
 }
 
 <div class="container py-5">
@@ -8,27 +8,27 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-primary text-white p-4 border-0 rounded-top">
-                    <h2 class="h4 mb-0"><i class="bi bi-car-front me-2"></i> Rent a Car</h2>
+                    <h2 class="h4 mb-0"><i class="bi bi-car-front me-2"></i> @L["Rental_RentACar"]</h2>
                 </div>
                 <div class="card-body p-4 p-md-5">
                     <div class="mb-5 p-4 bg-light rounded-3 border">
-                        <h3 class="h5 fw-bold mb-3 text-primary">Car Details</h3>
+                        <h3 class="h5 fw-bold mb-3 text-primary">@L["Rental_CarDetails"]</h3>
                         <div class="row g-3">
                             <div class="col-sm-6">
-                                <label class="text-muted small text-uppercase fw-bold d-block">Car</label>
+                                <label class="text-muted small text-uppercase fw-bold d-block">@L["Rental_Car"]</label>
                                 <span class="fs-5 fw-semibold text-dark">@Model.CarName</span>
                             </div>
                             <div class="col-sm-6">
-                                <label class="text-muted small text-uppercase fw-bold d-block">Location</label>
+                                <label class="text-muted small text-uppercase fw-bold d-block">@L["Rental_Location"]</label>
                                 <span class="text-dark">@Model.Location</span>
                             </div>
                             <div class="col-sm-6">
-                                <label class="text-muted small text-uppercase fw-bold d-block">Category</label>
+                                <label class="text-muted small text-uppercase fw-bold d-block">@L["Rental_Category"]</label>
                                 <span class="badge bg-secondary">@Model.CategoryName</span>
                             </div>
                             <div class="col-sm-6">
-                                <label class="text-muted small text-uppercase fw-bold d-block">Price</label>
-                                <span class="text-dark fw-bold text-primary">@Model.PricePerDay.ToString("N0") ₴ / day</span>
+                                <label class="text-muted small text-uppercase fw-bold d-block">@L["Rental_Price"]</label>
+                                <span class="text-dark fw-bold text-primary">@Model.PricePerDay.ToString("N0") ₴ / @L["Car_PerDayShort"]</span>
                             </div>
                         </div>
                     </div>
@@ -46,27 +46,27 @@
                                 <label asp-for="PickupDate" class="form-label fw-bold"></label>
                                 <input asp-for="PickupDate" class="form-control form-control-lg" type="date" />
                                 <span asp-validation-for="PickupDate" class="text-danger small"></span>
-                                <div class="form-text mt-2 small">When you want to pick up the car.</div>
+                                <div class="form-text mt-2 small">@L["Rental_PickupHint"]</div>
                             </div>
                             <div class="col-md-6">
                                 <label asp-for="ReturnDate" class="form-label fw-bold"></label>
                                 <input asp-for="ReturnDate" class="form-control form-control-lg" type="date" />
                                 <span asp-validation-for="ReturnDate" class="text-danger small"></span>
-                                <div class="form-text mt-2 small">When you plan to return the car.</div>
+                                <div class="form-text mt-2 small">@L["Rental_ReturnHint"]</div>
                             </div>
                         </div>
 
                         <div class="mb-5">
                             <label asp-for="Notes" class="form-label fw-bold"></label>
                             <textarea asp-for="Notes" class="form-control" rows="4"
-                                      placeholder="Any special requests or notes (optional)..."></textarea>
+                                      placeholder="@L["Rental_NotesPlaceholder"]"></textarea>
                             <span asp-validation-for="Notes" class="text-danger small"></span>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end pt-3 border-top">
                             <a asp-controller="Car" asp-action="Details" asp-route-id="@Model.CarId"
-                               class="btn btn-outline-secondary btn-lg px-4 me-md-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">Submit Rental Request</button>
+                               class="btn btn-outline-secondary btn-lg px-4 me-md-2">@L["Rental_Cancel"]</a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">@L["Rental_SubmitRequest"]</button>
                         </div>
                     </form>
                 </div>

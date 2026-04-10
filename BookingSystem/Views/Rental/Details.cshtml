@@ -1,6 +1,6 @@
 @model Rental
 @{
-    ViewData["Title"] = "Rental Details: " + Model.Car?.FullName;
+    ViewData["Title"] = L["Rental_DetailsHeader"].Value + ": " + Model.Car?.FullName;
 }
 
 <div class="container py-5">
@@ -8,14 +8,14 @@
         <div class="col-lg-8">
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-action="MyRentals">My Rentals</a></li>
-                    <li class="breadcrumb-item active">Details</li>
+                    <li class="breadcrumb-item"><a asp-action="MyRentals">@L["Rental_MyRentals"]</a></li>
+                    <li class="breadcrumb-item active">@L["Rental_Details"]</li>
                 </ol>
             </nav>
 
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-primary text-white p-4 border-0 rounded-top d-flex justify-content-between align-items-center">
-                    <h2 class="h4 mb-0"><i class="bi bi-info-circle me-2"></i> Rental Details</h2>
+                    <h2 class="h4 mb-0"><i class="bi bi-info-circle me-2"></i> @L["Rental_DetailsHeader"]</h2>
                     <span class="badge bg-white text-primary">ID: @Model.Id</span>
                 </div>
                 <div class="card-body p-4 p-md-5">
@@ -66,7 +66,7 @@
 
                     <div class="row g-5">
                         <div class="col-md-6">
-                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Car Information</h3>
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">@L["Rental_CarInfo"]</h3>
                             <div class="d-flex mb-3">
                                 <div class="bg-light p-2 rounded me-3">
                                     <i class="bi bi-car-front fs-4 text-primary"></i>
@@ -80,23 +80,23 @@
                         </div>
 
                         <div class="col-md-6 text-md-end">
-                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Current Status</h3>
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">@L["Rental_CurrentStatus"]</h3>
                             <partial name="_RentalStatusBadge" model="Model.Status" />
                             <div class="text-muted small mt-2">
-                                Submitted on @Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")
+                                @L["Rental_SubmittedOn"] @Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")
                             </div>
                         </div>
 
                         <div class="col-12"><hr></div>
 
                         <div class="col-md-6">
-                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Rental Period</h3>
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">@L["Rental_RentalPeriod"]</h3>
                             <div class="mb-3">
-                                <label class="small text-muted d-block">Pickup Date</label>
+                                <label class="small text-muted d-block">@L["Rental_PickupDate"]</label>
                                 <div class="fs-5 fw-semibold">@Model.PickupDate?.ToString("dddd, dd MMM yyyy")</div>
                             </div>
                             <div>
-                                <label class="small text-muted d-block">Return Date</label>
+                                <label class="small text-muted d-block">@L["Rental_ReturnDate"]</label>
                                 <div class="fs-5 fw-semibold">@Model.ReturnDate?.ToString("dddd, dd MMM yyyy")</div>
                             </div>
                             @if (Model.DurationDays.HasValue)
@@ -104,23 +104,23 @@
                                 <div class="mt-2">
                                     <span class="badge bg-light text-dark border">
                                         <i class="bi bi-calendar-range me-1"></i>
-                                        @Model.DurationDays day(s)
+                                        @Model.DurationDays @L["Rental_Days"]
                                     </span>
                                 </div>
                             }
                             <div class="mt-3">
-                                <span class="fs-5 fw-bold text-primary">Total: @Model.TotalPrice.ToString("N0") ₴</span>
+                                <span class="fs-5 fw-bold text-primary">@L["Rental_TotalLabel"] @Model.TotalPrice.ToString("N0") ₴</span>
                             </div>
                         </div>
 
                         <div class="col-md-6">
-                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">Notes</h3>
-                            <p class="mb-0">@(string.IsNullOrEmpty(Model.Notes) ? "No notes." : Model.Notes)</p>
+                            <h3 class="h6 text-uppercase text-muted fw-bold mb-3">@L["Rental_Notes"]</h3>
+                            <p class="mb-0">@(string.IsNullOrEmpty(Model.Notes) ? L["Rental_NoNotes"].Value : Model.Notes)</p>
 
                             @if (!string.IsNullOrEmpty(Model.AdminNote))
                             {
                                 <div class="mt-4 p-3 bg-light border-start border-primary border-4 rounded">
-                                    <label class="small text-uppercase text-primary fw-bold d-block mb-1">Admin Note</label>
+                                    <label class="small text-uppercase text-primary fw-bold d-block mb-1">@L["Rental_AdminNote"]</label>
                                     <p class="mb-0 small fst-italic">@Model.AdminNote</p>
                                 </div>
                             }
@@ -129,22 +129,22 @@
                             {
                                 <div class="mt-3 text-muted small">
                                     <i class="bi bi-clock-history me-1"></i>
-                                    Cancelled on @Model.CancelledAt.Value.ToString("dd MMM yyyy, HH:mm")
+                                    @L["Rental_CancelledOn"] @Model.CancelledAt.Value.ToString("dd MMM yyyy, HH:mm")
                                 </div>
                             }
                         </div>
                     </div>
 
                     <div class="mt-5 pt-4 border-top d-flex justify-content-between align-items-center">
-                        <a asp-action="MyRentals" class="btn btn-outline-secondary">Back to My Rentals</a>
+                        <a asp-action="MyRentals" class="btn btn-outline-secondary">@L["Rental_BackToMyRentals"]</a>
 
                         @if (Model.CanBeCancelledByUser)
                         {
                             <form asp-controller="Rental" asp-action="Cancel" method="post"
-                                  onsubmit="return confirm('Are you sure you want to cancel this rental?');">
+                                  onsubmit="return confirm('@L["Rental_CancelConfirm"]');">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@Model.Id" />
-                                <button type="submit" class="btn btn-danger px-4">Cancel Rental</button>
+                                <button type="submit" class="btn btn-danger px-4">@L["Rental_CancelRental"]</button>
                             </form>
                         }
                     </div>

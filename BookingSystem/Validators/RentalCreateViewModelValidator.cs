@@ -1,5 +1,8 @@
+using BookingSystem;
+using BookingSystem.Resources;
 using BookingSystem.ViewModels;
 using FluentValidation;
+using Microsoft.Extensions.Localization;
 
 namespace BookingSystem.Validators;
 
@@ -9,40 +12,40 @@ public class RentalCreateViewModelValidator : AbstractValidator<RentalCreateView
     private const int MaxRentalDays  = 30;
     private const int MaxAdvanceDays = 60;
 
-    public RentalCreateViewModelValidator()
+    public RentalCreateViewModelValidator(IStringLocalizer<SharedResources> localizer)
     {
         RuleFor(x => x.PickupDate)
             .NotEmpty()
-                .WithMessage("Pickup date is required.")
+                .WithMessage(localizer["Val_PickupRequired"].Value)
             .GreaterThanOrEqualTo(DateTime.UtcNow.Date)
-                .WithMessage("Pickup date cannot be in the past.")
+                .WithMessage(localizer["Val_PickupNotPast"].Value)
             .LessThanOrEqualTo(DateTime.UtcNow.Date.AddDays(MaxAdvanceDays))
-                .WithMessage($"Rental cannot be booked more than {MaxAdvanceDays} days in advance.");
+                .WithMessage(string.Format(localizer["Val_PickupAdvance"].Value, MaxAdvanceDays));
 
         RuleFor(x => x.ReturnDate)
             .NotEmpty()
-                .WithMessage("Return date is required.")
+                .WithMessage(localizer["Val_ReturnRequired"].Value)
             .GreaterThan(x => x.PickupDate)
                 .When(x => x.PickupDate.HasValue)
-                .WithMessage("Return date must be after pickup date.");
+                .WithMessage(localizer["Val_ReturnAfterPickup"].Value);
 
         RuleFor(x => x)
             .Must(x => !x.PickupDate.HasValue || !x.ReturnDate.HasValue ||
                        (x.ReturnDate.Value.Date - x.PickupDate.Value.Date).TotalDays >= MinRentalDays)
-            .WithMessage($"Rental must be at least {MinRentalDays} day(s).")
+            .WithMessage(string.Format(localizer["Val_MinDays"].Value, MinRentalDays))
             .WithName("Duration")
             .When(x => x.PickupDate.HasValue && x.ReturnDate.HasValue);
 
         RuleFor(x => x)
             .Must(x => !x.PickupDate.HasValue || !x.ReturnDate.HasValue ||
                        (x.ReturnDate.Value.Date - x.PickupDate.Value.Date).TotalDays <= MaxRentalDays)
-            .WithMessage($"Rental cannot exceed {MaxRentalDays} days.")
+            .WithMessage(string.Format(localizer["Val_MaxDays"].Value, MaxRentalDays))
             .WithName("Duration")
             .When(x => x.PickupDate.HasValue && x.ReturnDate.HasValue);
 
         RuleFor(x => x.Notes)
             .MaximumLength(500)
-                .WithMessage("Notes cannot exceed 500 characters.")
+                .WithMessage(localizer["Val_NotesMax"].Value)
             .When(x => x.Notes is not null);
     }
 }

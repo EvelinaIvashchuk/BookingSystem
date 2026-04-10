@@ -1,6 +1,6 @@
 @model RegisterViewModel
 @{
-    ViewData["Title"] = "Create Account";
+    ViewData["Title"] = L["Account_Register_Title"].Value;
 }
 
 <div class="container py-5">
@@ -10,8 +10,8 @@
                 <div class="card-body p-4 p-md-5">
                     <div class="text-center mb-4">
                         <i class="bi bi-person-plus text-primary" style="font-size: 3rem;"></i>
-                        <h2 class="h3 fw-bold mt-2">Create an Account</h2>
-                        <p class="text-muted small">Join to start booking resources.</p>
+                        <h2 class="h3 fw-bold mt-2">@L["Account_CreateAccount"]</h2>
+                        <p class="text-muted small">@L["Account_RegisterDesc"]</p>
                     </div>
 
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
@@ -51,7 +51,7 @@
                                     <i class="bi bi-lock text-muted"></i>
                                 </span>
                                 <input asp-for="Password" class="form-control border-start-0 ps-0"
-                                       placeholder="Min. 8 chars, 1 uppercase, 1 digit" autocomplete="new-password" />
+                                       placeholder="@L["Account_PasswordPlaceholder"]" autocomplete="new-password" />
                             </div>
                             <span asp-validation-for="Password" class="text-danger small"></span>
                         </div>
@@ -63,21 +63,21 @@
                                     <i class="bi bi-lock-fill text-muted"></i>
                                 </span>
                                 <input asp-for="ConfirmPassword" class="form-control border-start-0 ps-0"
-                                       placeholder="Repeat password" autocomplete="new-password" />
+                                       placeholder="@L["Account_RepeatPassword"]" autocomplete="new-password" />
                             </div>
                             <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
                         </div>
 
                         <div class="d-grid mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg">Create Account</button>
+                            <button type="submit" class="btn btn-primary btn-lg">@L["Account_CreateAccountBtn"]</button>
                         </div>
                     </form>
 
                     <hr class="my-4">
 
                     <p class="text-center text-muted small mb-0">
-                        Already have an account?
-                        <a asp-action="Login" class="fw-semibold text-decoration-none">Sign in</a>
+                        @L["Account_AlreadyHave"]
+                        <a asp-action="Login" class="fw-semibold text-decoration-none">@L["Account_SignInLink"]</a>
                     </p>
                 </div>
             </div>

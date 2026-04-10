@@ -1,17 +1,17 @@
 @using BookingSystem.Helpers
 @model PaginatedList<Rental>
 @{
-    ViewData["Title"] = "My Rentals";
+    ViewData["Title"] = L["Rental_MyRentals"].Value;
 }
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
         <div>
-            <h1 class="h2 mb-0">My Rentals</h1>
-            <p class="text-muted small mb-0">@Model.TotalCount rental(s) total.</p>
+            <h1 class="h2 mb-0">@L["Rental_MyRentals"]</h1>
+            <p class="text-muted small mb-0">@string.Format(L["Rental_RentalsTotal"].Value, Model.TotalCount)</p>
         </div>
         <a asp-controller="Car" asp-action="Index" class="btn btn-primary">
-            <i class="bi bi-car-front me-2"></i> Rent Another Car
+            <i class="bi bi-car-front me-2"></i> @L["Rental_RentAnother"]
         </a>
     </div>
 
@@ -36,11 +36,11 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-3">Car</th>
-                            <th>Dates</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th class="text-end pe-3">Actions</th>
+                            <th class="ps-3">@L["Admin_Car"]</th>
+                            <th>@L["Rental_Dates"]</th>
+                            <th>@L["Rental_Total"]</th>
+                            <th>@L["Admin_Status"]</th>
+                            <th class="text-end pe-3">@L["Common_Actions"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,7 +49,7 @@
                             <tr>
                                 <td colspan="5" class="text-center py-5 text-muted">
                                     <i class="bi bi-car-front fs-3 d-block mb-2"></i>
-                                    You haven't made any rentals yet.
+                                    @L["Rental_NoPrevious"]
                                 </td>
                             </tr>
                         }
@@ -62,7 +62,7 @@
                                 </td>
                                 <td>
                                     <div class="small">@r.PickupDate?.ToString("dd MMM yyyy") – @r.ReturnDate?.ToString("dd MMM yyyy")</div>
-                                    <div class="text-muted extra-small">@r.DurationDays day(s)</div>
+                                    <div class="text-muted extra-small">@r.DurationDays @L["Rental_Days"]</div>
                                 </td>
                                 <td class="fw-bold">@r.TotalPrice.ToString("N0") ₴</td>
                                 <td>
@@ -70,13 +70,13 @@
                                 </td>
                                 <td class="text-end pe-3">
                                     <div class="btn-group btn-group-sm">
-                                        <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-outline-primary">Details</a>
+                                        <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-outline-primary">@L["Rental_Details"]</a>
                                         @if (r.CanBeCancelledByUser)
                                         {
                                             <form asp-action="Cancel" method="post" class="d-inline"
-                                                  onsubmit="return confirm('Are you sure you want to cancel this rental?');">
+                                                  onsubmit="return confirm('@L["Rental_CancelConfirm"]');">
                                                 <input type="hidden" name="id" value="@r.Id" />
-                                                <button type="submit" class="btn btn-outline-danger">Cancel</button>
+                                                <button type="submit" class="btn btn-outline-danger">@L["Common_Cancel"]</button>
                                             </form>
                                         }
                                     </div>

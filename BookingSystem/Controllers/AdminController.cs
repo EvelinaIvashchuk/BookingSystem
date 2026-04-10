@@ -1,3 +1,5 @@
+using BookingSystem;
+using BookingSystem.Resources;
 using BookingSystem.Data;
 using BookingSystem.Enums;
 using BookingSystem.Helpers;
@@ -8,15 +10,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace BookingSystem.Controllers;
 
 [Authorize(Roles = "Admin")]
 public class AdminController(
-    IRentalService  rentalService,
-    ICarService     carService,
-    IUserService    userService,
-    ApplicationDbContext db) : Controller
+    IRentalService                    rentalService,
+    ICarService                       carService,
+    IUserService                      userService,
+    ApplicationDbContext              db,
+    IStringLocalizer<SharedResources> localizer) : Controller
 {
     // ── Dashboard ─────────────────────────────────────────────────────────────
 
@@ -94,7 +98,7 @@ public class AdminController(
             return View(vm);
         }
 
-        TempData["Success"] = $"Car \"{result.Value!.FullName}\" created successfully.";
+        TempData["Success"] = string.Format(localizer["Msg_CarCreated"].Value, result.Value!.FullName);
         return RedirectToAction(nameof(Cars));
     }
 
@@ -162,7 +166,7 @@ public class AdminController(
             return View(vm);
         }
 
-        TempData["Success"] = "Car updated successfully.";
+        TempData["Success"] = localizer["Msg_CarUpdated"].Value;
         return RedirectToAction(nameof(Cars));
     }
 
@@ -173,7 +177,7 @@ public class AdminController(
         var result = await carService.SetCarStatusAsync(carId, status);
 
         if (result.IsSuccess)
-            TempData["Success"] = "Car status updated.";
+            TempData["Success"] = localizer["Msg_CarStatusUpdated"].Value;
         else
             TempData["Error"] = result.Error;
 
@@ -201,7 +205,7 @@ public class AdminController(
         var result = await rentalService.ConfirmRentalAsync(id, adminNote);
 
         if (result.IsSuccess)
-            TempData["Success"] = "Rental confirmed.";
+            TempData["Success"] = localizer["Msg_RentalConfirmed"].Value;
         else
             TempData["Error"] = result.Error;
 
@@ -215,7 +219,7 @@ public class AdminController(
 
         if (rental.Status != RentalStatus.Pending)
         {
-            TempData["Error"] = "Only Pending rentals can be rejected.";
+            TempData["Error"] = localizer["Msg_OnlyPendingRejected"].Value;
             return RedirectToAction(nameof(Rentals));
         }
 
@@ -243,7 +247,7 @@ public class AdminController(
 
         if (result.IsSuccess)
         {
-            TempData["Success"] = "Rental rejected.";
+            TempData["Success"] = localizer["Msg_RentalRejected"].Value;
             return RedirectToAction(nameof(Rentals));
         }
 
@@ -266,7 +270,9 @@ public class AdminController(
         var result = await userService.SetActiveStatusAsync(userId, isActive);
 
         if (result.IsSuccess)
-            TempData["Success"] = isActive ? "User account activated." : "User account deactivated.";
+            TempData["Success"] = isActive
+                ? localizer["Msg_UserActivated"].Value
+                : localizer["Msg_UserDeactivated"].Value;
         else
             TempData["Error"] = result.Error;
 
@@ -280,7 +286,7 @@ public class AdminController(
         var result = await userService.PromoteToAdminAsync(userId);
 
         if (result.IsSuccess)
-            TempData["Success"] = "User has been promoted to Admin.";
+            TempData["Success"] = localizer["Msg_UserPromoted"].Value;
         else
             TempData["Error"] = result.Error;
 

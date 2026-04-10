@@ -1,3 +1,5 @@
+using System.Linq;
+using BookingSystem;
 using BookingSystem.Data;
 using BookingSystem.Data.Repositories;
 using BookingSystem.Mappings;
@@ -8,6 +10,7 @@ using BookingSystem.Validators;
 using BookingSystem.ViewModels;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -82,8 +85,17 @@ builder.Services.AddAutoMapper(typeof(RentalMappingProfile).Assembly);
 // ── FluentValidation ──────────────────────────────────────────────────────────
 builder.Services.AddScoped<IValidator<RentalCreateViewModel>, RentalCreateViewModelValidator>();
 
+// ── Localization ──────────────────────────────────────────────────────────────
+builder.Services.AddLocalization();
+
 // ── MVC ───────────────────────────────────────────────────────────────────────
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (_, factory) =>
+            factory.Create(typeof(BookingSystem.Resources.SharedResources));
+    });
 
 var app = builder.Build();
 
@@ -107,6 +119,19 @@ else
 app.UseStatusCodePagesWithReExecute("/Home/StatusCode", "?code={0}");
 
 app.UseSerilogRequestLogging();
+
+// ── Localization middleware ────────────────────────────────────────────────────
+var supportedCultures = new[] { "uk", "en-US", "en" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("uk")
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
+// Прибираємо AcceptLanguageHeaderRequestCultureProvider, щоб мова браузера не перебивала дефолтну українську
+localizationOptions.RequestCultureProviders.Remove(
+    localizationOptions.RequestCultureProviders.OfType<AcceptLanguageHeaderRequestCultureProvider>().FirstOrDefault()!);
+
+app.UseRequestLocalization(localizationOptions);
 
 app.UseHttpsRedirection();
 app.UseRouting();

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+
+  <!-- ── Navigation ─────────────────────────────────────────────── -->
+  <data name="Nav_Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Nav_Cars" xml:space="preserve"><value>Cars</value></data>
+  <data name="Nav_MyRentals" xml:space="preserve"><value>My Rentals</value></data>
+  <data name="Nav_AdminPanel" xml:space="preserve"><value>Admin Panel</value></data>
+  <data name="Nav_Login" xml:space="preserve"><value>Login</value></data>
+  <data name="Nav_Register" xml:space="preserve"><value>Register</value></data>
+  <data name="Nav_Logout" xml:space="preserve"><value>Logout</value></data>
+  <data name="Nav_Privacy" xml:space="preserve"><value>Privacy</value></data>
+  <data name="Nav_ChangeLanguage" xml:space="preserve"><value>Change Language</value></data>
+  <data name="Lang_Code" xml:space="preserve"><value>EN</value></data>
+  <data name="Lang_Other" xml:space="preserve"><value>UA</value></data>
+  <data name="Lang_Other_Culture" xml:space="preserve"><value>uk</value></data>
+
+  <!-- ── Home ───────────────────────────────────────────────────── -->
+  <data name="Home_Title" xml:space="preserve"><value>Home Page</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>Welcome to CarRental</value></data>
+  <data name="Home_Subtitle" xml:space="preserve"><value>Find and rent the perfect car for your trip. Fast, easy, reliable.</value></data>
+  <data name="Home_SearchCars" xml:space="preserve"><value>Search Cars</value></data>
+  <data name="Home_SearchCarsDesc" xml:space="preserve"><value>Browse our fleet and find the perfect car for your needs.</value></data>
+  <data name="Home_EasyRental" xml:space="preserve"><value>Easy Rental</value></data>
+  <data name="Home_EasyRentalDesc" xml:space="preserve"><value>Pick your dates, submit a request, and get confirmed quickly.</value></data>
+  <data name="Home_SecureReliable" xml:space="preserve"><value>Secure &amp; Reliable</value></data>
+  <data name="Home_SecureReliableDesc" xml:space="preserve"><value>All cars are inspected and insured for your safety.</value></data>
+  <data name="Home_FeaturedCars" xml:space="preserve"><value>Featured Cars</value></data>
+  <data name="Home_ViewAll" xml:space="preserve"><value>View all</value></data>
+  <data name="Home_BrowseCars" xml:space="preserve"><value>Browse Cars</value></data>
+  <data name="Home_PerDay" xml:space="preserve"><value>₴/day</value></data>
+
+  <!-- ── Car ────────────────────────────────────────────────────── -->
+  <data name="Car_Title" xml:space="preserve"><value>Available Cars</value></data>
+  <data name="Car_BrowseCars" xml:space="preserve"><value>Browse Cars</value></data>
+  <data name="Car_CarsFound" xml:space="preserve"><value>{0} available car(s) found.</value></data>
+  <data name="Car_AllCategories" xml:space="preserve"><value>All Categories</value></data>
+  <data name="Car_SearchPlaceholder" xml:space="preserve"><value>Search by brand, model or description...</value></data>
+  <data name="Car_Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Car_NoResults" xml:space="preserve"><value>No cars match your search or filter.</value></data>
+  <data name="Car_ViewAllCars" xml:space="preserve"><value>View all cars</value></data>
+  <data name="Car_Seats" xml:space="preserve"><value>seats</value></data>
+  <data name="Car_PerDay" xml:space="preserve"><value>₴/day</value></data>
+  <data name="Car_ViewDetails" xml:space="preserve"><value>View Details</value></data>
+  <data name="Car_RentNow" xml:space="preserve"><value>Rent Now</value></data>
+  <data name="Car_Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Car_Location" xml:space="preserve"><value>Location</value></data>
+  <data name="Car_SeatsLabel" xml:space="preserve"><value>Seats</value></data>
+  <data name="Car_FuelType" xml:space="preserve"><value>Fuel Type</value></data>
+  <data name="Car_Transmission" xml:space="preserve"><value>Transmission</value></data>
+  <data name="Car_Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Car_Available" xml:space="preserve"><value>Available</value></data>
+  <data name="Car_CurrentlyUnavailable" xml:space="preserve"><value>Currently Unavailable</value></data>
+  <data name="Car_BackToList" xml:space="preserve"><value>Back to List</value></data>
+  <data name="Car_Includes" xml:space="preserve"><value>Includes</value></data>
+  <data name="Car_FullInsurance" xml:space="preserve"><value>Full insurance</value></data>
+  <data name="Car_Roadside" xml:space="preserve"><value>24/7 roadside assistance</value></data>
+  <data name="Car_FreeCancellation" xml:space="preserve"><value>Free cancellation</value></data>
+  <data name="Car_PerDayShort" xml:space="preserve"><value>/ day</value></data>
+
+  <!-- ── Rental ─────────────────────────────────────────────────── -->
+  <data name="Rental_RentACar" xml:space="preserve"><value>Rent a Car</value></data>
+  <data name="Rental_CarDetails" xml:space="preserve"><value>Car Details</value></data>
+  <data name="Rental_Car" xml:space="preserve"><value>Car</value></data>
+  <data name="Rental_Location" xml:space="preserve"><value>Location</value></data>
+  <data name="Rental_Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Rental_Price" xml:space="preserve"><value>Price</value></data>
+  <data name="Rental_PickupDate" xml:space="preserve"><value>Pickup Date</value></data>
+  <data name="Rental_ReturnDate" xml:space="preserve"><value>Return Date</value></data>
+  <data name="Rental_PickupHint" xml:space="preserve"><value>When you want to pick up the car.</value></data>
+  <data name="Rental_ReturnHint" xml:space="preserve"><value>When you plan to return the car.</value></data>
+  <data name="Rental_Notes" xml:space="preserve"><value>Notes</value></data>
+  <data name="Rental_NotesPlaceholder" xml:space="preserve"><value>Any special requests or notes (optional)...</value></data>
+  <data name="Rental_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Rental_SubmitRequest" xml:space="preserve"><value>Submit Rental Request</value></data>
+  <data name="Rental_MyRentals" xml:space="preserve"><value>My Rentals</value></data>
+  <data name="Rental_RentalsTotal" xml:space="preserve"><value>{0} rental(s) total.</value></data>
+  <data name="Rental_RentAnother" xml:space="preserve"><value>Rent Another Car</value></data>
+  <data name="Rental_NoPrevious" xml:space="preserve"><value>You haven't made any rentals yet.</value></data>
+  <data name="Rental_Dates" xml:space="preserve"><value>Dates</value></data>
+  <data name="Rental_Total" xml:space="preserve"><value>Total</value></data>
+  <data name="Rental_Details" xml:space="preserve"><value>Details</value></data>
+  <data name="Rental_Days" xml:space="preserve"><value>day(s)</value></data>
+  <data name="Rental_DetailsHeader" xml:space="preserve"><value>Rental Details</value></data>
+  <data name="Rental_CarInfo" xml:space="preserve"><value>Car Information</value></data>
+  <data name="Rental_CurrentStatus" xml:space="preserve"><value>Current Status</value></data>
+  <data name="Rental_SubmittedOn" xml:space="preserve"><value>Submitted on</value></data>
+  <data name="Rental_RentalPeriod" xml:space="preserve"><value>Rental Period</value></data>
+  <data name="Rental_AdminNote" xml:space="preserve"><value>Admin Note</value></data>
+  <data name="Rental_NoNotes" xml:space="preserve"><value>No notes.</value></data>
+  <data name="Rental_CancelledOn" xml:space="preserve"><value>Cancelled on</value></data>
+  <data name="Rental_BackToMyRentals" xml:space="preserve"><value>Back to My Rentals</value></data>
+  <data name="Rental_CancelRental" xml:space="preserve"><value>Cancel Rental</value></data>
+  <data name="Rental_CancelConfirm" xml:space="preserve"><value>Are you sure you want to cancel this rental?</value></data>
+  <data name="Rental_TotalLabel" xml:space="preserve"><value>Total:</value></data>
+
+  <!-- ── Account ────────────────────────────────────────────────── -->
+  <data name="Account_SignIn_Title" xml:space="preserve"><value>Sign In</value></data>
+  <data name="Account_WelcomeBack" xml:space="preserve"><value>Welcome Back</value></data>
+  <data name="Account_SignInDesc" xml:space="preserve"><value>Sign in to manage your rentals.</value></data>
+  <data name="Account_Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Account_Password" xml:space="preserve"><value>Password</value></data>
+  <data name="Account_RememberMe" xml:space="preserve"><value>Remember me for 8 hours</value></data>
+  <data name="Account_SignInBtn" xml:space="preserve"><value>Sign In</value></data>
+  <data name="Account_NoAccount" xml:space="preserve"><value>Don't have an account?</value></data>
+  <data name="Account_CreateOne" xml:space="preserve"><value>Create one</value></data>
+  <data name="Account_Register_Title" xml:space="preserve"><value>Create Account</value></data>
+  <data name="Account_CreateAccount" xml:space="preserve"><value>Create an Account</value></data>
+  <data name="Account_RegisterDesc" xml:space="preserve"><value>Join to start renting cars.</value></data>
+  <data name="Account_FirstName" xml:space="preserve"><value>First Name</value></data>
+  <data name="Account_LastName" xml:space="preserve"><value>Last Name</value></data>
+  <data name="Account_PasswordPlaceholder" xml:space="preserve"><value>Min. 8 chars, 1 uppercase, 1 digit</value></data>
+  <data name="Account_ConfirmPassword" xml:space="preserve"><value>Confirm Password</value></data>
+  <data name="Account_RepeatPassword" xml:space="preserve"><value>Repeat password</value></data>
+  <data name="Account_CreateAccountBtn" xml:space="preserve"><value>Create Account</value></data>
+  <data name="Account_AlreadyHave" xml:space="preserve"><value>Already have an account?</value></data>
+  <data name="Account_SignInLink" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Account_AccessDenied_Title" xml:space="preserve"><value>Access Denied</value></data>
+  <data name="Account_AccessDeniedDesc" xml:space="preserve"><value>You don't have permission to view this page. If you believe this is a mistake, please contact an administrator.</value></data>
+  <data name="Account_GoHome" xml:space="preserve"><value>Go Home</value></data>
+  <data name="Account_SignInLink2" xml:space="preserve"><value>Sign In</value></data>
+
+  <!-- ── Admin ──────────────────────────────────────────────────── -->
+  <data name="Admin_Dashboard_Title" xml:space="preserve"><value>Admin Dashboard</value></data>
+  <data name="Admin_DashboardOverview" xml:space="preserve"><value>Dashboard Overview</value></data>
+  <data name="Admin_TotalCars" xml:space="preserve"><value>Total Cars</value></data>
+  <data name="Admin_AvailableNow" xml:space="preserve"><value>Available Now</value></data>
+  <data name="Admin_PendingRequests" xml:space="preserve"><value>Pending Requests</value></data>
+  <data name="Admin_PickupsToday" xml:space="preserve"><value>Pickups Today</value></data>
+  <data name="Admin_RecentPending" xml:space="preserve"><value>Recent Pending Requests</value></data>
+  <data name="Admin_ViewAll" xml:space="preserve"><value>View All</value></data>
+  <data name="Admin_Car" xml:space="preserve"><value>Car</value></data>
+  <data name="Admin_User" xml:space="preserve"><value>User</value></data>
+  <data name="Admin_Dates" xml:space="preserve"><value>Dates</value></data>
+  <data name="Admin_Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Admin_NoPending" xml:space="preserve"><value>No pending requests at the moment.</value></data>
+  <data name="Admin_QuickActions" xml:space="preserve"><value>Quick Actions</value></data>
+  <data name="Admin_AddNewCar" xml:space="preserve"><value>Add New Car</value></data>
+  <data name="Admin_ManageAllCars" xml:space="preserve"><value>Manage All Cars</value></data>
+  <data name="Admin_ReviewAllRentals" xml:space="preserve"><value>Review All Rentals</value></data>
+  <data name="Admin_ManageUsers" xml:space="preserve"><value>Manage Users</value></data>
+  <data name="Admin_SystemStatus" xml:space="preserve"><value>System Status</value></data>
+  <data name="Admin_AllSystemsOp" xml:space="preserve"><value>All systems operational</value></data>
+  <data name="Admin_DbConnected" xml:space="preserve"><value>Database: Connected</value></data>
+  <data name="Admin_ManageCars_Title" xml:space="preserve"><value>Manage Cars</value></data>
+  <data name="Admin_ManageCarsDesc" xml:space="preserve"><value>View and manage all cars in the fleet.</value></data>
+  <data name="Admin_NoCars" xml:space="preserve"><value>No cars found.</value></data>
+  <data name="Admin_AddFirstCar" xml:space="preserve"><value>Add the first car</value></data>
+  <data name="Admin_Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Admin_PriceDay" xml:space="preserve"><value>Price/Day</value></data>
+  <data name="Admin_Seats" xml:space="preserve"><value>Seats</value></data>
+  <data name="Admin_Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Admin_Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Admin_Status_Available" xml:space="preserve"><value>Available</value></data>
+  <data name="Admin_Status_Rented" xml:space="preserve"><value>Rented</value></data>
+  <data name="Admin_Status_UnderMaintenance" xml:space="preserve"><value>Under Maintenance</value></data>
+  <data name="Admin_CreateCar_Title" xml:space="preserve"><value>Add New Car</value></data>
+  <data name="Admin_Admin" xml:space="preserve"><value>Admin</value></data>
+  <data name="Admin_Cars" xml:space="preserve"><value>Cars</value></data>
+  <data name="Admin_Create" xml:space="preserve"><value>Create</value></data>
+  <data name="Admin_SaveCar" xml:space="preserve"><value>Save Car</value></data>
+  <data name="Admin_EditCar_Title" xml:space="preserve"><value>Edit Car</value></data>
+  <data name="Admin_Edit_Breadcrumb" xml:space="preserve"><value>Edit</value></data>
+  <data name="Admin_ImageUrlOpt" xml:space="preserve"><value>Image URL (Optional)</value></data>
+  <data name="Admin_CurrentImagePreview" xml:space="preserve"><value>Current Image Preview:</value></data>
+  <data name="Admin_UpdateCar" xml:space="preserve"><value>Update Car</value></data>
+  <data name="Admin_RejectRental_Title" xml:space="preserve"><value>Reject Rental Request</value></data>
+  <data name="Admin_RejectRentalHeader" xml:space="preserve"><value>Reject Rental</value></data>
+  <data name="Admin_RejectAboutTo" xml:space="preserve"><value>You are about to reject the rental for</value></data>
+  <data name="Admin_RejectBy" xml:space="preserve"><value>by</value></data>
+  <data name="Admin_ReasonForRejection" xml:space="preserve"><value>Reason for Rejection</value></data>
+  <data name="Admin_RejectPlaceholder" xml:space="preserve"><value>Explain why this request is being rejected. This will be visible to the user...</value></data>
+  <data name="Admin_RejectRequest" xml:space="preserve"><value>Reject Request</value></data>
+  <data name="Admin_ManageRentals_Title" xml:space="preserve"><value>Manage Rentals</value></data>
+  <data name="Admin_RentalsFound" xml:space="preserve"><value>{0} rental(s) found.</value></data>
+  <data name="Admin_All" xml:space="preserve"><value>All</value></data>
+  <data name="Admin_Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Admin_Confirmed" xml:space="preserve"><value>Confirmed</value></data>
+  <data name="Admin_Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Admin_NoRentalsFilter" xml:space="preserve"><value>No rentals found for the selected filter.</value></data>
+  <data name="Admin_Pickup" xml:space="preserve"><value>Pickup</value></data>
+  <data name="Admin_Return" xml:space="preserve"><value>Return</value></data>
+  <data name="Admin_Total" xml:space="preserve"><value>Total</value></data>
+  <data name="Admin_ManageUsers_Title" xml:space="preserve"><value>Manage Users</value></data>
+  <data name="Admin_ManageUsersDesc" xml:space="preserve"><value>View all registered accounts, activate/deactivate, or promote to Admin.</value></data>
+  <data name="Admin_BackToDashboard" xml:space="preserve"><value>Back to Dashboard</value></data>
+  <data name="Admin_Role" xml:space="preserve"><value>Role</value></data>
+  <data name="Admin_Registered" xml:space="preserve"><value>Registered</value></data>
+  <data name="Admin_Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Admin_Inactive" xml:space="preserve"><value>Inactive</value></data>
+  <data name="Admin_NoUsers" xml:space="preserve"><value>No users found.</value></data>
+  <data name="Admin_You" xml:space="preserve"><value>You</value></data>
+  <data name="Admin_Deactivate" xml:space="preserve"><value>Deactivate</value></data>
+  <data name="Admin_Activate" xml:space="preserve"><value>Activate</value></data>
+  <data name="Admin_MakeAdmin" xml:space="preserve"><value>Make Admin</value></data>
+  <data name="Admin_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Admin_SelectCategory" xml:space="preserve"><value>-- Select --</value></data>
+
+  <!-- ── Status badges ──────────────────────────────────────────── -->
+  <data name="Status_Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Status_Confirmed" xml:space="preserve"><value>Confirmed</value></data>
+  <data name="Status_Rejected" xml:space="preserve"><value>Rejected</value></data>
+  <data name="Status_Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+
+  <!-- ── Pagination ─────────────────────────────────────────────── -->
+  <data name="Pagination_Page" xml:space="preserve"><value>Page</value></data>
+  <data name="Pagination_Of" xml:space="preserve"><value>of</value></data>
+
+  <!-- ── Common ─────────────────────────────────────────────────── -->
+  <data name="Common_Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Common_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Common_GoHome" xml:space="preserve"><value>Go Home</value></data>
+  <data name="Common_BrowseCars" xml:space="preserve"><value>Browse Cars</value></data>
+
+  <!-- ── Error pages ────────────────────────────────────────────── -->
+  <data name="Error_NotFound_Title" xml:space="preserve"><value>Page Not Found</value></data>
+  <data name="Error_NotFound_Desc" xml:space="preserve"><value>Sorry, the page you're looking for doesn't exist or has been moved.</value></data>
+  <data name="Error_Forbidden_Title" xml:space="preserve"><value>Forbidden</value></data>
+  <data name="Error_Forbidden_Desc" xml:space="preserve"><value>You don't have permission to access this page.</value></data>
+  <data name="Error_Generic_Title" xml:space="preserve"><value>Error</value></data>
+  <data name="Error_Generic_Desc" xml:space="preserve"><value>Something went wrong</value></data>
+  <data name="Error_Generic_Details" xml:space="preserve"><value>An unexpected error occurred. If this persists, please contact the administrator.</value></data>
+  <data name="Privacy_Title" xml:space="preserve"><value>Privacy Policy</value></data>
+  <data name="Privacy_Desc" xml:space="preserve"><value>Use this page to detail your site's privacy policy.</value></data>
+
+  <!-- ── Controller messages (TempData) ────────────────────────── -->
+  <data name="Msg_RentalSubmitted" xml:space="preserve"><value>Your rental request has been submitted and is pending confirmation.</value></data>
+  <data name="Msg_RentalCancelled" xml:space="preserve"><value>Your rental has been cancelled.</value></data>
+  <data name="Msg_CarNotAvailable" xml:space="preserve"><value>"{0}" is not available for rental.</value></data>
+  <data name="Msg_CarCreated" xml:space="preserve"><value>Car "{0}" created successfully.</value></data>
+  <data name="Msg_CarUpdated" xml:space="preserve"><value>Car updated successfully.</value></data>
+  <data name="Msg_CarStatusUpdated" xml:space="preserve"><value>Car status updated.</value></data>
+  <data name="Msg_RentalConfirmed" xml:space="preserve"><value>Rental confirmed.</value></data>
+  <data name="Msg_RentalRejected" xml:space="preserve"><value>Rental rejected.</value></data>
+  <data name="Msg_OnlyPendingRejected" xml:space="preserve"><value>Only Pending rentals can be rejected.</value></data>
+  <data name="Msg_UserActivated" xml:space="preserve"><value>User account activated.</value></data>
+  <data name="Msg_UserDeactivated" xml:space="preserve"><value>User account deactivated.</value></data>
+  <data name="Msg_UserPromoted" xml:space="preserve"><value>User has been promoted to Admin.</value></data>
+  <data name="Msg_AccountDeactivated" xml:space="preserve"><value>Your account has been deactivated. Please contact an administrator.</value></data>
+  <data name="Msg_AccountLocked" xml:space="preserve"><value>Account locked due to too many failed attempts. Try again in 10 minutes.</value></data>
+  <data name="Msg_InvalidCredentials" xml:space="preserve"><value>Invalid email or password.</value></data>
+
+  <!-- ── FluentValidation messages ─────────────────────────────── -->
+  <data name="Val_PickupRequired" xml:space="preserve"><value>Pickup date is required.</value></data>
+  <data name="Val_PickupNotPast" xml:space="preserve"><value>Pickup date cannot be in the past.</value></data>
+  <data name="Val_PickupAdvance" xml:space="preserve"><value>Rental cannot be booked more than {0} days in advance.</value></data>
+  <data name="Val_ReturnRequired" xml:space="preserve"><value>Return date is required.</value></data>
+  <data name="Val_ReturnAfterPickup" xml:space="preserve"><value>Return date must be after pickup date.</value></data>
+  <data name="Val_MinDays" xml:space="preserve"><value>Rental must be at least {0} day(s).</value></data>
+  <data name="Val_MaxDays" xml:space="preserve"><value>Rental cannot exceed {0} days.</value></data>
+  <data name="Val_NotesMax" xml:space="preserve"><value>Notes cannot exceed 500 characters.</value></data>
+</root>

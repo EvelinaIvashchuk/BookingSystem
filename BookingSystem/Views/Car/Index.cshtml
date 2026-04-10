@@ -2,31 +2,31 @@
 @using Microsoft.AspNetCore.Mvc.Rendering
 @model PaginatedList<BookingSystem.Models.Car>
 @{
-    ViewData["Title"] = "Available Cars";
+    ViewData["Title"] = L["Car_Title"].Value;
     var categories = ViewBag.Categories as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>();
 }
 
 <div class="container py-4">
     <div class="row mb-4 align-items-end">
         <div class="col-lg-4 mb-3 mb-lg-0">
-            <h1 class="h2 mb-0">Browse Cars</h1>
-            <p class="text-muted small mb-0">@Model.TotalCount available car(s) found.</p>
+            <h1 class="h2 mb-0">@L["Car_BrowseCars"]</h1>
+            <p class="text-muted small mb-0">@string.Format(L["Car_CarsFound"].Value, Model.TotalCount)</p>
         </div>
         <div class="col-lg-8">
             <form asp-action="Index" method="get">
                 <div class="row g-2">
                     <div class="col-md-4">
                         <select name="categoryId" class="form-select" onchange="this.form.submit()" asp-items="categories">
-                            <option value="">All Categories</option>
+                            <option value="">@L["Car_AllCategories"]</option>
                         </select>
                     </div>
                     <div class="col-md-5">
                         <input type="text" name="search" value="@ViewBag.Search"
-                               class="form-control" placeholder="Search by brand, model or description..." />
+                               class="form-control" placeholder="@L["Car_SearchPlaceholder"]" />
                     </div>
                     <div class="col-md-3 d-flex gap-1">
                         <button type="submit" class="btn btn-primary flex-fill">
-                            <i class="bi bi-search me-1"></i> Search
+                            <i class="bi bi-search me-1"></i> @L["Car_Search"]
                         </button>
                         @if (!string.IsNullOrEmpty((string?)ViewBag.Search) || ViewBag.CategoryId != null)
                         {
@@ -44,8 +44,8 @@
     {
         <div class="alert alert-info shadow-sm" role="alert">
             <i class="bi bi-info-circle me-2"></i>
-            No cars match your search or filter.
-            <a asp-action="Index" class="alert-link ms-2">View all cars</a>
+            @L["Car_NoResults"]
+            <a asp-action="Index" class="alert-link ms-2">@L["Car_ViewAllCars"]</a>
         </div>
     }
     else
@@ -80,20 +80,20 @@
                                 <span class="mx-2 text-muted">|</span>
                                 <i class="bi bi-gear me-1"></i> @c.Transmission
                                 <span class="mx-2 text-muted">|</span>
-                                <i class="bi bi-people me-1"></i> @c.Seats seats
+                                <i class="bi bi-people me-1"></i> @c.Seats @L["Car_Seats"]
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 @if (c.Category != null)
                                 {
                                     <span class="badge bg-light text-dark border">@c.Category.Name</span>
                                 }
-                                <span class="fw-bold text-primary">@c.PricePerDay.ToString("N0") ₴/day</span>
+                                <span class="fw-bold text-primary">@c.PricePerDay.ToString("N0") @L["Car_PerDay"]</span>
                             </div>
                         </div>
                         <div class="card-footer bg-transparent border-top-0 pb-3">
                             <div class="d-grid gap-2">
-                                <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-outline-primary">View Details</a>
-                                <a asp-controller="Rental" asp-action="Create" asp-route-carId="@c.Id" class="btn btn-primary">Rent Now</a>
+                                <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-outline-primary">@L["Car_ViewDetails"]</a>
+                                <a asp-controller="Rental" asp-action="Create" asp-route-carId="@c.Id" class="btn btn-primary">@L["Car_RentNow"]</a>
                             </div>
                         </div>
                     </div>

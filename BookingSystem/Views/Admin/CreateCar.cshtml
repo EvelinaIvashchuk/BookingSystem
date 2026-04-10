@@ -1,6 +1,6 @@
 @model CarFormViewModel
 @{
-    ViewData["Title"] = "Add New Car";
+    ViewData["Title"] = L["Admin_CreateCar_Title"].Value;
 }
 
 <div class="container py-4">
@@ -8,15 +8,15 @@
         <div class="col-lg-8">
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-action="Index">Admin</a></li>
-                    <li class="breadcrumb-item"><a asp-action="Cars">Cars</a></li>
-                    <li class="breadcrumb-item active">Create</li>
+                    <li class="breadcrumb-item"><a asp-action="Index">@L["Admin_Admin"]</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Cars">@L["Admin_Cars"]</a></li>
+                    <li class="breadcrumb-item active">@L["Admin_Create"]</li>
                 </ol>
             </nav>
 
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-primary text-white p-4 border-0 rounded-top">
-                    <h2 class="h4 mb-0"><i class="bi bi-plus-circle me-2"></i> Add New Car</h2>
+                    <h2 class="h4 mb-0"><i class="bi bi-plus-circle me-2"></i> @L["Admin_AddNewCar"]</h2>
                 </div>
                 <div class="card-body p-4 p-md-5">
                     <form asp-action="CreateCar" method="post">
@@ -49,7 +49,7 @@
                             <div class="col-md-4">
                                 <label asp-for="CategoryId" class="form-label fw-bold"></label>
                                 <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select">
-                                    <option value="">-- Select --</option>
+                                    <option value="">@L["Admin_SelectCategory"]</option>
                                 </select>
                                 <span asp-validation-for="CategoryId" class="text-danger small"></span>
                             </div>
@@ -90,14 +90,14 @@
                         </div>
 
                         <div class="mb-5">
-                            <label asp-for="ImageUrl" class="form-label fw-bold">Image URL (Optional)</label>
+                            <label asp-for="ImageUrl" class="form-label fw-bold">@L["Admin_ImageUrlOpt"]</label>
                             <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
                             <span asp-validation-for="ImageUrl" class="text-danger small"></span>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end pt-3 border-top">
-                            <a asp-action="Cars" class="btn btn-outline-secondary btn-lg px-4 me-md-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">Save Car</button>
+                            <a asp-action="Cars" class="btn btn-outline-secondary btn-lg px-4 me-md-2">@L["Admin_Cancel"]</a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">@L["Admin_SaveCar"]</button>
                         </div>
                     </form>
                 </div>
