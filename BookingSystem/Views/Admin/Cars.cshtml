@@ -1,16 +1,16 @@
 @model IEnumerable<Car>
 @{
-    ViewData["Title"] = "Manage Cars";
+    ViewData["Title"] = L["Admin_ManageCars_Title"].Value;
 }
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h2 mb-0">Manage Cars</h1>
-            <p class="text-muted small">View and manage all cars in the fleet.</p>
+            <h1 class="h2 mb-0">@L["Admin_ManageCars_Title"]</h1>
+            <p class="text-muted small">@L["Admin_ManageCarsDesc"]</p>
         </div>
         <a asp-action="CreateCar" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-2"></i> Add New Car
+            <i class="bi bi-plus-circle me-2"></i> @L["Admin_AddNewCar"]
         </a>
     </div>
 
@@ -28,12 +28,12 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-3">Car</th>
-                            <th>Category</th>
-                            <th>Price/Day</th>
-                            <th>Seats</th>
-                            <th>Status</th>
-                            <th class="text-end pe-3">Actions</th>
+                            <th class="ps-3">@L["Admin_Car"]</th>
+                            <th>@L["Admin_Category"]</th>
+                            <th>@L["Admin_PriceDay"]</th>
+                            <th>@L["Admin_Seats"]</th>
+                            <th>@L["Admin_Status"]</th>
+                            <th class="text-end pe-3">@L["Admin_Actions"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,8 +42,8 @@
                             <tr>
                                 <td colspan="6" class="text-center py-5 text-muted">
                                     <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                                    No cars found.
-                                    <a asp-action="CreateCar" class="d-block mt-2">Add the first car</a>
+                                    @L["Admin_NoCars"]
+                                    <a asp-action="CreateCar" class="d-block mt-2">@L["Admin_AddFirstCar"]</a>
                                 </td>
                             </tr>
                         }
@@ -62,15 +62,15 @@
                                 <td>
                                     @if (c.Status == CarStatus.Available)
                                     {
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Available</span>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">@L["Admin_Status_Available"]</span>
                                     }
                                     else if (c.Status == CarStatus.Rented)
                                     {
-                                        <span class="badge bg-info-subtle text-info border border-info-subtle">Rented</span>
+                                        <span class="badge bg-info-subtle text-info border border-info-subtle">@L["Admin_Status_Rented"]</span>
                                     }
                                     else if (c.Status == CarStatus.UnderMaintenance)
                                     {
-                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Maintenance</span>
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">@L["Admin_Status_UnderMaintenance"]</span>
                                     }
                                     else
                                     {
@@ -79,33 +79,33 @@
                                 </td>
                                 <td class="text-end pe-3">
                                     <div class="btn-group btn-group-sm">
-                                        <a asp-action="EditCar" asp-route-id="@c.Id" class="btn btn-outline-primary" title="Edit">
+                                        <a asp-action="EditCar" asp-route-id="@c.Id" class="btn btn-outline-primary" title="@L["Admin_Edit"]">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <div class="dropdown d-inline">
                                             <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                Status
+                                                @L["Admin_Status"]
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li>
                                                     <form asp-action="SetCarStatus" method="post">
                                                         <input type="hidden" name="carId" value="@c.Id" />
                                                         <input type="hidden" name="status" value="@CarStatus.Available" />
-                                                        <button type="submit" class="dropdown-item @(c.Status == CarStatus.Available ? "disabled" : "")">Available</button>
+                                                        <button type="submit" class="dropdown-item @(c.Status == CarStatus.Available ? "disabled" : "")">@L["Admin_Status_Available"]</button>
                                                     </form>
                                                 </li>
                                                 <li>
                                                     <form asp-action="SetCarStatus" method="post">
                                                         <input type="hidden" name="carId" value="@c.Id" />
                                                         <input type="hidden" name="status" value="@CarStatus.Rented" />
-                                                        <button type="submit" class="dropdown-item @(c.Status == CarStatus.Rented ? "disabled" : "")">Rented</button>
+                                                        <button type="submit" class="dropdown-item @(c.Status == CarStatus.Rented ? "disabled" : "")">@L["Admin_Status_Rented"]</button>
                                                     </form>
                                                 </li>
                                                 <li>
                                                     <form asp-action="SetCarStatus" method="post">
                                                         <input type="hidden" name="carId" value="@c.Id" />
                                                         <input type="hidden" name="status" value="@CarStatus.UnderMaintenance" />
-                                                        <button type="submit" class="dropdown-item @(c.Status == CarStatus.UnderMaintenance ? "disabled" : "")">Under Maintenance</button>
+                                                        <button type="submit" class="dropdown-item @(c.Status == CarStatus.UnderMaintenance ? "disabled" : "")">@L["Admin_Status_UnderMaintenance"]</button>
                                                     </form>
                                                 </li>
                                             </ul>

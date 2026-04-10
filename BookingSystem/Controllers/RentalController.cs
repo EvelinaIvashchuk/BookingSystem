@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using AutoMapper;
+using BookingSystem;
 using BookingSystem.Helpers;
 using BookingSystem.Models;
 using BookingSystem.Services.Dtos;
@@ -9,6 +10,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace BookingSystem.Controllers;
 
@@ -17,7 +19,8 @@ public class RentalController(
     IRentalService                     rentalService,
     ICarService                        carService,
     IMapper                            mapper,
-    IValidator<RentalCreateViewModel>  validator) : Controller
+    IValidator<RentalCreateViewModel>  validator,
+    IStringLocalizer<SharedResources>  localizer) : Controller
 {
     // GET /Rental/Create?carId=5
     public async Task<IActionResult> Create(int carId)
@@ -29,7 +32,7 @@ public class RentalController(
 
         if (car.Status != Enums.CarStatus.Available)
         {
-            TempData["Error"] = $"\"{car.FullName}\" is not available for rental.";
+            TempData["Error"] = string.Format(localizer["Msg_CarNotAvailable"].Value, car.FullName);
             return RedirectToAction("Details", "Car", new { id = carId });
         }
 
@@ -72,7 +75,7 @@ public class RentalController(
             return View(vm);
         }
 
-        TempData["Success"] = "Your rental request has been submitted and is pending confirmation.";
+        TempData["Success"] = localizer["Msg_RentalSubmitted"].Value;
         return RedirectToAction(nameof(MyRentals));
     }
 
@@ -113,7 +116,7 @@ public class RentalController(
         var result = await rentalService.CancelRentalAsync(id, userId);
 
         if (result.IsSuccess)
-            TempData["Success"] = "Your rental has been cancelled.";
+            TempData["Success"] = localizer["Msg_RentalCancelled"].Value;
         else
             TempData["Error"] = result.Error;
 

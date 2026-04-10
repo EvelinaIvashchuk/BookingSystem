@@ -1,3 +1,4 @@
+using BookingSystem;
 using BookingSystem.Data;
 using BookingSystem.Data.Repositories;
 using BookingSystem.Mappings;
@@ -8,6 +9,7 @@ using BookingSystem.Validators;
 using BookingSystem.ViewModels;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -82,8 +84,17 @@ builder.Services.AddAutoMapper(typeof(RentalMappingProfile).Assembly);
 // ── FluentValidation ──────────────────────────────────────────────────────────
 builder.Services.AddScoped<IValidator<RentalCreateViewModel>, RentalCreateViewModelValidator>();
 
+// ── Localization ──────────────────────────────────────────────────────────────
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
 // ── MVC ───────────────────────────────────────────────────────────────────────
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (_, factory) =>
+            factory.Create(typeof(SharedResources));
+    });
 
 var app = builder.Build();
 
@@ -107,6 +118,13 @@ else
 app.UseStatusCodePagesWithReExecute("/Home/StatusCode", "?code={0}");
 
 app.UseSerilogRequestLogging();
+
+// ── Localization middleware ────────────────────────────────────────────────────
+var supportedCultures = new[] { "en", "uk" };
+app.UseRequestLocalization(new RequestLocalizationOptions()
+    .SetDefaultCulture("en")
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures));
 
 app.UseHttpsRedirection();
 app.UseRouting();

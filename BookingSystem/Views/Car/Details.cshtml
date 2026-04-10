@@ -6,7 +6,7 @@
 <div class="container py-5">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-action="Index">Browse Cars</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">@L["Car_BrowseCars"]</a></li>
             @if (Model.Category != null)
             {
                 <li class="breadcrumb-item"><a asp-action="Index" asp-route-categoryId="@Model.CategoryId">@Model.Category.Name</a></li>
@@ -29,7 +29,7 @@
             }
 
             <div class="mt-5">
-                <h3 class="h4 mb-3 border-bottom pb-2">Description</h3>
+                <h3 class="h4 mb-3 border-bottom pb-2">@L["Car_Description"]</h3>
                 <p class="lead text-muted">@Model.Description</p>
 
                 <div class="row mt-4">
@@ -39,7 +39,7 @@
                                 <i class="bi bi-geo-alt fs-4"></i>
                             </div>
                             <div>
-                                <small class="text-uppercase text-muted fw-bold d-block">Location</small>
+                                <small class="text-uppercase text-muted fw-bold d-block">@L["Car_Location"]</small>
                                 <span>@Model.Location</span>
                             </div>
                         </div>
@@ -50,7 +50,7 @@
                                 <i class="bi bi-people fs-4"></i>
                             </div>
                             <div>
-                                <small class="text-uppercase text-muted fw-bold d-block">Seats</small>
+                                <small class="text-uppercase text-muted fw-bold d-block">@L["Car_SeatsLabel"]</small>
                                 <span>@Model.Seats</span>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                                 <i class="bi bi-fuel-pump fs-4"></i>
                             </div>
                             <div>
-                                <small class="text-uppercase text-muted fw-bold d-block">Fuel Type</small>
+                                <small class="text-uppercase text-muted fw-bold d-block">@L["Car_FuelType"]</small>
                                 <span>@Model.FuelType</span>
                             </div>
                         </div>
@@ -72,7 +72,7 @@
                                 <i class="bi bi-gear fs-4"></i>
                             </div>
                             <div>
-                                <small class="text-uppercase text-muted fw-bold d-block">Transmission</small>
+                                <small class="text-uppercase text-muted fw-bold d-block">@L["Car_Transmission"]</small>
                                 <span>@Model.Transmission</span>
                             </div>
                         </div>
@@ -85,14 +85,14 @@
             <div class="card shadow-sm border-0 sticky-top" style="top: 20px; z-index: 100;">
                 <div class="card-body p-4">
                     <h2 class="h3 fw-bold mb-2">@Model.FullName</h2>
-                    <div class="fs-4 text-primary fw-bold mb-4">@Model.PricePerDay.ToString("N0") ₴ <span class="fs-6 text-muted fw-normal">/ day</span></div>
+                    <div class="fs-4 text-primary fw-bold mb-4">@Model.PricePerDay.ToString("N0") ₴ <span class="fs-6 text-muted fw-normal">@L["Car_PerDayShort"]</span></div>
 
                     <div class="mb-4">
-                        <span class="text-uppercase text-muted fw-bold d-block small mb-2">Status</span>
+                        <span class="text-uppercase text-muted fw-bold d-block small mb-2">@L["Car_Status"]</span>
                         @if (Model.Status == CarStatus.Available)
                         {
                             <span class="badge bg-success-subtle text-success border border-success-subtle p-2 px-3 fs-6">
-                                <i class="bi bi-check-circle me-1"></i> Available
+                                <i class="bi bi-check-circle me-1"></i> @L["Car_Available"]
                             </span>
                         }
                         else
@@ -107,26 +107,26 @@
                         @if (Model.Status == CarStatus.Available)
                         {
                             <a asp-controller="Rental" asp-action="Create" asp-route-carId="@Model.Id" class="btn btn-primary btn-lg py-3 fw-bold">
-                                <i class="bi bi-car-front me-2"></i>Rent Now
+                                <i class="bi bi-car-front me-2"></i>@L["Car_RentNow"]
                             </a>
                         }
                         else
                         {
                             <button class="btn btn-secondary btn-lg py-3 fw-bold" disabled>
-                                Currently Unavailable
+                                @L["Car_CurrentlyUnavailable"]
                             </button>
                         }
                         <a asp-action="Index" class="btn btn-outline-secondary py-2 mt-2">
-                            Back to List
+                            @L["Car_BackToList"]
                         </a>
                     </div>
 
                     <div class="mt-4 pt-4 border-top">
-                        <h5 class="h6 fw-bold mb-3">Includes</h5>
+                        <h5 class="h6 fw-bold mb-3">@L["Car_Includes"]</h5>
                         <ul class="list-unstyled mb-0 small text-muted">
-                            <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i> Full insurance</li>
-                            <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i> 24/7 roadside assistance</li>
-                            <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i> Free cancellation</li>
+                            <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i> @L["Car_FullInsurance"]</li>
+                            <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i> @L["Car_Roadside"]</li>
+                            <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i> @L["Car_FreeCancellation"]</li>
                         </ul>
                     </div>
                 </div>

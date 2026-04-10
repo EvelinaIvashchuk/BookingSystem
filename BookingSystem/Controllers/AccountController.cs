@@ -1,14 +1,17 @@
+using BookingSystem;
 using BookingSystem.Models;
 using BookingSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace BookingSystem.Controllers;
 
 public class AccountController(
-    UserManager<ApplicationUser>  userManager,
-    SignInManager<ApplicationUser> signInManager) : Controller
+    UserManager<ApplicationUser>       userManager,
+    SignInManager<ApplicationUser>     signInManager,
+    IStringLocalizer<SharedResources>  localizer) : Controller
 {
     // ── Register ──────────────────────────────────────────────────────────────
 
@@ -74,8 +77,7 @@ public class AccountController(
         var user = await userManager.FindByEmailAsync(vm.Email);
         if (user is not null && !user.IsActive)
         {
-            ModelState.AddModelError(string.Empty,
-                "Your account has been deactivated. Please contact an administrator.");
+            ModelState.AddModelError(string.Empty, localizer["Msg_AccountDeactivated"]);
             return View(vm);
         }
 
@@ -95,12 +97,11 @@ public class AccountController(
 
         if (result.IsLockedOut)
         {
-            ModelState.AddModelError(string.Empty,
-                "Account locked due to too many failed attempts. Try again in 10 minutes.");
+            ModelState.AddModelError(string.Empty, localizer["Msg_AccountLocked"]);
         }
         else
         {
-            ModelState.AddModelError(string.Empty, "Invalid email or password.");
+            ModelState.AddModelError(string.Empty, localizer["Msg_InvalidCredentials"]);
         }
 
         return View(vm);
