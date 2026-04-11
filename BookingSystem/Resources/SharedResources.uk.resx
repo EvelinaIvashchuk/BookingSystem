@@ -31,6 +31,10 @@
   <data name="Home_ViewAll" xml:space="preserve"><value>Переглянути всі</value></data>
   <data name="Home_BrowseCars" xml:space="preserve"><value>Переглянути автомобілі</value></data>
   <data name="Home_PerDay" xml:space="preserve"><value>₴/день</value></data>
+  <data name="Home_HowItWorks" xml:space="preserve"><value>Як це працює</value></data>
+  <data name="Home_WhyChooseUs" xml:space="preserve"><value>Чому обирають CarRental?</value></data>
+  <data name="Home_TopPicks" xml:space="preserve"><value>Рекомендовані авто</value></data>
+  <data name="Home_ViewDetails" xml:space="preserve"><value>Деталі</value></data>
 
   <!-- ── Car ────────────────────────────────────────────────────── -->
   <data name="Car_Title" xml:space="preserve"><value>Доступні автомобілі</value></data>
