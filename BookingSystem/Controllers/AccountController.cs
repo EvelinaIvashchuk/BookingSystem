@@ -1,4 +1,3 @@
-using BookingSystem;
 using BookingSystem.Resources;
 using BookingSystem.Models;
 using BookingSystem.ViewModels;
@@ -9,13 +8,9 @@ using Microsoft.Extensions.Localization;
 
 namespace BookingSystem.Controllers;
 
-public class AccountController(
-    UserManager<ApplicationUser>       userManager,
-    SignInManager<ApplicationUser>     signInManager,
-    IStringLocalizer<SharedResources>  localizer) : Controller
+public class AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, 
+    IStringLocalizer<SharedResources> localizer) : Controller
 {
-    // ── Register ──────────────────────────────────────────────────────────────
-
     [HttpGet]
     public IActionResult Register()
     {
@@ -34,11 +29,11 @@ public class AccountController(
 
         var user = new ApplicationUser
         {
-            UserName       = vm.Email,
-            Email          = vm.Email,
-            FirstName      = vm.FirstName.Trim(),
-            LastName       = vm.LastName.Trim(),
-            EmailConfirmed = true   // Skip email confirmation for coursework
+            UserName = vm.Email,
+            Email = vm.Email,
+            FirstName = vm.FirstName.Trim(),
+            LastName = vm.LastName.Trim(),
+            EmailConfirmed = true   // Skip email confirmation
         };
 
         var result = await userManager.CreateAsync(user, vm.Password);
@@ -55,9 +50,7 @@ public class AccountController(
 
         return RedirectToAction("Index", "Home");
     }
-
-    // ── Login ─────────────────────────────────────────────────────────────────
-
+    
     [HttpGet]
     public IActionResult Login(string? returnUrl = null)
     {
@@ -74,7 +67,6 @@ public class AccountController(
         if (!ModelState.IsValid)
             return View(vm);
 
-        // Check IsActive before attempting sign-in (avoids leaking account existence)
         var user = await userManager.FindByEmailAsync(vm.Email);
         if (user is not null && !user.IsActive)
         {
@@ -82,11 +74,8 @@ public class AccountController(
             return View(vm);
         }
 
-        var result = await signInManager.PasswordSignInAsync(
-            vm.Email,
-            vm.Password,
-            vm.RememberMe,
-            lockoutOnFailure: true);
+        var result = await signInManager.PasswordSignInAsync(vm.Email, vm.Password, 
+            vm.RememberMe, lockoutOnFailure: true);
 
         if (result.Succeeded)
         {
@@ -96,20 +85,12 @@ public class AccountController(
             return RedirectToAction("Index", "Home");
         }
 
-        if (result.IsLockedOut)
-        {
-            ModelState.AddModelError(string.Empty, localizer["Msg_AccountLocked"]);
-        }
-        else
-        {
-            ModelState.AddModelError(string.Empty, localizer["Msg_InvalidCredentials"]);
-        }
+        ModelState.AddModelError(string.Empty,
+            result.IsLockedOut ? localizer["Msg_AccountLocked"] : localizer["Msg_InvalidCredentials"]);
 
         return View(vm);
     }
-
-    // ── Logout ────────────────────────────────────────────────────────────────
-
+    
     [HttpPost]
     [Authorize]
     [ValidateAntiForgeryToken]
@@ -118,9 +99,7 @@ public class AccountController(
         await signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
-
-    // ── Access Denied ─────────────────────────────────────────────────────────
-
+    
     [HttpGet]
     public IActionResult AccessDenied() => View();
 }

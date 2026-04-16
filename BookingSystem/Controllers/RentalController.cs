@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using AutoMapper;
-using BookingSystem;
 using BookingSystem.Resources;
 using BookingSystem.Helpers;
 using BookingSystem.Models;
@@ -16,12 +15,8 @@ using Microsoft.Extensions.Localization;
 namespace BookingSystem.Controllers;
 
 [Authorize]
-public class RentalController(
-    IRentalService                     rentalService,
-    ICarService                        carService,
-    IMapper                            mapper,
-    IValidator<RentalCreateViewModel>  validator,
-    IStringLocalizer<SharedResources>  localizer) : Controller
+public class RentalController(IRentalService rentalService, ICarService carService, IMapper mapper,
+    IValidator<RentalCreateViewModel> validator, IStringLocalizer<SharedResources> localizer) : Controller
 {
     // GET /Rental/Create?carId=5
     public async Task<IActionResult> Create(int carId)
@@ -39,10 +34,10 @@ public class RentalController(
 
         var vm = new RentalCreateViewModel
         {
-            CarId        = car.Id,
-            CarName      = car.FullName,
-            Location     = car.Location,
-            PricePerDay  = car.PricePerDay,
+            CarId = car.Id,
+            CarName = car.FullName,
+            Location = car.Location,
+            PricePerDay = car.PricePerDay,
             CategoryName = car.Category?.Name ?? string.Empty
         };
 
@@ -71,7 +66,7 @@ public class RentalController(
 
         if (!result.IsSuccess)
         {
-            ModelState.AddModelError(string.Empty, result.Error!);
+            ModelState.AddModelError(string.Empty, result.Error);
             await RepopulateDisplayFields(vm);
             return View(vm);
         }
@@ -129,9 +124,9 @@ public class RentalController(
         var car = await carService.GetCarByIdAsync(vm.CarId);
         if (car is not null)
         {
-            vm.CarName      = car.FullName;
-            vm.Location     = car.Location;
-            vm.PricePerDay  = car.PricePerDay;
+            vm.CarName = car.FullName;
+            vm.Location = car.Location;
+            vm.PricePerDay = car.PricePerDay;
             vm.CategoryName = car.Category?.Name ?? string.Empty;
         }
     }

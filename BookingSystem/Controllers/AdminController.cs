@@ -1,4 +1,3 @@
-using BookingSystem;
 using BookingSystem.Resources;
 using BookingSystem.Data;
 using BookingSystem.Enums;
@@ -15,39 +14,28 @@ using Microsoft.Extensions.Localization;
 namespace BookingSystem.Controllers;
 
 [Authorize(Roles = "Admin")]
-public class AdminController(
-    IRentalService                    rentalService,
-    ICarService                       carService,
-    IUserService                      userService,
-    ApplicationDbContext              db,
-    IStringLocalizer<SharedResources> localizer) : Controller
+public class AdminController(IRentalService rentalService, ICarService carService, IUserService userService,
+    IStorageService storageService, ApplicationDbContext db, IStringLocalizer<SharedResources> localizer) : Controller
 {
-    // ── Dashboard ─────────────────────────────────────────────────────────────
-
     public async Task<IActionResult> Index()
     {
         var allRentals = (await rentalService.GetAllRentalsAsync()).ToList();
-        var allCars    = (await carService.GetAllCarsAsync()).ToList();
-        var today      = DateTime.UtcNow.Date;
+        var allCars = (await carService.GetAllCarsAsync()).ToList();
+        var today = DateTime.UtcNow.Date;
 
         var vm = new AdminDashboardViewModel
         {
-            TotalCars      = allCars.Count,
-            AvailableCars  = allCars.Count(c => c.Status == CarStatus.Available),
-            TotalRentals   = allRentals.Count,
+            TotalCars = allCars.Count,
+            AvailableCars = allCars.Count(c => c.Status == CarStatus.Available),
+            TotalRentals = allRentals.Count,
             PendingRentals = allRentals.Count(r => r.Status == RentalStatus.Pending),
-            TodaysRentals  = allRentals.Count(r =>
-                r.PickupDate.HasValue && r.PickupDate.Value.Date == today),
-            RecentPending  = allRentals
-                .Where(r => r.Status == RentalStatus.Pending)
-                .Take(10)
+            TodaysRentals = allRentals.Count(r => r.PickupDate.HasValue && r.PickupDate.Value.Date == today),
+            RecentPending = allRentals.Where(r => r.Status == RentalStatus.Pending).Take(10)
         };
 
         return View(vm);
     }
-
-    // ── Car Management ────────────────────────────────────────────────────────
-
+    
     public async Task<IActionResult> Cars()
     {
         var cars = await carService.GetAllCarsAsync();
@@ -73,20 +61,34 @@ public class AdminController(
             return View(vm);
         }
 
+        if (vm.ImageFile is not null)
+        {
+            try
+            {
+                vm.ImageUrl = await storageService.UploadAsync(vm.ImageFile);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError(nameof(vm.ImageFile), ex.Message);
+                vm.Categories = await GetCategorySelectListAsync();
+                return View(vm);
+            }
+        }
+
         var car = new Car
         {
-            Brand        = vm.Brand.Trim(),
-            Model        = vm.Model.Trim(),
-            Year         = vm.Year,
+            Brand = vm.Brand.Trim(),
+            Model = vm.Model.Trim(),
+            Year = vm.Year,
             LicensePlate = vm.LicensePlate.Trim().ToUpperInvariant(),
-            FuelType     = vm.FuelType,
+            FuelType = vm.FuelType,
             Transmission = vm.Transmission,
-            Seats        = vm.Seats,
-            PricePerDay  = vm.PricePerDay,
-            Description  = vm.Description?.Trim(),
-            Location     = vm.Location.Trim(),
-            CategoryId   = vm.CategoryId,
-            ImageUrl     = vm.ImageUrl?.Trim()
+            Seats = vm.Seats,
+            PricePerDay = vm.PricePerDay,
+            Description = vm.Description?.Trim(),
+            Location = vm.Location.Trim(),
+            CategoryId = vm.CategoryId,
+            ImageUrl = vm.ImageUrl
         };
 
         var result = await carService.CreateCarAsync(car);
@@ -109,21 +111,21 @@ public class AdminController(
 
         var vm = new CarFormViewModel
         {
-            Id           = car.Id,
-            Brand        = car.Brand,
-            Model        = car.Model,
-            Year         = car.Year,
+            Id = car.Id,
+            Brand = car.Brand,
+            Model = car.Model,
+            Year = car.Year,
             LicensePlate = car.LicensePlate,
-            FuelType     = car.FuelType,
+            FuelType = car.FuelType,
             Transmission = car.Transmission,
-            Seats        = car.Seats,
-            PricePerDay  = car.PricePerDay,
-            Description  = car.Description,
-            Location     = car.Location,
-            CategoryId   = car.CategoryId,
-            ImageUrl     = car.ImageUrl,
-            Status       = car.Status,
-            Categories   = await GetCategorySelectListAsync(car.CategoryId)
+            Seats = car.Seats,
+            PricePerDay = car.PricePerDay,
+            Description = car.Description,
+            Location = car.Location,
+            CategoryId = car.CategoryId,
+            ImageUrl = car.ImageUrl,
+            Status = car.Status,
+            Categories = await GetCategorySelectListAsync(car.CategoryId)
         };
 
         return View(vm);
@@ -139,22 +141,38 @@ public class AdminController(
             return View(vm);
         }
 
+        if (vm.ImageFile is not null)
+        {
+            try
+            {
+                var oldUrl   = vm.ImageUrl;
+                vm.ImageUrl  = await storageService.UploadAsync(vm.ImageFile);
+                await storageService.DeleteAsync(oldUrl);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError(nameof(vm.ImageFile), ex.Message);
+                vm.Categories = await GetCategorySelectListAsync(vm.CategoryId);
+                return View(vm);
+            }
+        }
+
         var car = new Car
         {
-            Id           = vm.Id,
-            Brand        = vm.Brand.Trim(),
-            Model        = vm.Model.Trim(),
-            Year         = vm.Year,
+            Id = vm.Id,
+            Brand = vm.Brand.Trim(),
+            Model = vm.Model.Trim(),
+            Year = vm.Year,
             LicensePlate = vm.LicensePlate.Trim().ToUpperInvariant(),
-            FuelType     = vm.FuelType,
+            FuelType = vm.FuelType,
             Transmission = vm.Transmission,
-            Seats        = vm.Seats,
-            PricePerDay  = vm.PricePerDay,
-            Description  = vm.Description?.Trim(),
-            Location     = vm.Location.Trim(),
-            CategoryId   = vm.CategoryId,
-            ImageUrl     = vm.ImageUrl?.Trim(),
-            Status       = vm.Status
+            Seats = vm.Seats,
+            PricePerDay = vm.PricePerDay,
+            Description = vm.Description?.Trim(),
+            Location = vm.Location.Trim(),
+            CategoryId = vm.CategoryId,
+            ImageUrl = vm.ImageUrl,
+            Status = vm.Status
         };
 
         var result = await carService.UpdateCarAsync(car);
@@ -183,9 +201,7 @@ public class AdminController(
 
         return RedirectToAction(nameof(Cars));
     }
-
-    // ── Rental Management ─────────────────────────────────────────────────────
-
+    
     public async Task<IActionResult> Rentals(RentalStatus? status, int page = 1)
     {
         var rentals = await rentalService.GetAllRentalsAsync();
@@ -225,10 +241,10 @@ public class AdminController(
 
         var vm = new AdminRejectViewModel
         {
-            RentalId     = rental.Id,
-            CarName      = rental.Car?.FullName ?? string.Empty,
+            RentalId = rental.Id,
+            CarName = rental.Car?.FullName ?? string.Empty,
             UserFullName = rental.User?.FullName ?? rental.UserId,
-            DateRange    = rental.PickupDate.HasValue && rental.ReturnDate.HasValue
+            DateRange = rental is { PickupDate: not null, ReturnDate: not null }
                 ? $"{rental.PickupDate.Value:dd MMM yyyy} – {rental.ReturnDate.Value:dd MMM yyyy}"
                 : string.Empty
         };
@@ -254,9 +270,7 @@ public class AdminController(
         ModelState.AddModelError(string.Empty, result.Error);
         return View(vm);
     }
-
-    // ── User Management ───────────────────────────────────────────────────────
-
+    
     public async Task<IActionResult> Users()
     {
         var usersWithRoles = await userService.GetAllUsersWithRolesAsync();

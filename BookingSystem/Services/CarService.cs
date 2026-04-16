@@ -55,19 +55,19 @@ public class CarService(
             return ServiceResult.Fail(
                 "Another car with this license plate already exists.");
 
-        existing.Brand        = car.Brand;
-        existing.Model        = car.Model;
-        existing.Year         = car.Year;
+        existing.Brand = car.Brand;
+        existing.Model = car.Model;
+        existing.Year = car.Year;
         existing.LicensePlate = car.LicensePlate;
-        existing.FuelType     = car.FuelType;
+        existing.FuelType = car.FuelType;
         existing.Transmission = car.Transmission;
-        existing.Seats        = car.Seats;
-        existing.PricePerDay  = car.PricePerDay;
-        existing.Description  = car.Description;
-        existing.Location     = car.Location;
-        existing.CategoryId   = car.CategoryId;
-        existing.ImageUrl     = car.ImageUrl;
-        existing.Status       = car.Status;
+        existing.Seats = car.Seats;
+        existing.PricePerDay = car.PricePerDay;
+        existing.Description = car.Description;
+        existing.Location = car.Location;
+        existing.CategoryId = car.CategoryId;
+        existing.ImageUrl = car.ImageUrl;
+        existing.Status = car.Status;
 
         await carRepo.SaveChangesAsync();
 

@@ -30,11 +30,7 @@ public class RentalRepository(ApplicationDbContext db)
                 .ThenInclude(c => c.Category)
             .FirstOrDefaultAsync(r => r.Id == rentalId);
 
-    public async Task<bool> HasOverlapAsync(
-        int      carId,
-        DateTime pickupDate,
-        DateTime returnDate,
-        int?     excludeRentalId = null)
+    public async Task<bool> HasOverlapAsync(int carId, DateTime pickupDate, DateTime returnDate, int? excludeRentalId = null)
     {
         return await Db.Rentals
             .Where(r =>

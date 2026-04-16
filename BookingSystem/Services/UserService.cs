@@ -6,10 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookingSystem.Services;
 
-public class UserService(
-    UserManager<ApplicationUser>  userManager,
-    ApplicationDbContext          db,
-    ILogger<UserService>          logger) : IUserService
+public class UserService(UserManager<ApplicationUser>  userManager, ApplicationDbContext db, 
+    ILogger<UserService> logger) : IUserService
 {
     public async Task<IEnumerable<(ApplicationUser User, IList<string> Roles)>> GetAllUsersWithRolesAsync()
     {

@@ -8,8 +8,8 @@ namespace BookingSystem.Validators;
 
 public class RentalCreateViewModelValidator : AbstractValidator<RentalCreateViewModel>
 {
-    private const int MinRentalDays  = 1;
-    private const int MaxRentalDays  = 30;
+    private const int MinRentalDays = 1;
+    private const int MaxRentalDays = 30;
     private const int MaxAdvanceDays = 60;
 
     public RentalCreateViewModelValidator(IStringLocalizer<SharedResources> localizer)

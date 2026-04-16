@@ -23,7 +23,6 @@ public class LanguageController : Controller
         }
         catch (System.Globalization.CultureNotFoundException)
         {
-            // If the culture is invalid, we just redirect back without setting the cookie.
         }
 
         return LocalRedirect(Url.IsLocalUrl(returnUrl) ? returnUrl : "/");

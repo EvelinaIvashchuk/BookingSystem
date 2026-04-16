@@ -32,8 +32,8 @@ public class CarController(ICarService carService) : Controller
         ViewBag.Categories = (await carService.GetAllCategoriesAsync())
             .Select(c => new SelectListItem
             {
-                Value    = c.Id.ToString(),
-                Text     = c.Name,
+                Value = c.Id.ToString(),
+                Text = c.Name,
                 Selected = c.Id == categoryId
             });
 

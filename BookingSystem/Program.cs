@@ -1,5 +1,3 @@
-using System.Linq;
-using BookingSystem;
 using BookingSystem.Data;
 using BookingSystem.Data.Repositories;
 using BookingSystem.Mappings;
@@ -77,7 +75,9 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRentalService, RentalService>();
 builder.Services.AddScoped<ICarService,    CarService>();
 builder.Services.AddScoped<IUserService,   UserService>();
-builder.Services.AddScoped<IEmailService,  MockEmailService>();
+builder.Services.AddScoped<IEmailService,   MockEmailService>();
+builder.Services.AddHttpClient("s3");
+builder.Services.AddSingleton<IStorageService, S3StorageService>();
 
 // ── AutoMapper ────────────────────────────────────────────────────────────────
 builder.Services.AddAutoMapper(typeof(RentalMappingProfile).Assembly);

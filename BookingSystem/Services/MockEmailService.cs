@@ -2,9 +2,7 @@ using BookingSystem.Services.Interfaces;
 
 namespace BookingSystem.Services;
 
-public class MockEmailService(
-    ILogger<MockEmailService> logger,
-    IWebHostEnvironment env) : IEmailService
+public class MockEmailService(ILogger<MockEmailService> logger, IWebHostEnvironment env) : IEmailService
 {
     private readonly string _logDir = Path.Combine(env.ContentRootPath, "Logs", "Emails");
 

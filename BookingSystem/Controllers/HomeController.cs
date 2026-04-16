@@ -20,7 +20,7 @@ public class HomeController(ICarService carService) : Controller
         View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult StatusCode(int code)
+    public new IActionResult StatusCode(int code)
     {
         ViewBag.StatusCode = code;
         return code switch

@@ -21,10 +21,8 @@ public class ApplicationUser : IdentityUser
     [Display(Name = "Active")]
     public bool IsActive { get; set; } = true;
 
-    // Navigation
     public ICollection<Rental> Rentals { get; set; } = [];
 
-    // Computed helper (not mapped)
     [System.ComponentModel.DataAnnotations.Schema.NotMapped]
     public string FullName => $"{FirstName} {LastName}";
 }

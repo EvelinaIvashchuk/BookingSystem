@@ -5,11 +5,11 @@ namespace BookingSystem.ViewModels;
 public class RentalCreateViewModel
 {
     // Pre-filled from the car — not posted back
-    public int     CarId        { get; set; }
-    public string  CarName      { get; set; } = string.Empty;
-    public string  Location     { get; set; } = string.Empty;
-    public decimal PricePerDay  { get; set; }
-    public string  CategoryName { get; set; } = string.Empty;
+    public int CarId { get; set; }
+    public string CarName { get; set; } = string.Empty;
+    public string Location { get; set; } = string.Empty;
+    public decimal PricePerDay { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Pickup date is required.")]
     [Display(Name = "Pickup Date")]

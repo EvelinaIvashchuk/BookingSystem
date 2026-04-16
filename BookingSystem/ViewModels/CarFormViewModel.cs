@@ -52,9 +52,13 @@ public class CarFormViewModel
     [Display(Name = "Location")]
     public string Location { get; set; } = string.Empty;
 
+    // Existing URL kept when no new file is chosen (hidden field in form)
     [StringLength(500)]
-    [Display(Name = "Image URL")]
     public string? ImageUrl { get; set; }
+
+    // New upload — optional
+    [Display(Name = "Photo")]
+    public IFormFile? ImageFile { get; set; }
 
     [Required]
     [Range(1, int.MaxValue, ErrorMessage = "Please select a category.")]

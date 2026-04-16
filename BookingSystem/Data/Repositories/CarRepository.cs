@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookingSystem.Data.Repositories;
 
-public class CarRepository(ApplicationDbContext db)
-    : GenericRepository<Car>(db), ICarRepository
+public class CarRepository(ApplicationDbContext db) : GenericRepository<Car>(db), ICarRepository
 {
     public async Task<IEnumerable<Car>> GetAllWithCategoryAsync() =>
         await Db.Cars

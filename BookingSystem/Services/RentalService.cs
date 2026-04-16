@@ -6,15 +6,12 @@ using BookingSystem.Services.Interfaces;
 
 namespace BookingSystem.Services;
 
-public class RentalService(
-    IUnitOfWork             uow,
-    IEmailService           emailService,
-    ILogger<RentalService>  logger) : IRentalService
+public class RentalService(IUnitOfWork uow, IEmailService emailService, ILogger<RentalService>  logger) : IRentalService
 {
     private const int MaxActiveRentalsPerUser = 3;
-    private const int MinRentalDays           = 1;
-    private const int MaxRentalDays           = 30;
-    private const int MaxAdvanceBookingDays   = 60;
+    private const int MinRentalDays = 1;
+    private const int MaxRentalDays = 30;
+    private const int MaxAdvanceBookingDays = 60;
 
     public async Task<ServiceResult<Rental>> CreateRentalAsync(
         string userId, CreateRentalDto dto)
@@ -48,14 +45,14 @@ public class RentalService(
 
         var rental = new Rental
         {
-            UserId     = userId,
-            CarId      = dto.CarId,
+            UserId = userId,
+            CarId = dto.CarId,
             PickupDate = dto.PickupDate,
             ReturnDate = dto.ReturnDate,
             TotalPrice = totalPrice,
-            Notes      = dto.Notes?.Trim(),
-            Status     = RentalStatus.Pending,
-            CreatedAt  = DateTime.UtcNow
+            Notes = dto.Notes?.Trim(),
+            Status = RentalStatus.Pending,
+            CreatedAt = DateTime.UtcNow
         };
 
         await uow.Rentals.AddAsync(rental);
