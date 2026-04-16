@@ -1,0 +1,92 @@
+Summary - BookingSystem — Code Coverage Report
+  Generated on: 16.04.2026 - 21:33:47
+  Coverage date: 16.04.2026 - 21:33:40
+  Parser: Cobertura
+  Assemblies: 4
+  Classes: 64
+  Files: 63
+  Line coverage: 34.4%
+  Covered lines: 588
+  Uncovered lines: 1117
+  Coverable lines: 1705
+  Total lines: 4834
+  Branch coverage: 14.4% (114 of 791)
+  Covered branches: 114
+  Total branches: 791
+  Method coverage: 38.9% (101 of 259)
+  Full method coverage: 38.2% (99 of 259)
+  Covered methods: 101
+  Fully covered methods: 99
+  Total methods: 259
+
+BookingSystem                                                   13.3%
+  AspNetCoreGeneratedDocument.Views__ViewStart                     0%
+  AspNetCoreGeneratedDocument.Views_Account_AccessDenied           0%
+  AspNetCoreGeneratedDocument.Views_Account_Login                  0%
+  AspNetCoreGeneratedDocument.Views_Account_Register               0%
+  AspNetCoreGeneratedDocument.Views_Admin_Cars                     0%
+  AspNetCoreGeneratedDocument.Views_Admin_CreateCar                0%
+  AspNetCoreGeneratedDocument.Views_Admin_EditCar                  0%
+  AspNetCoreGeneratedDocument.Views_Admin_Index                    0%
+  AspNetCoreGeneratedDocument.Views_Admin_RejectRental             0%
+  AspNetCoreGeneratedDocument.Views_Admin_Rentals                  0%
+  AspNetCoreGeneratedDocument.Views_Admin_Users                    0%
+  AspNetCoreGeneratedDocument.Views_Car_Details                    0%
+  AspNetCoreGeneratedDocument.Views_Car_Index                      0%
+  AspNetCoreGeneratedDocument.Views_Home_Forbidden                 0%
+  AspNetCoreGeneratedDocument.Views_Home_GenericError              0%
+  AspNetCoreGeneratedDocument.Views_Home_Index                     0%
+  AspNetCoreGeneratedDocument.Views_Home_NotFound                  0%
+  AspNetCoreGeneratedDocument.Views_Home_Privacy                   0%
+  AspNetCoreGeneratedDocument.Views_Rental_Create                  0%
+  AspNetCoreGeneratedDocument.Views_Rental_Details                 0%
+  AspNetCoreGeneratedDocument.Views_Rental_MyRentals               0%
+  AspNetCoreGeneratedDocument.Views_Shared__Layout                 0%
+  AspNetCoreGeneratedDocument.Views_Shared__Pagination             0%
+  AspNetCoreGeneratedDocument.Views_Shared__RentalStatusBadge      0%
+  AspNetCoreGeneratedDocument.Views_Shared_Error                   0%
+  BookingSystem.Controllers.AccountController                      0%
+  BookingSystem.Controllers.AdminController                        0%
+  BookingSystem.Controllers.CarController                        100%
+  BookingSystem.Controllers.HomeController                         0%
+  BookingSystem.Controllers.ImageController                        0%
+  BookingSystem.Controllers.LanguageController                     0%
+  BookingSystem.Controllers.RentalController                     100%
+  BookingSystem.Helpers.ImageHelper                                0%
+  BookingSystem.Helpers.PaginatedList<T>                        56.6%
+  BookingSystem.Mappings.RentalMappingProfile                      0%
+  BookingSystem.Models.ErrorViewModel                              0%
+  BookingSystem.Validators.RentalCreateViewModelValidator          0%
+  BookingSystem.ViewModels.AdminDashboardViewModel                 0%
+  BookingSystem.ViewModels.AdminRejectViewModel                    0%
+  BookingSystem.ViewModels.CarFormViewModel                        0%
+  BookingSystem.ViewModels.LoginViewModel                          0%
+  BookingSystem.ViewModels.RegisterViewModel                       0%
+  BookingSystem.ViewModels.RentalCreateViewModel                62.5%
+  Program                                                          0%
+
+BookingSystem.Application                                       94.1%
+  BookingSystem.Services.Dtos.CreateRentalDto                    100%
+  BookingSystem.Services.Dtos.RentalDto                            0%
+  BookingSystem.Services.RentalService                          96.5%
+  BookingSystem.Services.ServiceResult                           100%
+  BookingSystem.Services.ServiceResult<T>                       78.5%
+
+BookingSystem.Domain                                              74%
+  BookingSystem.Models.ApplicationUser                           100%
+  BookingSystem.Models.Car                                       100%
+  BookingSystem.Models.Category                                  100%
+  BookingSystem.Models.Payment                                     0%
+  BookingSystem.Models.Rental                                   68.4%
+
+BookingSystem.Infrastructure                                    48.3%
+  BookingSystem.Data.ApplicationDbContext                        100%
+  BookingSystem.Data.DbSeeder                                      0%
+  BookingSystem.Data.Repositories.CarRepository                  100%
+  BookingSystem.Data.Repositories.GenericRepository<T>          27.2%
+  BookingSystem.Data.Repositories.RentalRepository               100%
+  BookingSystem.Data.UnitOfWork                                    0%
+  BookingSystem.Services.CarService                             94.7%
+  BookingSystem.Services.MockEmailService                          0%
+  BookingSystem.Services.S3StorageService                          0%
+  BookingSystem.Services.UserService                               0%

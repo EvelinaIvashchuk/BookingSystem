@@ -3,24 +3,40 @@ USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 
+# ─────────────────────────────────────────────────────────────────────────────
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 
-# Пропускаємо завантаження XML-документації — значно прискорює dotnet restore
+# Прискорює restore: пропускаємо XML-документацію пакетів
 ENV NUGET_XMLDOC_MODE=skip
 
 WORKDIR /src
 
-# Копіюємо .csproj всіх проектів для максимального Docker-кешу при restore
-COPY ["BookingSystem/BookingSystem.csproj",                       "BookingSystem/"]
-COPY ["BookingSystem.Domain/BookingSystem.Domain.csproj",         "BookingSystem.Domain/"]
-COPY ["BookingSystem.Application/BookingSystem.Application.csproj", "BookingSystem.Application/"]
-COPY ["BookingSystem.Infrastructure/BookingSystem.Infrastructure.csproj", "BookingSystem.Infrastructure/"]
+# Копіюємо конфіги, які впливають на restore, першими — максимальний Docker-кеш
+COPY ["global.json",    "global.json"]
+COPY ["NuGet.Config",   "NuGet.Config"]
+
+# Копіюємо .csproj всіх проектів — ще один шар кешу (restore не запускається при зміні лише .cs)
+COPY ["BookingSystem/BookingSystem.csproj",                                   "BookingSystem/"]
+COPY ["BookingSystem.Domain/BookingSystem.Domain.csproj",                     "BookingSystem.Domain/"]
+COPY ["BookingSystem.Application/BookingSystem.Application.csproj",           "BookingSystem.Application/"]
+COPY ["BookingSystem.Infrastructure/BookingSystem.Infrastructure.csproj",     "BookingSystem.Infrastructure/"]
+COPY ["BookingSystem.Tests/BookingSystem.Tests.csproj",                       "BookingSystem.Tests/"]
 
 # Відновлюємо залежності для всього рішення
 RUN dotnet restore "BookingSystem/BookingSystem.csproj"
 
-# Копіюємо весь код і публікуємо Web-проект
+# ─────────────────────────────────────────────────────────────────────────────
+# Тестовий stage (опціональний — не потрапляє у фінальний образ)
+FROM build AS test
+COPY . .
+RUN dotnet test "BookingSystem.Tests/BookingSystem.Tests.csproj" \
+        --no-restore \
+        --configuration Debug \
+        --logger "console;verbosity=minimal"
+
+# ─────────────────────────────────────────────────────────────────────────────
+FROM build AS publish
 COPY . .
 WORKDIR "/src/BookingSystem"
 RUN dotnet publish "./BookingSystem.csproj" \
@@ -29,7 +45,8 @@ RUN dotnet publish "./BookingSystem.csproj" \
         /p:UseAppHost=false \
         --no-restore
 
+# ─────────────────────────────────────────────────────────────────────────────
 FROM base AS final
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "BookingSystem.dll"]
