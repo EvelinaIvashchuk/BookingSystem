@@ -1,4 +1,6 @@
 using BookingSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace BookingSystem.Services;
 

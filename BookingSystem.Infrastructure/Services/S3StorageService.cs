@@ -4,6 +4,8 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using BookingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace BookingSystem.Services;
 

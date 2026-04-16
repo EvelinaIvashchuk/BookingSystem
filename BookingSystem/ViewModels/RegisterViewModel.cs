@@ -6,28 +6,28 @@ public class RegisterViewModel
 {
     [Required]
     [StringLength(50, MinimumLength = 2)]
-    [Display(Name = "First Name")]
+    [Display(Name = "Account_FirstName")]
     public string FirstName { get; set; } = string.Empty;
 
     [Required]
     [StringLength(50, MinimumLength = 2)]
-    [Display(Name = "Last Name")]
+    [Display(Name = "Account_LastName")]
     public string LastName { get; set; } = string.Empty;
 
     [Required]
     [EmailAddress]
-    [Display(Name = "Email")]
+    [Display(Name = "Account_Email")]
     public string Email { get; set; } = string.Empty;
 
     [Required]
     [StringLength(100, MinimumLength = 8)]
     [DataType(DataType.Password)]
-    [Display(Name = "Password")]
+    [Display(Name = "Account_Password")]
     public string Password { get; set; } = string.Empty;
 
     [Required]
     [DataType(DataType.Password)]
     [Compare(nameof(Password), ErrorMessage = "Passwords do not match.")]
-    [Display(Name = "Confirm Password")]
+    [Display(Name = "Account_ConfirmPassword")]
     public string ConfirmPassword { get; set; } = string.Empty;
 }
