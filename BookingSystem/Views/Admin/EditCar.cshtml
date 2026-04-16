@@ -1,3 +1,4 @@
+@using BookingSystem.Helpers
 @model CarFormViewModel
 @{
     ViewData["Title"] = L["Admin_EditCar_Title"].Value + ": " + Model.Brand + " " + Model.Model;
@@ -109,7 +110,7 @@
                             <span asp-validation-for="ImageFile" class="text-danger small"></span>
                             <div id="imagePreview" class="mt-3 @(string.IsNullOrEmpty(Model.ImageUrl) ? "d-none" : "")">
                                 <label class="d-block small text-muted mb-2">@L["Admin_CurrentImagePreview"]</label>
-                                <img id="previewImg" src="@Model.ImageUrl" class="img-thumbnail" style="max-height:150px;" />
+                                <img id="previewImg" src="@ImageHelper.Src(Model.ImageUrl)" class="img-thumbnail" style="max-height:150px;" />
                             </div>
                         </div>
 

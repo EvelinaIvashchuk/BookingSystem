@@ -57,7 +57,7 @@
                     <div class="card h-100 shadow-sm border-0 transition-hover">
                         @if (!string.IsNullOrEmpty(c.ImageUrl))
                         {
-                            <img src="@c.ImageUrl" class="card-img-top" alt="@c.FullName" style="height: 180px; object-fit: cover;">
+                            <img src="@ImageHelper.Src(c.ImageUrl)" class="card-img-top" alt="@c.FullName" style="height: 180px; object-fit: cover;">
                         }
                         else
                         {

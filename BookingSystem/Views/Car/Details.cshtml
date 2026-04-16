@@ -1,3 +1,4 @@
+@using BookingSystem.Helpers
 @model Car
 @{
     ViewData["Title"] = Model.FullName;
@@ -19,7 +20,7 @@
         <div class="col-lg-7 mb-4 mb-lg-0">
             @if (!string.IsNullOrEmpty(Model.ImageUrl))
             {
-                <img src="@Model.ImageUrl" class="img-fluid rounded shadow-sm border" alt="@Model.FullName" style="width: 100%; max-height: 450px; object-fit: cover;">
+                <img src="@ImageHelper.Src(Model.ImageUrl)" class="img-fluid rounded shadow-sm border" alt="@Model.FullName" style="width: 100%; max-height: 450px; object-fit: cover;">
             }
             else
             {

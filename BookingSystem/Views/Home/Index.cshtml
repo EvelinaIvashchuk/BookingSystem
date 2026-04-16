@@ -1,3 +1,4 @@
+@using BookingSystem.Helpers
 @model IEnumerable<Car>
 @{
     ViewData["Title"] = L["Home_Title"].Value;
@@ -316,7 +317,7 @@
                             @* Thumbnail *@
                             @if (!string.IsNullOrEmpty(c.ImageUrl))
                             {
-                                <img src="@c.ImageUrl" class="car-thumb" alt="@c.FullName">
+                                <img src="@ImageHelper.Src(c.ImageUrl)" class="car-thumb" alt="@c.FullName">
                             }
                             else
                             {
