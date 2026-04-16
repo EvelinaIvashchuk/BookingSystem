@@ -11,16 +11,16 @@ ENV NUGET_XMLDOC_MODE=skip
 
 WORKDIR /src
 
-# Копіюємо global.json і nuget.config ДО restore
-# щоб SDK і джерела пакетів кешувались у окремому шарі
-COPY global.json  ./
-COPY nuget.config ./
+# Копіюємо .csproj всіх проектів для максимального Docker-кешу при restore
+COPY ["BookingSystem/BookingSystem.csproj",                       "BookingSystem/"]
+COPY ["BookingSystem.Domain/BookingSystem.Domain.csproj",         "BookingSystem.Domain/"]
+COPY ["BookingSystem.Application/BookingSystem.Application.csproj", "BookingSystem.Application/"]
+COPY ["BookingSystem.Infrastructure/BookingSystem.Infrastructure.csproj", "BookingSystem.Infrastructure/"]
 
-# Копіюємо лише .csproj для максимального використання Docker-кешу
-COPY ["BookingSystem/BookingSystem.csproj", "BookingSystem/"]
+# Відновлюємо залежності для всього рішення
 RUN dotnet restore "BookingSystem/BookingSystem.csproj"
 
-# Копіюємо код і одразу публікуємо (без проміжного build-кроку)
+# Копіюємо весь код і публікуємо Web-проект
 COPY . .
 WORKDIR "/src/BookingSystem"
 RUN dotnet publish "./BookingSystem.csproj" \
