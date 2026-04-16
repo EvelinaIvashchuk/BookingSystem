@@ -12,10 +12,6 @@ ENV NUGET_XMLDOC_MODE=skip
 
 WORKDIR /src
 
-# Копіюємо конфіги, які впливають на restore, першими — максимальний Docker-кеш
-COPY ["global.json",    "global.json"]
-COPY ["NuGet.Config",   "NuGet.Config"]
-
 # Копіюємо .csproj всіх проектів — ще один шар кешу (restore не запускається при зміні лише .cs)
 COPY ["BookingSystem/BookingSystem.csproj",                                   "BookingSystem/"]
 COPY ["BookingSystem.Domain/BookingSystem.Domain.csproj",                     "BookingSystem.Domain/"]
