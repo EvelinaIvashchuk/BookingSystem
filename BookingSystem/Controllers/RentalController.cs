@@ -18,8 +18,8 @@ namespace BookingSystem.Controllers;
 public class RentalController(IRentalService rentalService, ICarService carService, IMapper mapper,
     IValidator<RentalCreateViewModel> validator, IStringLocalizer<SharedResources> localizer) : Controller
 {
-    // GET /Rental/Create?carId=5
-    public async Task<IActionResult> Create(int carId)
+    // GET /Rental/Create?carId=5&pickupDate=2026-05-01&returnDate=2026-05-05
+    public async Task<IActionResult> Create(int carId, DateTime? pickupDate, DateTime? returnDate)
     {
         var car = await carService.GetCarByIdAsync(carId);
 
@@ -34,11 +34,13 @@ public class RentalController(IRentalService rentalService, ICarService carServi
 
         var vm = new RentalCreateViewModel
         {
-            CarId = car.Id,
-            CarName = car.FullName,
-            Location = car.Location,
-            PricePerDay = car.PricePerDay,
-            CategoryName = car.Category?.Name ?? string.Empty
+            CarId        = car.Id,
+            CarName      = car.FullName,
+            Location     = car.Location,
+            PricePerDay  = car.PricePerDay,
+            CategoryName = car.Category?.Name ?? string.Empty,
+            PickupDate   = pickupDate,
+            ReturnDate   = returnDate
         };
 
         return View(vm);

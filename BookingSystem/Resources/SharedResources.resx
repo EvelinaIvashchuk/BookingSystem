@@ -63,6 +63,23 @@
   <data name="Car_Roadside" xml:space="preserve"><value>24/7 roadside assistance</value></data>
   <data name="Car_FreeCancellation" xml:space="preserve"><value>Free cancellation</value></data>
   <data name="Car_PerDayShort" xml:space="preserve"><value>/ day</value></data>
+  <data name="Car_SelectDates" xml:space="preserve"><value>Select dates</value></data>
+  <data name="Car_SelectDatesHint" xml:space="preserve"><value>Select pickup and return dates on the calendar</value></data>
+  <data name="Car_LoginToRent" xml:space="preserve"><value>Log in to continue</value></data>
+  <data name="Car_LegendSelected" xml:space="preserve"><value>Selected</value></data>
+  <data name="Car_LegendBooked" xml:space="preserve"><value>Booked</value></data>
+  <data name="Car_LegendAvailable" xml:space="preserve"><value>Available</value></data>
+  <data name="Car_PickReturn" xml:space="preserve"><value>Now pick the return date</value></data>
+  <data name="Car_DaysPrefix" xml:space="preserve"><value></value></data>
+  <data name="Car_DaysSuffix" xml:space="preserve"><value> days</value></data>
+  <data name="Car_TotalLabel" xml:space="preserve"><value>Total:</value></data>
+  <data name="Cal_Sun" xml:space="preserve"><value>Su</value></data>
+  <data name="Cal_Mon" xml:space="preserve"><value>Mo</value></data>
+  <data name="Cal_Tue" xml:space="preserve"><value>Tu</value></data>
+  <data name="Cal_Wed" xml:space="preserve"><value>We</value></data>
+  <data name="Cal_Thu" xml:space="preserve"><value>Th</value></data>
+  <data name="Cal_Fri" xml:space="preserve"><value>Fr</value></data>
+  <data name="Cal_Sat" xml:space="preserve"><value>Sa</value></data>
 
   <!-- ── Rental ─────────────────────────────────────────────────── -->
   <data name="Rental_RentACar" xml:space="preserve"><value>Rent a Car</value></data>

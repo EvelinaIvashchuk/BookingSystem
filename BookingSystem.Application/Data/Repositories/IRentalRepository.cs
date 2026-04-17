@@ -9,4 +9,5 @@ public interface IRentalRepository : IGenericRepository<Rental>
     Task<Rental?> GetWithDetailsAsync(int rentalId);
     Task<bool> HasOverlapAsync(int carId, DateTime pickupDate, DateTime returnDate, int? excludeRentalId = null);
     Task<int> GetActiveRentalCountAsync(string userId);
+    Task<IEnumerable<(DateTime Pickup, DateTime Return)>> GetBookedRangesForCarAsync(int carId);
 }

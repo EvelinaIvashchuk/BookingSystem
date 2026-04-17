@@ -1,3 +1,4 @@
+using BookingSystem.Data;
 using BookingSystem.Helpers;
 using BookingSystem.Models;
 using BookingSystem.Services.Interfaces;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BookingSystem.Controllers;
 
-public class CarController(ICarService carService) : Controller
+public class CarController(ICarService carService, IUnitOfWork uow) : Controller
 {
     private const int PageSize = 6;
 
@@ -49,5 +50,18 @@ public class CarController(ICarService carService) : Controller
             return NotFound();
 
         return View(car);
+    }
+
+    // GET /Car/BookedRanges/5  →  JSON for the availability calendar
+    [HttpGet]
+    public async Task<IActionResult> BookedRanges(int id)
+    {
+        var ranges = await uow.Rentals.GetBookedRangesForCarAsync(id);
+        var result = ranges.Select(r => new
+        {
+            pickup = r.Pickup.ToString("yyyy-MM-dd"),
+            @return = r.Return.ToString("yyyy-MM-dd")
+        });
+        return Json(result);
     }
 }

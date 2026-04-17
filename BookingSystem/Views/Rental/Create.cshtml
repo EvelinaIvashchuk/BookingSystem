@@ -28,7 +28,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <label class="text-muted small text-uppercase fw-bold d-block">@L["Rental_Price"]</label>
-                                <span class="text-dark fw-bold text-primary">@Model.PricePerDay.ToString("N0") ₴ / @L["Car_PerDayShort"]</span>
+                                <span class="text-dark fw-bold text-primary">@Model.PricePerDay.ToString("N0") ₴ @L["Car_PerDayShort"]</span>
                             </div>
                         </div>
                     </div>
@@ -54,6 +54,11 @@
                                 <span asp-validation-for="ReturnDate" class="text-danger small"></span>
                                 <div class="form-text mt-2 small">@L["Rental_ReturnHint"]</div>
                             </div>
+                        </div>
+
+                        <div class="mb-4 p-3 bg-primary bg-opacity-10 rounded-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-calculator text-primary fs-5"></i>
+                            <span class="fw-semibold text-primary" id="priceEstimate">&nbsp;</span>
                         </div>
 
                         <div class="mb-5">
@@ -82,16 +87,32 @@
             const pickupInput = document.querySelector('input[name="PickupDate"]');
             const returnInput = document.querySelector('input[name="ReturnDate"]');
 
+            // If dates were NOT pre-filled from the calendar, set sensible defaults
             if (!pickupInput.value) {
                 const today = new Date();
                 const tomorrow = new Date(today);
                 tomorrow.setDate(tomorrow.getDate() + 1);
                 const dayAfter = new Date(tomorrow);
                 dayAfter.setDate(dayAfter.getDate() + 3);
-
                 pickupInput.value = tomorrow.toISOString().slice(0, 10);
                 returnInput.value = dayAfter.toISOString().slice(0, 10);
             }
+
+            // Live price estimate
+            const pricePerDay = parseFloat('@Model.PricePerDay');
+            const estimateEl  = document.getElementById('priceEstimate');
+            function updateEstimate() {
+                if (!estimateEl) return;
+                const p = new Date(pickupInput.value);
+                const r = new Date(returnInput.value);
+                if (isNaN(p) || isNaN(r) || r <= p) { estimateEl.textContent = ''; return; }
+                const days  = Math.round((r - p) / 86400000);
+                const total = (days * pricePerDay).toLocaleString('uk-UA');
+                estimateEl.textContent = `${days} @Html.Raw(L["Car_DaysSuffix"].Value) · @Html.Raw(L["Car_TotalLabel"].Value) ${total} ₴`;
+            }
+            pickupInput.addEventListener('change', updateEstimate);
+            returnInput.addEventListener('change', updateEstimate);
+            updateEstimate();
         });
     </script>
 }

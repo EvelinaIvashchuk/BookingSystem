@@ -1,4 +1,5 @@
 using BookingSystem.Controllers;
+using BookingSystem.Data;
 using BookingSystem.Enums;
 using BookingSystem.Helpers;
 using BookingSystem.Models;
@@ -23,8 +24,9 @@ public class CarControllerTests
     // =========================================================================
 
     private readonly Mock<ICarService> _carService = new();
+    private readonly Mock<IUnitOfWork> _uow        = new();
 
-    private CarController CreateSut() => new(_carService.Object);
+    private CarController CreateSut() => new(_carService.Object, _uow.Object);
 
     private static Category MakeCategory(int id = 1, string name = "Sedan") =>
         new() { Id = id, Name = name };

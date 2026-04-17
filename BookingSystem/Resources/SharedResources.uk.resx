@@ -63,6 +63,23 @@
   <data name="Car_Roadside" xml:space="preserve"><value>Цілодобова допомога на дорозі</value></data>
   <data name="Car_FreeCancellation" xml:space="preserve"><value>Безкоштовне скасування</value></data>
   <data name="Car_PerDayShort" xml:space="preserve"><value>/ день</value></data>
+  <data name="Car_SelectDates" xml:space="preserve"><value>Оберіть дати</value></data>
+  <data name="Car_SelectDatesHint" xml:space="preserve"><value>Оберіть дати прийому та повернення на календарі</value></data>
+  <data name="Car_LoginToRent" xml:space="preserve"><value>Увійдіть, щоб продовжити</value></data>
+  <data name="Car_LegendSelected" xml:space="preserve"><value>Обрано</value></data>
+  <data name="Car_LegendBooked" xml:space="preserve"><value>Зайнято</value></data>
+  <data name="Car_LegendAvailable" xml:space="preserve"><value>Вільно</value></data>
+  <data name="Car_PickReturn" xml:space="preserve"><value>Тепер оберіть дату повернення</value></data>
+  <data name="Car_DaysPrefix" xml:space="preserve"><value></value></data>
+  <data name="Car_DaysSuffix" xml:space="preserve"><value> дн.</value></data>
+  <data name="Car_TotalLabel" xml:space="preserve"><value>Разом:</value></data>
+  <data name="Cal_Sun" xml:space="preserve"><value>Нд</value></data>
+  <data name="Cal_Mon" xml:space="preserve"><value>Пн</value></data>
+  <data name="Cal_Tue" xml:space="preserve"><value>Вт</value></data>
+  <data name="Cal_Wed" xml:space="preserve"><value>Ср</value></data>
+  <data name="Cal_Thu" xml:space="preserve"><value>Чт</value></data>
+  <data name="Cal_Fri" xml:space="preserve"><value>Пт</value></data>
+  <data name="Cal_Sat" xml:space="preserve"><value>Сб</value></data>
 
   <!-- ── Rental ─────────────────────────────────────────────────── -->
   <data name="Rental_RentACar" xml:space="preserve"><value>Оренда автомобіля</value></data>

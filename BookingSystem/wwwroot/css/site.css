@@ -128,3 +128,166 @@ body {
 .lang-input:not(:checked) ~ .flag-ua {
     opacity: 1;
 }
+
+/* ═══════════════════════════════════════════════
+   AVAILABILITY CALENDAR
+   ═══════════════════════════════════════════════ */
+.avail-calendar-wrap {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+.avail-calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+.avail-months {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+@media (max-width: 575px) {
+    .avail-months { grid-template-columns: 1fr; }
+    .avail-month:last-child { display: none; }
+}
+.avail-month-title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1e293b;
+    margin-bottom: 0.6rem;
+    text-transform: capitalize;
+}
+.avail-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+.avail-dow {
+    text-align: center;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #94a3b8;
+    padding: 0.2rem 0;
+    text-transform: uppercase;
+}
+.avail-day {
+    text-align: center;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.15rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    user-select: none;
+    line-height: 1.6;
+    position: relative;
+}
+.avail-day:hover:not(.avail-day--disabled):not(.avail-day--past):not(.avail-day--empty) {
+    background: #eff6ff;
+    color: #2563eb;
+}
+.avail-day--today {
+    font-weight: 700;
+    color: #2563eb;
+}
+.avail-day--today::after {
+    content: '';
+    display: block;
+    width: 4px; height: 4px;
+    background: #2563eb;
+    border-radius: 50%;
+    margin: 1px auto 0;
+}
+.avail-day--past,
+.avail-day--empty {
+    color: #cbd5e1;
+    cursor: default;
+}
+.avail-day--booked {
+    background: #fee2e2;
+    color: #ef4444 !important;
+    cursor: not-allowed;
+    text-decoration: line-through;
+    border-radius: 0;
+}
+.avail-day--booked-start { border-radius: 6px 0 0 6px; }
+.avail-day--booked-end   { border-radius: 0 6px 6px 0; }
+.avail-day--booked-single { border-radius: 6px; }
+
+.avail-day--sel-start,
+.avail-day--sel-end {
+    background: #2563eb !important;
+    color: #fff !important;
+    border-radius: 6px;
+    font-weight: 700;
+}
+.avail-day--sel-range {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-radius: 0;
+}
+.avail-day--sel-start { border-radius: 6px 0 0 6px; }
+.avail-day--sel-end   { border-radius: 0 6px 6px 0; }
+
+.avail-nav-btn {
+    background: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    width: 32px; height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: #475569;
+    transition: background 0.15s, border-color 0.15s;
+    font-size: 0.9rem;
+}
+.avail-nav-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+.avail-legend {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid #f1f5f9;
+}
+.avail-legend-dot {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.avail-cta {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    width: 100%;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+}
+.avail-cta:hover { opacity: 0.9; transform: translateY(-1px); color: #fff; }
+.avail-cta:disabled, .avail-cta.disabled {
+    background: #cbd5e1; cursor: not-allowed; transform: none; opacity: 1;
+    pointer-events: none;
+}
+.avail-selected-info {
+    font-size: 0.82rem;
+    color: #64748b;
+    text-align: center;
+    margin: 0.5rem 0 0.75rem;
+    min-height: 1.2rem;
+}

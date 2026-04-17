@@ -151,7 +151,7 @@ public class RentalControllerTests
         _carService.Setup(s => s.GetCarByIdAsync(It.IsAny<int>()))
                    .ReturnsAsync((Car?)null);
 
-        var result = await CreateSut().Create(carId: 99);
+        var result = await CreateSut().Create(carId: 99, pickupDate: null, returnDate: null);
 
         result.Should().BeOfType<NotFoundResult>();
     }
@@ -164,7 +164,7 @@ public class RentalControllerTests
         _carService.Setup(s => s.GetCarByIdAsync(car.Id)).ReturnsAsync(car);
 
         var sut    = CreateSut();
-        var result = await sut.Create(carId: car.Id);
+        var result = await sut.Create(carId: car.Id, pickupDate: null, returnDate: null);
 
         var redirect = result.Should().BeOfType<RedirectToActionResult>().Subject;
         redirect.ActionName.Should().Be("Details");
@@ -180,7 +180,7 @@ public class RentalControllerTests
         var car = MakeAvailableCar(id: 5);
         _carService.Setup(s => s.GetCarByIdAsync(5)).ReturnsAsync(car);
 
-        var result = await CreateSut().Create(carId: 5);
+        var result = await CreateSut().Create(carId: 5, pickupDate: null, returnDate: null);
 
         var view = result.Should().BeOfType<ViewResult>().Subject;
         var vm   = view.Model.Should().BeOfType<RentalCreateViewModel>().Subject;

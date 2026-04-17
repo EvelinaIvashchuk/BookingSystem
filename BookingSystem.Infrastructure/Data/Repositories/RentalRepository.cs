@@ -47,4 +47,16 @@ public class RentalRepository(ApplicationDbContext db)
             .CountAsync(r =>
                 r.UserId == userId &&
                 (r.Status == RentalStatus.Pending || r.Status == RentalStatus.Confirmed));
+
+    public async Task<IEnumerable<(DateTime Pickup, DateTime Return)>> GetBookedRangesForCarAsync(int carId)
+    {
+        var rows = await Db.Rentals
+            .Where(r => r.CarId == carId &&
+                        (r.Status == RentalStatus.Pending || r.Status == RentalStatus.Confirmed) &&
+                        r.PickupDate != null && r.ReturnDate != null)
+            .Select(r => new { r.PickupDate, r.ReturnDate })
+            .ToListAsync();
+
+        return rows.Select(r => (r.PickupDate!.Value, r.ReturnDate!.Value));
+    }
 }

@@ -3,6 +3,233 @@
 @{
     ViewData["Title"] = Model.FullName;
 }
+@section Scripts {
+<script>
+(function () {
+    // ── Config ────────────────────────────────────────────────────
+    const CAR_ID      = @Model.Id;
+    const CREATE_URL  = '@Url.Action("Create","Rental")';
+    const IS_AUTH     = @(User.Identity?.IsAuthenticated == true ? "true" : "false");
+    const LOGIN_URL   = '@Url.Action("Login","Account",new{returnUrl=Context.Request.Path+Context.Request.QueryString})';
+
+    const DOW_LABELS       = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new[]{L["Cal_Sun"].Value,L["Cal_Mon"].Value,L["Cal_Tue"].Value,L["Cal_Wed"].Value,L["Cal_Thu"].Value,L["Cal_Fri"].Value,L["Cal_Sat"].Value}));
+    const MSG_PICK_RETURN  = '@Html.Raw(L["Car_PickReturn"].Value)';
+    const MSG_DAYS_SUFFIX  = '@Html.Raw(L["Car_DaysSuffix"].Value)';
+    const MSG_TOTAL        = '@Html.Raw(L["Car_TotalLabel"].Value)';
+    const PRICE_PER_DAY    = @Model.PricePerDay.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    const SELECT_HINT_ANON = '@Html.Raw(L["Car_LoginToRent"].Value)';
+
+    // ── State ─────────────────────────────────────────────────────
+    let bookedDaySet = new Set();
+    let viewYear, viewMonth;
+    let selStart = null, selEnd = null, hovering = null;
+
+    const SEL_CLASSES = ['avail-day--sel-start','avail-day--sel-end','avail-day--sel-range'];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // ── Helpers ──────────────────────────────────────────────────
+    const fmt     = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const parse   = s => { const [y,m,d] = s.split('-').map(Number); const dt = new Date(y,m-1,d); dt.setHours(0,0,0,0); return dt; };
+    const addDays = (d,n) => { const r = new Date(d); r.setDate(r.getDate()+n); return r; };
+    const diffDays = (a,b) => Math.round((b-a)/(1000*60*60*24));
+    const isFree  = cell => !cell.classList.contains('avail-day--past')
+                         && !cell.classList.contains('avail-day--booked')
+                         && !cell.classList.contains('avail-day--empty')
+                         && cell.dataset.date;
+
+    function buildBookedSet(ranges) {
+        const s = new Set();
+        ranges.forEach(({pickup, return: ret}) => {
+            let cur = parse(pickup);
+            const end = parse(ret);
+            while (cur <= end) { s.add(fmt(cur)); cur = addDays(cur, 1); }
+        });
+        return s;
+    }
+
+    // ── Fetch booked ranges ───────────────────────────────────────
+    viewYear  = today.getFullYear();
+    viewMonth = today.getMonth();
+
+    renderCalendar(); // immediate render, no booked dates yet
+
+    fetch(`/Car/BookedRanges/${CAR_ID}`)
+        .then(r => r.json())
+        .then(data => { bookedDaySet = buildBookedSet(data); renderCalendar(); })
+        .catch(() => {});
+
+    // ── Render calendar (full rebuild — only on month change / fetch) ─
+    function renderCalendar() {
+        const container = document.getElementById('calMonths');
+        if (!container) return;
+        container.innerHTML = '';
+        container.appendChild(buildMonth(viewYear, viewMonth));
+        const n = viewMonth === 11 ? new Date(viewYear+1,0,1) : new Date(viewYear, viewMonth+1, 1);
+        container.appendChild(buildMonth(n.getFullYear(), n.getMonth()));
+        updateHighlight();
+        updateCta();
+    }
+
+    function buildMonth(year, month) {
+        const wrap  = document.createElement('div');
+        wrap.className = 'avail-month';
+
+        const title = document.createElement('div');
+        title.className = 'avail-month-title';
+        const lbl = new Date(year, month, 1)
+            .toLocaleDateString(document.documentElement.lang || 'uk', {month:'long', year:'numeric'});
+        title.textContent = lbl.charAt(0).toUpperCase() + lbl.slice(1);
+        wrap.appendChild(title);
+
+        const grid = document.createElement('div');
+        grid.className = 'avail-grid';
+
+        DOW_LABELS.forEach(l => {
+            const h = document.createElement('div');
+            h.className = 'avail-dow'; h.textContent = l;
+            grid.appendChild(h);
+        });
+
+        const firstDow    = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month+1, 0).getDate();
+
+        for (let i = 0; i < firstDow; i++) {
+            const e = document.createElement('div');
+            e.className = 'avail-day avail-day--empty';
+            grid.appendChild(e);
+        }
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const date    = new Date(year, month, d);
+            date.setHours(0,0,0,0);
+            const dateStr = fmt(date);
+            const cell    = document.createElement('div');
+            cell.className = 'avail-day';
+            cell.textContent = d;
+            cell.dataset.date = dateStr;
+
+            if (date < today)                  cell.classList.add('avail-day--past');
+            else if (bookedDaySet.has(dateStr)) cell.classList.add('avail-day--booked');
+            if (dateStr === fmt(today))         cell.classList.add('avail-day--today');
+
+            grid.appendChild(cell);
+        }
+
+        wrap.appendChild(grid);
+        return wrap;
+    }
+
+    // ── Event delegation — ONE listener for the whole calendar ───
+    const calEl = document.getElementById('calMonths');
+    if (calEl) {
+        // Click
+        calEl.addEventListener('click', e => {
+            const cell = e.target.closest('.avail-day');
+            if (!cell || !isFree(cell)) return;
+            onDayClick(parse(cell.dataset.date));
+        });
+
+        // Hover (mouseover = event delegation friendly)
+        calEl.addEventListener('mouseover', e => {
+            const cell = e.target.closest('.avail-day');
+            const d = cell && isFree(cell) ? parse(cell.dataset.date) : null;
+            if (d?.getTime() === hovering?.getTime()) return; // no change
+            hovering = d;
+            if (selStart && !selEnd) updateHighlight();
+        });
+
+        calEl.addEventListener('mouseleave', () => {
+            if (hovering) { hovering = null; if (selStart && !selEnd) updateHighlight(); }
+        });
+    }
+
+    // ── Selection logic ──────────────────────────────────────────
+    function onDayClick(date) {
+        if (!selStart || selEnd) {
+            selStart = date; selEnd = null;
+        } else {
+            const lo = selStart < date ? selStart : date;
+            const hi = selStart < date ? date : selStart;
+            if (lo.getTime() === hi.getTime()) { selStart = null; selEnd = null; }
+            else {
+                // reject if booked day inside range
+                let blocked = false, cur = addDays(lo, 1);
+                while (cur < hi) { if (bookedDaySet.has(fmt(cur))) { blocked = true; break; } cur = addDays(cur,1); }
+                if (blocked) { selStart = date; selEnd = null; }
+                else         { selStart = lo; selEnd = hi; }
+            }
+            hovering = null;
+        }
+        updateHighlight();
+        updateCta();
+    }
+
+    // ── Highlight — only CSS class updates, no DOM rebuild ───────
+    function updateHighlight() {
+        const container = document.getElementById('calMonths');
+        if (!container) return;
+
+        // Clear previous
+        container.querySelectorAll('.avail-day').forEach(c => c.classList.remove(...SEL_CLASSES));
+
+        if (!selStart) return;
+
+        const end = selEnd ?? hovering;
+        if (!end) {
+            const c = container.querySelector(`[data-date="${fmt(selStart)}"]`);
+            c?.classList.add('avail-day--sel-start');
+            return;
+        }
+
+        const lo = selStart <= end ? selStart : end;
+        const hi = selStart <= end ? end      : selStart;
+
+        container.querySelectorAll('.avail-day[data-date]').forEach(cell => {
+            const d = parse(cell.dataset.date);
+            if      (d.getTime() === lo.getTime()) cell.classList.add('avail-day--sel-start');
+            else if (d.getTime() === hi.getTime()) cell.classList.add('avail-day--sel-end');
+            else if (d > lo && d < hi)             cell.classList.add('avail-day--sel-range');
+        });
+    }
+
+    // ── CTA button ───────────────────────────────────────────────
+    function updateCta() {
+        const btn  = document.getElementById('rentBtn');
+        const info = document.getElementById('selInfo');
+        if (!btn || !info) return;
+
+        if (selStart && selEnd) {
+            const days  = diffDays(selStart, selEnd);
+            const total = (days * PRICE_PER_DAY).toLocaleString('uk-UA');
+            info.textContent = `${days}${MSG_DAYS_SUFFIX} · ${MSG_TOTAL} ${total} ₴`;
+            btn.href = IS_AUTH
+                ? `${CREATE_URL}?carId=${CAR_ID}&pickupDate=${fmt(selStart)}&returnDate=${fmt(selEnd)}`
+                : LOGIN_URL;
+            btn.classList.remove('disabled');
+        } else {
+            info.textContent = selStart ? MSG_PICK_RETURN : '';
+            btn.href = '#';
+            btn.classList.add('disabled');
+        }
+    }
+
+    // ── Month navigation ─────────────────────────────────────────
+    document.getElementById('calPrev')?.addEventListener('click', () => {
+        const d = new Date(viewYear, viewMonth - 1, 1);
+        if (d >= new Date(today.getFullYear(), today.getMonth(), 1)) {
+            viewYear = d.getFullYear(); viewMonth = d.getMonth(); renderCalendar();
+        }
+    });
+    document.getElementById('calNext')?.addEventListener('click', () => {
+        viewYear = viewMonth === 11 ? viewYear + 1 : viewYear;
+        viewMonth = viewMonth === 11 ? 0 : viewMonth + 1;
+        renderCalendar();
+    });
+})();
+</script>
+}
 
 <div class="container py-5">
     <nav aria-label="breadcrumb" class="mb-4">
@@ -85,42 +312,52 @@
         <div class="col-lg-5">
             <div class="card shadow-sm border-0 sticky-top" style="top: 20px; z-index: 100;">
                 <div class="card-body p-4">
-                    <h2 class="h3 fw-bold mb-2">@Model.FullName</h2>
-                    <div class="fs-4 text-primary fw-bold mb-4">@Model.PricePerDay.ToString("N0") ₴ <span class="fs-6 text-muted fw-normal">@L["Car_PerDayShort"]</span></div>
+                    <h2 class="h3 fw-bold mb-1">@Model.FullName</h2>
+                    <div class="fs-4 text-primary fw-bold mb-3">@Model.PricePerDay.ToString("N0") ₴ <span class="fs-6 text-muted fw-normal">@L["Car_PerDayShort"]</span></div>
 
-                    <div class="mb-4">
-                        <span class="text-uppercase text-muted fw-bold d-block small mb-2">@L["Car_Status"]</span>
-                        @if (Model.Status == CarStatus.Available)
-                        {
-                            <span class="badge bg-success-subtle text-success border border-success-subtle p-2 px-3 fs-6">
-                                <i class="bi bi-check-circle me-1"></i> @L["Car_Available"]
-                            </span>
-                        }
-                        else
-                        {
+                    @if (Model.Status == CarStatus.Available)
+                    {
+                        @* ── Availability Calendar ─────────────────────── *@
+                        <div class="avail-calendar-wrap">
+                            <div class="avail-calendar-header">
+                                <button class="avail-nav-btn" id="calPrev" title="Previous month">&#8249;</button>
+                                <span class="fw-semibold small text-secondary">@L["Car_SelectDates"]</span>
+                                <button class="avail-nav-btn" id="calNext" title="Next month">&#8250;</button>
+                            </div>
+                            <div class="avail-months" id="calMonths"></div>
+                            <div class="avail-legend">
+                                <span><span class="avail-legend-dot" style="background:#dbeafe;border:1px solid #93c5fd;"></span>@L["Car_LegendSelected"]</span>
+                                <span><span class="avail-legend-dot" style="background:#fee2e2;"></span>@L["Car_LegendBooked"]</span>
+                                <span><span class="avail-legend-dot" style="background:#f1f5f9;border:1px solid #e2e8f0;"></span>@L["Car_LegendAvailable"]</span>
+                            </div>
+                        </div>
+
+                        <div class="avail-selected-info" id="selInfo"></div>
+
+                        <a id="rentBtn"
+                           href="@Url.Action("Create","Rental",new{carId=Model.Id})"
+                           class="avail-cta disabled"
+                           aria-disabled="true">
+                            <i class="bi bi-car-front me-2"></i>@L["Car_RentNow"]
+                        </a>
+
+                        <p class="text-muted small text-center mt-2 mb-0">@L["Car_SelectDatesHint"]</p>
+                    }
+                    else
+                    {
+                        <div class="mb-3">
                             <span class="badge bg-warning-subtle text-warning border border-warning-subtle p-2 px-3 fs-6">
                                 <i class="bi bi-exclamation-triangle me-1"></i> @Model.Status
                             </span>
-                        }
-                    </div>
+                        </div>
+                        <button class="btn btn-secondary btn-lg w-100 py-3 fw-bold" disabled>
+                            @L["Car_CurrentlyUnavailable"]
+                        </button>
+                    }
 
-                    <div class="d-grid gap-3">
-                        @if (Model.Status == CarStatus.Available)
-                        {
-                            <a asp-controller="Rental" asp-action="Create" asp-route-carId="@Model.Id" class="btn btn-primary btn-lg py-3 fw-bold">
-                                <i class="bi bi-car-front me-2"></i>@L["Car_RentNow"]
-                            </a>
-                        }
-                        else
-                        {
-                            <button class="btn btn-secondary btn-lg py-3 fw-bold" disabled>
-                                @L["Car_CurrentlyUnavailable"]
-                            </button>
-                        }
-                        <a asp-action="Index" class="btn btn-outline-secondary py-2 mt-2">
-                            @L["Car_BackToList"]
-                        </a>
-                    </div>
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100 py-2 mt-3">
+                        @L["Car_BackToList"]
+                    </a>
 
                     <div class="mt-4 pt-4 border-top">
                         <h5 class="h6 fw-bold mb-3">@L["Car_Includes"]</h5>
