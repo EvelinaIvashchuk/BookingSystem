@@ -1,0 +1,9 @@
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+@if (TempData["Success"] != null)
+{
+    <script>showToast('success', @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["Success"]!.ToString())));</script>
+}
+@if (TempData["Error"] != null)
+{
+    <script>showToast('error', @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["Error"]!.ToString())));</script>
+}
