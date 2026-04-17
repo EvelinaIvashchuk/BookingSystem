@@ -19,8 +19,9 @@ COPY ["BookingSystem.Application/BookingSystem.Application.csproj",           "B
 COPY ["BookingSystem.Infrastructure/BookingSystem.Infrastructure.csproj",     "BookingSystem.Infrastructure/"]
 COPY ["BookingSystem.Tests/BookingSystem.Tests.csproj",                       "BookingSystem.Tests/"]
 
-# Відновлюємо залежності для всього рішення
+# Відновлюємо залежності: основний проект + тести (окремо, щоб не тягнути xunit у prod)
 RUN dotnet restore "BookingSystem/BookingSystem.csproj"
+RUN dotnet restore "BookingSystem.Tests/BookingSystem.Tests.csproj"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Тестовий stage (опціональний — не потрапляє у фінальний образ)
