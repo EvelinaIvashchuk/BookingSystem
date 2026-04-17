@@ -44,22 +44,8 @@
                 </ul>
             </div>
 
-            @* Always visible: lang + auth + toggler *@
+            @* Always visible: auth + toggler *@
             <div class="d-flex align-items-center gap-2 ms-auto">
-                <form id="langForm" asp-controller="Language" asp-action="Set" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
-                    <input type="hidden" id="cultureInput" name="culture" value="" />
-                    <div class="lang-switcher-container" title="@L["Nav_ChangeLanguage"]">
-                        <input type="checkbox" id="langToggle" class="lang-input" @(!System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("uk") ? "checked" : "")>
-                        <label for="langToggle" class="lang-flag-label flag-ua">🇺🇦</label>
-                        <label for="langToggle" class="lang-switch">
-                            <span class="lang-slider"></span>
-                        </label>
-                        <label for="langToggle" class="lang-flag-label flag-en">🇺🇸</label>
-                    </div>
-                </form>
-
                 @if (User.Identity?.IsAuthenticated == true)
                 {
                     <span class="text-muted small d-none d-sm-inline">
@@ -92,8 +78,22 @@
 </div>
 
 <footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2026 - CarRental - <a asp-area="" asp-controller="Home" asp-action="Privacy">@L["Nav_Privacy"]</a>
+    <div class="container footer-inner">
+        <span>&copy; 2026 CarRental &mdash; <a asp-area="" asp-controller="Home" asp-action="Privacy">@L["Nav_Privacy"]</a></span>
+
+        <form id="langForm" asp-controller="Language" asp-action="Set" method="post" class="footer-lang">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+            <input type="hidden" id="cultureInput" name="culture" value="" />
+            <div class="lang-switcher-container" title="@L["Nav_ChangeLanguage"]">
+                <input type="checkbox" id="langToggle" class="lang-input" @(!System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("uk") ? "checked" : "")>
+                <label for="langToggle" class="lang-flag-label flag-ua">🇺🇦</label>
+                <label for="langToggle" class="lang-switch">
+                    <span class="lang-slider"></span>
+                </label>
+                <label for="langToggle" class="lang-flag-label flag-en">🇺🇸</label>
+            </div>
+        </form>
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

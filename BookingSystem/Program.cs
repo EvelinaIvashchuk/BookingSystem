@@ -123,13 +123,27 @@ app.UseSerilogRequestLogging();
 // ── Localization middleware ────────────────────────────────────────────────────
 var supportedCultures = new[] { "uk", "en-US", "en" };
 var localizationOptions = new RequestLocalizationOptions()
-    .SetDefaultCulture("uk")
+    .SetDefaultCulture("en-US")               // fallback if all providers return null
     .AddSupportedCultures(supportedCultures)
     .AddSupportedUICultures(supportedCultures);
 
-// Прибираємо AcceptLanguageHeaderRequestCultureProvider, щоб мова браузера не перебивала дефолтну українську
+// Remove the default Accept-Language provider — we replace it with our own logic:
+// cookie (manual user choice) → region detection (uk header → Ukrainian, else → English)
 localizationOptions.RequestCultureProviders.Remove(
     localizationOptions.RequestCultureProviders.OfType<AcceptLanguageHeaderRequestCultureProvider>().FirstOrDefault()!);
+
+// Custom provider: if no cookie set yet, pick language by Accept-Language header.
+// Ukrainian browser ("uk*") → uk, everything else → en-US.
+localizationOptions.RequestCultureProviders.Add(new CustomRequestCultureProvider(context =>
+{
+    var acceptLang = context.Request.Headers.AcceptLanguage.ToString();
+    var culture = acceptLang.Split(',')
+        .Select(l => l.Split(';')[0].Trim())
+        .Any(l => l.StartsWith("uk", StringComparison.OrdinalIgnoreCase))
+        ? "uk"
+        : "en-US";
+    return Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult(culture));
+}));
 
 app.UseRequestLocalization(localizationOptions);
 
