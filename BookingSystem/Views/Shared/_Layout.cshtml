@@ -101,6 +101,7 @@
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 <partial name="_Toasts" />
+<partial name="_ChatWidget" />
 <script>
     document.getElementById('langToggle').addEventListener('change', function() {
         const culture = this.checked ? 'en-US' : 'uk';

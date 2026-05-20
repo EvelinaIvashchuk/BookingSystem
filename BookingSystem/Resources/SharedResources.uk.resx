@@ -246,6 +246,13 @@
   <data name="Privacy_Title" xml:space="preserve"><value>Політика конфіденційності</value></data>
   <data name="Privacy_Desc" xml:space="preserve"><value>Використовуйте цю сторінку для детального опису політики конфіденційності сайту.</value></data>
 
+  <!-- ── Chat Widget ────────────────────────────────────────────── -->
+  <data name="Chat_Title" xml:space="preserve"><value>AI Помічник</value></data>
+  <data name="Chat_Greeting" xml:space="preserve"><value>Привіт! Я помічник CarRental. Чим можу допомогти? 🚗</value></data>
+  <data name="Chat_Placeholder" xml:space="preserve"><value>Задайте питання...</value></data>
+  <data name="Chat_AriaOpen" xml:space="preserve"><value>Відкрити чат</value></data>
+  <data name="Chat_Error" xml:space="preserve"><value>Щось пішло не так. Спробуйте ще раз.</value></data>
+
   <!-- ── Controller messages (TempData) ────────────────────────── -->
   <data name="Msg_RentalSubmitted" xml:space="preserve"><value>Вашу заявку на оренду подано та очікує підтвердження.</value></data>
   <data name="Msg_RentalCancelled" xml:space="preserve"><value>Вашу оренду скасовано.</value></data>

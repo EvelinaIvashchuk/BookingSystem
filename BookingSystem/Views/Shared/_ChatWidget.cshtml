@@ -1,0 +1,104 @@
+<div id="chat-widget"
+     data-greeting="@L["Chat_Greeting"]"
+     data-error="@L["Chat_Error"]">
+
+    <button id="chat-toggle" title="@L["Chat_Title"]" aria-label="@L["Chat_AriaOpen"]">
+        <i class="bi bi-chat-dots-fill" id="chat-icon-open"></i>
+        <i class="bi bi-x-lg d-none" id="chat-icon-close"></i>
+    </button>
+
+    <div id="chat-window" class="d-none">
+        <div id="chat-header">
+            <i class="bi bi-robot me-2"></i>
+            <span>@L["Chat_Title"]</span>
+        </div>
+        <div id="chat-messages"></div>
+        <div id="chat-input-area">
+            <input id="chat-input" type="text" placeholder="@L["Chat_Placeholder"]" autocomplete="off" maxlength="500" />
+            <button id="chat-send" title="Send">
+                <i class="bi bi-send-fill"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const widget   = document.getElementById('chat-widget');
+        const toggle   = document.getElementById('chat-toggle');
+        const window_  = document.getElementById('chat-window');
+        const iconOpen = document.getElementById('chat-icon-open');
+        const iconClose= document.getElementById('chat-icon-close');
+        const messages = document.getElementById('chat-messages');
+        const input    = document.getElementById('chat-input');
+        const sendBtn  = document.getElementById('chat-send');
+
+        const greeting = widget.dataset.greeting;
+        const errorMsg = widget.dataset.error;
+
+        appendMessage(greeting, 'bot');
+
+        toggle.addEventListener('click', function () {
+            const isOpen = !window_.classList.contains('d-none');
+            window_.classList.toggle('d-none', isOpen);
+            iconOpen.classList.toggle('d-none', !isOpen);
+            iconClose.classList.toggle('d-none', isOpen);
+            if (!isOpen) input.focus();
+        });
+
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+        sendBtn.addEventListener('click', sendMessage);
+
+        function sendMessage() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            input.value = '';
+            input.disabled = true;
+            sendBtn.disabled = true;
+
+            const typing = appendTyping();
+
+            fetch('/Ai/Chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                typing.remove();
+                appendMessage(data.reply || errorMsg, 'bot');
+            })
+            .catch(function () {
+                typing.remove();
+                appendMessage(errorMsg, 'bot');
+            })
+            .finally(function () {
+                input.disabled = false;
+                sendBtn.disabled = false;
+                input.focus();
+            });
+        }
+
+        function appendMessage(text, who) {
+            const div = document.createElement('div');
+            div.className = 'chat-msg chat-msg--' + who;
+            div.textContent = text;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+            return div;
+        }
+
+        function appendTyping() {
+            const div = document.createElement('div');
+            div.className = 'chat-msg chat-msg--bot chat-msg--typing';
+            div.innerHTML = '<span></span><span></span><span></span>';
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+            return div;
+        }
+    })();
+</script>

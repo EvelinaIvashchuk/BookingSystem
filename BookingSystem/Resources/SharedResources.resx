@@ -246,6 +246,13 @@
   <data name="Privacy_Title" xml:space="preserve"><value>Privacy Policy</value></data>
   <data name="Privacy_Desc" xml:space="preserve"><value>Use this page to detail your site's privacy policy.</value></data>
 
+  <!-- ── Chat Widget ────────────────────────────────────────────── -->
+  <data name="Chat_Title" xml:space="preserve"><value>AI Assistant</value></data>
+  <data name="Chat_Greeting" xml:space="preserve"><value>Hi! I'm the CarRental assistant. How can I help you? 🚗</value></data>
+  <data name="Chat_Placeholder" xml:space="preserve"><value>Ask a question...</value></data>
+  <data name="Chat_AriaOpen" xml:space="preserve"><value>Open chat</value></data>
+  <data name="Chat_Error" xml:space="preserve"><value>Something went wrong. Please try again.</value></data>
+
   <!-- ── Controller messages (TempData) ────────────────────────── -->
   <data name="Msg_RentalSubmitted" xml:space="preserve"><value>Your rental request has been submitted and is pending confirmation.</value></data>
   <data name="Msg_RentalCancelled" xml:space="preserve"><value>Your rental has been cancelled.</value></data>
