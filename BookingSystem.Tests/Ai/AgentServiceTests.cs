@@ -58,6 +58,9 @@ public class AgentServiceTests
             new[] { chatOptions?.Instructions }
                 .Concat(messages.Where(m => m.Role == ChatRole.System).Select(m => m.Text)));
         instructions.Should().Contain("2026-11-20 10:00").And.Contain("Friday");
+        instructions.Should().Contain("2026-11-20 Friday (today)")
+            .And.Contain("2026-11-21 Saturday (tomorrow)")
+            .And.Contain("2026-11-27 Friday");
         instructions.Should().Contain("signed in.");
         chatOptions!.Temperature.Should().Be(_options.Temperature);
     }

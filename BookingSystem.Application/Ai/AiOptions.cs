@@ -7,8 +7,8 @@ public sealed class AiOptions
 {
     public const string SectionName = "Ai";
 
-    /// <summary>Model in <c>provider:model</c> form, e.g. <c>groq:llama-3.3-70b-versatile</c>.</summary>
-    public string DefaultModel { get; set; } = "groq:llama-3.3-70b-versatile";
+    /// <summary>Model in <c>provider:model</c> form, e.g. <c>groq:openai/gpt-oss-120b</c>.</summary>
+    public string DefaultModel { get; set; } = "groq:openai/gpt-oss-120b";
 
     /// <summary>Upper bound on model calls inside one agent turn (tool-calling loop).</summary>
     public int MaxAgentIterations { get; set; } = 5;
