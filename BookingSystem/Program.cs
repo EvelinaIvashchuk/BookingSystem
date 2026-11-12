@@ -1,3 +1,4 @@
+using BookingSystem.Ai;
 using BookingSystem.Data;
 using BookingSystem.Data.Repositories;
 using BookingSystem.Mappings;
@@ -78,6 +79,9 @@ builder.Services.AddScoped<IUserService,   UserService>();
 builder.Services.AddScoped<IEmailService,   MockEmailService>();
 builder.Services.AddHttpClient("s3");
 builder.Services.AddSingleton<IStorageService, S3StorageService>();
+
+// ── AI agent ──────────────────────────────────────────────────────────────────
+builder.Services.AddAiAgent(builder.Configuration);
 
 // ── AutoMapper ────────────────────────────────────────────────────────────────
 builder.Services.AddAutoMapper(typeof(RentalMappingProfile).Assembly);
