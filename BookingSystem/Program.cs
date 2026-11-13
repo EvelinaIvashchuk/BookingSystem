@@ -68,6 +68,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 // ── Repositories ─────────────────────────────────────────────────────────────
 builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 builder.Services.AddScoped<ICarRepository,    CarRepository>();
+builder.Services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
 
 // ── Unit of Work ─────────────────────────────────────────────────────────────
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

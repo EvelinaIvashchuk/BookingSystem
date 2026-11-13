@@ -1,5 +1,8 @@
 using BookingSystem.Ai;
+using BookingSystem.Data;
+using BookingSystem.Data.Repositories;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -13,6 +16,11 @@ public class AiServiceRegistrationTests
         var configuration = new ConfigurationBuilder().AddInMemoryCollection(settings).Build();
         var services = new ServiceCollection();
         services.AddLogging();
+        services.AddDbContext<ApplicationDbContext>(o => o.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+        services.AddScoped<IRentalRepository, RentalRepository>();
+        services.AddScoped<ICarRepository, CarRepository>();
+        services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddAiAgent(configuration);
         return services.BuildServiceProvider(validateScopes: true);
     }
@@ -55,7 +63,7 @@ public class AiServiceRegistrationTests
             ["Ai:DefaultModel"] = "groq:llama-3.3-70b-versatile",
             ["Ai:Providers:groq:Endpoint"] = "https://api.groq.com/openai/v1"
         });
-        using var scope = provider.CreateScope();
+        await using var scope = provider.CreateAsyncScope();
 
         var agent = scope.ServiceProvider.GetRequiredService<IAgentService>();
         var reply = await agent.ChatAsync(Guid.NewGuid(), null, "hi");

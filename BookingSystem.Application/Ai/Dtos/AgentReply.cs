@@ -5,6 +5,12 @@ public sealed record AgentReply
 {
     public required string Text { get; init; }
 
+    /// <summary>
+    /// Session the turn belongs to. May differ from the requested one when it was unknown
+    /// or owned by another user; the widget must store this value.
+    /// </summary>
+    public Guid SessionId { get; init; }
+
     /// <summary>Cars to show as cards (filled by the car search tool).</summary>
     public IReadOnlyList<CarCardDto> Cars { get; init; } = [];
 

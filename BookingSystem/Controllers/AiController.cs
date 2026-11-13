@@ -18,19 +18,18 @@ public class AiController(IAgentService agentService, IOptions<AiOptions> aiOpti
         if (message.Length > aiOptions.Value.MaxMessageLength)
             return BadRequest(new { reply = $"Message is too long (max {aiOptions.Value.MaxMessageLength} characters)." });
 
-        var sessionId = request!.SessionId ?? Guid.NewGuid();
-
         // The user id always comes from the auth cookie, never from the model or the request body.
         var userId = User.Identity?.IsAuthenticated == true
             ? User.FindFirstValue(ClaimTypes.NameIdentifier)
             : null;
 
-        var reply = await agentService.ChatAsync(sessionId, userId, message, cancellationToken: cancellationToken);
+        var reply = await agentService.ChatAsync(
+            request!.SessionId ?? Guid.Empty, userId, message, cancellationToken: cancellationToken);
 
         var body = new
         {
             reply = reply.Text,
-            sessionId,
+            sessionId = reply.SessionId,
             cars = reply.Cars,
             pendingActionId = reply.PendingActionId,
             missingSlots = reply.MissingSlots

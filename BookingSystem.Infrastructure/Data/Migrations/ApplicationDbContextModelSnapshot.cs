@@ -330,6 +330,78 @@ namespace BookingSystem.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookingSystem.Models.ChatSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("SlotsJson")
+                        .IsRequired()
+                        .HasColumnType("json");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ChatSessions", (string)null);
+                });
+
+            modelBuilder.Entity("BookingSystem.Models.ChatSessionMessage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("InputTokens")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LatencyMs")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Model")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("OutputTokens")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16)");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ToolCallsJson")
+                        .HasColumnType("json");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionId", "Id");
+
+                    b.ToTable("ChatMessages", (string)null);
+                });
+
             modelBuilder.Entity("BookingSystem.Models.Payment", b =>
                 {
                     b.Property<int>("Id")
@@ -365,6 +437,54 @@ namespace BookingSystem.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("BookingSystem.Models.PendingAction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("PayloadJson")
+                        .IsRequired()
+                        .HasColumnType("json");
+
+                    b.Property<int?>("RentalId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionId");
+
+                    b.HasIndex("UserId", "Status");
+
+                    b.ToTable("PendingActions", (string)null);
                 });
 
             modelBuilder.Entity("BookingSystem.Models.Rental", b =>
@@ -563,6 +683,27 @@ namespace BookingSystem.Data.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("BookingSystem.Models.ChatSession", b =>
+                {
+                    b.HasOne("BookingSystem.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BookingSystem.Models.ChatSessionMessage", b =>
+                {
+                    b.HasOne("BookingSystem.Models.ChatSession", "Session")
+                        .WithMany("Messages")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Session");
+                });
+
             modelBuilder.Entity("BookingSystem.Models.Payment", b =>
                 {
                     b.HasOne("BookingSystem.Models.Rental", "Rental")
@@ -572,6 +713,25 @@ namespace BookingSystem.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Rental");
+                });
+
+            modelBuilder.Entity("BookingSystem.Models.PendingAction", b =>
+                {
+                    b.HasOne("BookingSystem.Models.ChatSession", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookingSystem.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Session");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BookingSystem.Models.Rental", b =>
@@ -657,6 +817,11 @@ namespace BookingSystem.Data.Migrations
             modelBuilder.Entity("BookingSystem.Models.Category", b =>
                 {
                     b.Navigation("Cars");
+                });
+
+            modelBuilder.Entity("BookingSystem.Models.ChatSession", b =>
+                {
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

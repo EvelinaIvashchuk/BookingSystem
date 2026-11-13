@@ -12,6 +12,8 @@ public sealed class AgentClock(TimeProvider timeProvider, IOptions<AiOptions> op
 
     public DateTimeOffset Now => TimeZoneInfo.ConvertTime(timeProvider.GetUtcNow(), _zone);
 
+    public DateTime UtcNow => timeProvider.GetUtcNow().UtcDateTime;
+
     public DateOnly Today => DateOnly.FromDateTime(Now.DateTime);
 
     private static TimeZoneInfo ResolveZone(string id)

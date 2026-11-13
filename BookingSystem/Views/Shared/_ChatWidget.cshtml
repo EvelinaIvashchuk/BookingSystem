@@ -14,7 +14,7 @@
         </div>
         <div id="chat-messages"></div>
         <div id="chat-input-area">
-            <input id="chat-input" type="text" placeholder="@L["Chat_Placeholder"]" autocomplete="off" maxlength="500" />
+            <input id="chat-input" type="text" placeholder="@L["Chat_Placeholder"]" autocomplete="off" maxlength="1000" />
             <button id="chat-send" title="Send">
                 <i class="bi bi-send-fill"></i>
             </button>
@@ -35,6 +35,16 @@
 
         const greeting = widget.dataset.greeting;
         const errorMsg = widget.dataset.error;
+
+        // The server owns the conversation history; the widget only remembers the session id.
+        const SESSION_KEY = 'carrental.chat.sessionId';
+        function loadSessionId() {
+            try { return localStorage.getItem(SESSION_KEY); } catch (e) { return null; }
+        }
+        function saveSessionId(id) {
+            try { if (id) localStorage.setItem(SESSION_KEY, id); } catch (e) { /* storage unavailable */ }
+        }
+        let sessionId = loadSessionId();
 
         appendMessage(greeting, 'bot');
 
@@ -65,11 +75,12 @@
             fetch('/Ai/Chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text })
+                body: JSON.stringify({ message: text, sessionId: sessionId })
             })
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 typing.remove();
+                if (data.sessionId) { sessionId = data.sessionId; saveSessionId(sessionId); }
                 appendMessage(data.reply || errorMsg, 'bot');
             })
             .catch(function () {
