@@ -1,3 +1,4 @@
+using BookingSystem.Ai.Tools;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace BookingSystem.Ai;
@@ -16,6 +17,7 @@ public static class AiServiceCollectionExtensions
         services.TryAddSingleton(TimeProvider.System);
         services.AddSingleton<AgentClock>();
         services.AddSingleton<IChatClientFactory, ChatClientFactory>();
+        services.AddScoped<BookingToolsFactory>();
         services.AddScoped<IAgentService, AgentService>();
 
         return services;

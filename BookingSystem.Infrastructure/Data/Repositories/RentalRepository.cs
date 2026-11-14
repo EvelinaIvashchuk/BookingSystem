@@ -33,12 +33,8 @@ public class RentalRepository(ApplicationDbContext db)
     public async Task<bool> HasOverlapAsync(int carId, DateTime pickupDate, DateTime returnDate, int? excludeRentalId = null)
     {
         return await Db.Rentals
-            .Where(r =>
-                r.CarId == carId &&
-                (r.Status == RentalStatus.Pending || r.Status == RentalStatus.Confirmed) &&
-                (excludeRentalId == null || r.Id != excludeRentalId) &&
-                r.PickupDate < returnDate &&
-                r.ReturnDate > pickupDate)
+            .Where(RentalPredicates.ActiveOverlapping(pickupDate, returnDate))
+            .Where(r => r.CarId == carId && (excludeRentalId == null || r.Id != excludeRentalId))
             .AnyAsync();
     }
 

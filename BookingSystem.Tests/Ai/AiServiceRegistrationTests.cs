@@ -1,6 +1,8 @@
 using BookingSystem.Ai;
 using BookingSystem.Data;
 using BookingSystem.Data.Repositories;
+using BookingSystem.Services;
+using BookingSystem.Services.Interfaces;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +23,7 @@ public class AiServiceRegistrationTests
         services.AddScoped<ICarRepository, CarRepository>();
         services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ICarService, CarService>();
         services.AddAiAgent(configuration);
         return services.BuildServiceProvider(validateScopes: true);
     }

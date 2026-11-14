@@ -1,6 +1,7 @@
 using BookingSystem.Ai;
+using BookingSystem.Ai.Dtos;
+using BookingSystem.Ai.Tools;
 using BookingSystem.Data;
-using BookingSystem.Data.Repositories;
 using BookingSystem.Models;
 using BookingSystem.Tests.Helpers;
 using FluentAssertions;
@@ -12,7 +13,7 @@ using Moq;
 
 namespace BookingSystem.Tests.Ai;
 
-public class AgentServiceTests : IDisposable
+public class AgentServiceTests : IAsyncLifetime
 {
     // 2026-11-20 08:00 UTC = 10:00 in Kyiv (Friday)
     private static readonly DateTimeOffset UtcNow = new(2026, 11, 20, 8, 0, 0, TimeSpan.Zero);
@@ -21,20 +22,23 @@ public class AgentServiceTests : IDisposable
     private readonly AiOptions _options = new() { DefaultModel = "groq:test-model", HistoryLength = 12 };
     private readonly ApplicationDbContext _db = TestDbContextFactory.Create();
 
-    public void Dispose() => _db.Dispose();
+    public Task InitializeAsync() => AiTestData.SeedAsync(_db);
+
+    public Task DisposeAsync()
+    {
+        _db.Dispose();
+        return Task.CompletedTask;
+    }
 
     private AgentService CreateSut()
     {
         var options = Options.Create(_options);
-        var uow = new UnitOfWork(
-            _db,
-            new RentalRepository(_db),
-            new CarRepository(_db),
-            new ChatSessionRepository(_db));
+        var uow = AiTestData.CreateUnitOfWork(_db);
 
         return new AgentService(
             _factory.Object,
             uow,
+            new BookingToolsFactory(uow, AiTestData.CreateCarService(_db)),
             new AgentClock(new FixedTimeProvider(UtcNow), options),
             options,
             NullLoggerFactory.Instance,
@@ -230,5 +234,130 @@ public class AgentServiceTests : IDisposable
         var reply = await CreateSut().ChatAsync(unknown, null, "hi");
 
         reply.SessionId.Should().NotBe(unknown).And.NotBeEmpty();
+    }
+
+    // ── Tool calling ─────────────────────────────────────────────────────────
+
+    private static ChatResponse CallTool(string name, Dictionary<string, object?> arguments, string callId = "call-1") =>
+        new(new ChatMessage(ChatRole.Assistant, [new FunctionCallContent(callId, name, arguments)]));
+
+    private static ChatResponse Say(string text) => new(new ChatMessage(ChatRole.Assistant, text));
+
+    private static bool HasToolResult(IList<ChatMessage> messages) =>
+        messages.SelectMany(m => m.Contents).OfType<FunctionResultContent>().Any();
+
+    private static string ToolResultText(IList<ChatMessage> messages) =>
+        messages.SelectMany(m => m.Contents).OfType<FunctionResultContent>().Last().Result?.ToString() ?? "";
+
+    /// <summary>Model that calls one tool and then answers with text.</summary>
+    private FakeChatClient UseModelCallingTool(string name, Dictionary<string, object?> arguments)
+    {
+        var client = new FakeChatClient((messages, _) =>
+            HasToolResult(messages) ? Say("Готово") : CallTool(name, arguments));
+        _factory.Setup(f => f.Create(It.IsAny<string>())).Returns(client);
+        return client;
+    }
+
+    [Fact]
+    public async Task ChatAsync_ModelCallsSearchTool_ReturnsCarCardsAndLogsCall()
+    {
+        var client = UseModelCallingTool(BookingTools.SearchAvailableCarsName, new()
+        {
+            ["pickupDate"] = AiTestData.Pickup,
+            ["returnDate"] = AiTestData.Return,
+            ["location"] = "Київ",
+            ["transmission"] = "Automatic"
+        });
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "Автомат у Києві з 20 по 25 грудня");
+
+        reply.Text.Should().Be("Готово");
+        reply.ToolCalls.Should().ContainSingle()
+            .Which.Should().Match<ToolCallRecord>(t => t.Name == BookingTools.SearchAvailableCarsName && t.Success);
+        reply.Cars.Select(c => c.Id).Should().Equal(
+            AiTestData.CeedId, AiTestData.CamryId, AiTestData.CrvId, AiTestData.SiennaId);
+
+        // The model received the tool result on the second call.
+        client.Calls.Should().HaveCount(2);
+        ToolResultText(client.Calls[1].Messages).Should().Contain("Ceed");
+
+        var stored = await _db.ChatMessages.SingleAsync(m => m.Role == ChatSessionMessage.AssistantRole);
+        stored.ToolCallsJson.Should().Contain(BookingTools.SearchAvailableCarsName);
+    }
+
+    [Fact]
+    public async Task ChatAsync_ToolReturnsError_IsRecordedAsFailedCall()
+    {
+        UseModelCallingTool(BookingTools.SearchAvailableCarsName, new()
+        {
+            ["pickupDate"] = "20.12.2026",
+            ["returnDate"] = AiTestData.Return
+        });
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "Авто з 20.12");
+
+        var call = reply.ToolCalls.Should().ContainSingle().Subject;
+        call.Success.Should().BeFalse();
+        call.Error.Should().Be(ToolErrorCodes.InvalidArguments);
+        reply.Cars.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ChatAsync_ModelOmitsRequiredArgument_IsRecordedAsInvalidArguments()
+    {
+        var client = UseModelCallingTool(BookingTools.SearchAvailableCarsName, new()
+        {
+            ["pickupDate"] = AiTestData.Pickup
+        });
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "Авто з 20 грудня");
+
+        var call = reply.ToolCalls.Should().ContainSingle().Subject;
+        call.Success.Should().BeFalse();
+        call.Error.Should().Be(ToolErrorCodes.InvalidArguments);
+        ToolResultText(client.Calls[1].Messages).Should().Contain(ToolErrorCodes.InvalidArguments);
+    }
+
+    [Fact]
+    public async Task ChatAsync_StopsAfterMaxAgentIterations_WithSafeReply()
+    {
+        _options.MaxAgentIterations = 3;
+        var counter = 0;
+        var client = new FakeChatClient((_, _) =>
+            CallTool(BookingTools.GetCarDetailsName, new() { ["carId"] = 1 }, $"call-{++counter}"));
+        _factory.Setup(f => f.Create(It.IsAny<string>())).Returns(client);
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "Розкажи про авто 1");
+
+        client.Calls.Count.Should().BeLessThanOrEqualTo(_options.MaxAgentIterations + 1);
+        reply.ToolCalls.Count.Should().BeLessThanOrEqualTo(_options.MaxAgentIterations);
+        reply.Text.Should().Be(AgentService.EmptyReplyText);
+        reply.IsDegraded.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ChatAsync_UserIdComesFromClaimsNotFromModelArguments()
+    {
+        var client = UseModelCallingTool(BookingTools.GetMyRentalsName, new()
+        {
+            ["userId"] = "other-user"   // injected by a malicious prompt — must be ignored
+        });
+
+        await CreateSut().ChatAsync(Guid.Empty, "user-1", "Покажи мої бронювання");
+
+        var result = ToolResultText(client.Calls[1].Messages);
+        result.Should().Contain("Camry").And.Contain("Golf");
+        result.Should().NotContain("Octavia").And.NotContain("Ceed");
+    }
+
+    [Fact]
+    public async Task ChatAsync_AnonymousUserCannotListRentals()
+    {
+        var client = UseModelCallingTool(BookingTools.GetMyRentalsName, new());
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "Покажи мої бронювання");
+
+        reply.ToolCalls.Single().Error.Should().Be(ToolErrorCodes.AuthenticationRequired);
+        ToolResultText(client.Calls[1].Messages).Should().NotContain("Camry");
     }
 }

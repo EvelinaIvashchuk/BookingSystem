@@ -9,15 +9,10 @@ namespace BookingSystem.Services;
 
 public class RentalService(IUnitOfWork uow, IEmailService emailService, ILogger<RentalService>  logger) : IRentalService
 {
-    private const int MaxActiveRentalsPerUser = 3;
-    private const int MinRentalDays = 1;
-    private const int MaxRentalDays = 30;
-    private const int MaxAdvanceBookingDays = 60;
-
     public async Task<ServiceResult<Rental>> CreateRentalAsync(
         string userId, CreateRentalDto dto)
     {
-        var dateCheck = ValidateDates(dto.PickupDate, dto.ReturnDate);
+        var dateCheck = RentalRules.ValidateDates(dto.PickupDate, dto.ReturnDate, DateTime.UtcNow.Date);
         if (!dateCheck.IsSuccess)
             return ServiceResult<Rental>.Fail(dateCheck.Error!);
 
@@ -30,9 +25,9 @@ public class RentalService(IUnitOfWork uow, IEmailService emailService, ILogger<
                 $"\"{car.FullName}\" is currently {car.Status.ToString().ToLowerInvariant()} and cannot be rented.");
 
         var activeCount = await uow.Rentals.GetActiveRentalCountAsync(userId);
-        if (activeCount >= MaxActiveRentalsPerUser)
+        if (activeCount >= RentalRules.MaxActiveRentalsPerUser)
             return ServiceResult<Rental>.Fail(
-                $"You already have {MaxActiveRentalsPerUser} active rentals. " +
+                $"You already have {RentalRules.MaxActiveRentalsPerUser} active rentals. " +
                 "Please cancel one before making a new reservation.");
 
         var hasOverlap = await uow.Rentals.HasOverlapAsync(dto.CarId, dto.PickupDate, dto.ReturnDate);
@@ -41,8 +36,7 @@ public class RentalService(IUnitOfWork uow, IEmailService emailService, ILogger<
                 "This car is already rented for the selected dates. " +
                 "Please choose different dates.");
 
-        var days = (int)(dto.ReturnDate.Date - dto.PickupDate.Date).TotalDays;
-        var totalPrice = days * car.PricePerDay;
+        var totalPrice = RentalRules.CalculateTotalPrice(car.PricePerDay, dto.PickupDate, dto.ReturnDate);
 
         var rental = new Rental
         {
@@ -186,30 +180,6 @@ public class RentalService(IUnitOfWork uow, IEmailService emailService, ILogger<
     public Task<Rental?> GetRentalByIdAsync(int rentalId) =>
         uow.Rentals.GetWithDetailsAsync(rentalId);
 
-    private static ServiceResult ValidateDates(DateTime pickupDate, DateTime returnDate)
-    {
-        var today = DateTime.UtcNow.Date;
-
-        if (pickupDate.Date < today)
-            return ServiceResult.Fail("The pickup date cannot be in the past.");
-
-        if (returnDate.Date <= pickupDate.Date)
-            return ServiceResult.Fail("The return date must be after the pickup date.");
-
-        var days = (returnDate.Date - pickupDate.Date).TotalDays;
-
-        if (days < MinRentalDays)
-            return ServiceResult.Fail($"Rental must be at least {MinRentalDays} day(s).");
-
-        if (days > MaxRentalDays)
-            return ServiceResult.Fail($"Rental cannot exceed {MaxRentalDays} days.");
-
-        if (pickupDate.Date > today.AddDays(MaxAdvanceBookingDays))
-            return ServiceResult.Fail(
-                $"Rental cannot be booked more than {MaxAdvanceBookingDays} days in advance.");
-
-        return ServiceResult.Ok();
-    }
 
     private async Task SafeSendEmailAsync(Func<Task> sendAction)
     {
