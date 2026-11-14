@@ -465,6 +465,7 @@ namespace BookingSystem.Data.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Status")
+                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");

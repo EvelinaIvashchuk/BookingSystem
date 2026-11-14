@@ -77,6 +77,7 @@ public sealed class AgentService(
                 Text = text,
                 SessionId = session.Id,
                 Cars = turn.Cars,
+                Draft = turn.Draft,
                 ToolCalls = [.. turn.ToolCalls],
                 Model = model,
                 InputTokens = ToInt(response.Usage?.InputTokenCount),

@@ -7,5 +7,6 @@ public interface IUnitOfWork : IAsyncDisposable
     IRentalRepository Rentals { get; }
     ICarRepository Cars { get; }
     IChatSessionRepository ChatSessions { get; }
+    IPendingActionRepository PendingActions { get; }
     Task<int> CommitAsync(CancellationToken ct = default);
 }

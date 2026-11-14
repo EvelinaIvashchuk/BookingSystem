@@ -252,6 +252,21 @@
   <data name="Chat_Placeholder" xml:space="preserve"><value>Задайте питання...</value></data>
   <data name="Chat_AriaOpen" xml:space="preserve"><value>Відкрити чат</value></data>
   <data name="Chat_Error" xml:space="preserve"><value>Щось пішло не так. Спробуйте ще раз.</value></data>
+  <data name="Chat_DraftTitle" xml:space="preserve"><value>Підтвердіть бронювання</value></data>
+  <data name="Chat_DraftDates" xml:space="preserve"><value>{0} — {1} ({2} дн.)</value></data>
+  <data name="Chat_DraftTotal" xml:space="preserve"><value>Разом: {0} ₴</value></data>
+  <data name="Chat_DraftExpiresHint" xml:space="preserve"><value>Бронювання ще не створене. Натисніть «Підтвердити» протягом {0} хв.</value></data>
+  <data name="Chat_Confirm" xml:space="preserve"><value>Підтвердити</value></data>
+  <data name="Chat_Cancel" xml:space="preserve"><value>Скасувати</value></data>
+  <data name="Chat_BookingConfirmed" xml:space="preserve"><value>Бронювання №{0} створено. Воно очікує підтвердження адміністратора.</value></data>
+  <data name="Chat_BookingCancelled" xml:space="preserve"><value>Чернетку бронювання скасовано.</value></data>
+  <data name="Chat_BookingFailed" xml:space="preserve"><value>Не вдалося створити бронювання: {0}</value></data>
+  <data name="Chat_DraftNotFound" xml:space="preserve"><value>Чернетку бронювання не знайдено.</value></data>
+  <data name="Chat_DraftForbidden" xml:space="preserve"><value>Ця чернетка належить іншому користувачу.</value></data>
+  <data name="Chat_DraftExpired" xml:space="preserve"><value>Час на підтвердження минув. Попросіть помічника підготувати бронювання ще раз.</value></data>
+  <data name="Chat_DraftProcessed" xml:space="preserve"><value>Цю чернетку вже оброблено.</value></data>
+  <data name="Chat_SignInRequired" xml:space="preserve"><value>Увійдіть в обліковий запис, щоб підтвердити бронювання.</value></data>
+  <data name="Chat_MyRentals" xml:space="preserve"><value>Мої бронювання</value></data>
 
   <!-- ── Controller messages (TempData) ────────────────────────── -->
   <data name="Msg_RentalSubmitted" xml:space="preserve"><value>Вашу заявку на оренду подано та очікує підтвердження.</value></data>

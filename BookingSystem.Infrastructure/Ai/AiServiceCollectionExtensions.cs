@@ -19,6 +19,7 @@ public static class AiServiceCollectionExtensions
         services.AddSingleton<IChatClientFactory, ChatClientFactory>();
         services.AddScoped<BookingToolsFactory>();
         services.AddScoped<IAgentService, AgentService>();
+        services.AddScoped<IPendingActionService, PendingActionService>();
 
         return services;
     }

@@ -252,6 +252,21 @@
   <data name="Chat_Placeholder" xml:space="preserve"><value>Ask a question...</value></data>
   <data name="Chat_AriaOpen" xml:space="preserve"><value>Open chat</value></data>
   <data name="Chat_Error" xml:space="preserve"><value>Something went wrong. Please try again.</value></data>
+  <data name="Chat_DraftTitle" xml:space="preserve"><value>Confirm your booking</value></data>
+  <data name="Chat_DraftDates" xml:space="preserve"><value>{0} — {1} ({2} days)</value></data>
+  <data name="Chat_DraftTotal" xml:space="preserve"><value>Total: {0} ₴</value></data>
+  <data name="Chat_DraftExpiresHint" xml:space="preserve"><value>The booking is not created yet. Press Confirm within {0} min.</value></data>
+  <data name="Chat_Confirm" xml:space="preserve"><value>Confirm</value></data>
+  <data name="Chat_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Chat_BookingConfirmed" xml:space="preserve"><value>Booking #{0} has been created and is awaiting administrator approval.</value></data>
+  <data name="Chat_BookingCancelled" xml:space="preserve"><value>The booking draft has been cancelled.</value></data>
+  <data name="Chat_BookingFailed" xml:space="preserve"><value>The booking could not be created: {0}</value></data>
+  <data name="Chat_DraftNotFound" xml:space="preserve"><value>Booking draft not found.</value></data>
+  <data name="Chat_DraftForbidden" xml:space="preserve"><value>This draft belongs to another user.</value></data>
+  <data name="Chat_DraftExpired" xml:space="preserve"><value>The confirmation time has expired. Ask the assistant to prepare the booking again.</value></data>
+  <data name="Chat_DraftProcessed" xml:space="preserve"><value>This draft has already been processed.</value></data>
+  <data name="Chat_SignInRequired" xml:space="preserve"><value>Please sign in to confirm the booking.</value></data>
+  <data name="Chat_MyRentals" xml:space="preserve"><value>My rentals</value></data>
 
   <!-- ── Controller messages (TempData) ────────────────────────── -->
   <data name="Msg_RentalSubmitted" xml:space="preserve"><value>Your rental request has been submitted and is pending confirmation.</value></data>

@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Globalization;
+using System.Text.Json;
 using BookingSystem.Ai.Dtos;
 using BookingSystem.Ai.Slots;
 using BookingSystem.Data;
@@ -9,6 +10,7 @@ using BookingSystem.Models;
 using BookingSystem.Services;
 using BookingSystem.Services.Interfaces;
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Options;
 
 namespace BookingSystem.Ai.Tools;
 
@@ -18,15 +20,22 @@ namespace BookingSystem.Ai.Tools;
 /// The user id is taken from <see cref="AgentTurnContext"/> (claims), never from model arguments.
 /// All business logic is delegated to existing repositories and <see cref="RentalRules"/>.
 /// </summary>
-public sealed class BookingTools(IUnitOfWork uow, ICarService carService, AgentTurnContext turn)
+public sealed class BookingTools(
+    IUnitOfWork uow,
+    ICarService carService,
+    AgentClock clock,
+    AiOptions options,
+    AgentTurnContext turn)
 {
     public const string SearchAvailableCarsName = "search_available_cars";
     public const string GetCarDetailsName = "get_car_details";
     public const string CalculatePriceName = "calculate_price";
     public const string GetMyRentalsName = "get_my_rentals";
+    public const string CreateRentalDraftName = "create_rental_draft";
 
     internal const int MaxSearchResults = 5;
     internal const int MaxRentalsListed = 10;
+    internal const int MaxNotesLength = 500;
     private const string DateFormat = "yyyy-MM-dd";
 
     public IList<AITool> AsAITools() =>
@@ -34,7 +43,8 @@ public sealed class BookingTools(IUnitOfWork uow, ICarService carService, AgentT
         AIFunctionFactory.Create(SearchAvailableCarsAsync, SearchAvailableCarsName),
         AIFunctionFactory.Create(GetCarDetailsAsync, GetCarDetailsName),
         AIFunctionFactory.Create(CalculatePriceAsync, CalculatePriceName),
-        AIFunctionFactory.Create(GetMyRentalsAsync, GetMyRentalsName)
+        AIFunctionFactory.Create(GetMyRentalsAsync, GetMyRentalsName),
+        AIFunctionFactory.Create(CreateRentalDraftAsync, CreateRentalDraftName)
     ];
 
     // ── search_available_cars ────────────────────────────────────────────────
@@ -183,6 +193,90 @@ public sealed class BookingTools(IUnitOfWork uow, ICarService carService, AgentT
                 r.Status.ToString(), r.TotalPrice))]);
     }
 
+    // ── create_rental_draft ──────────────────────────────────────────────────
+
+    [Description(
+        "Prepares a booking of one car for the given dates WITHOUT creating it. The user then sees a card with " +
+        "Confirm and Cancel buttons; only the user can confirm, you cannot. Call it only when the user clearly wants " +
+        "to book a specific car (carId from search results) and both dates are known. Requires a signed-in user.")]
+    public async Task<object> CreateRentalDraftAsync(
+        [Description("Car id from search results.")] int carId,
+        [Description("Pickup date in YYYY-MM-DD format.")] string pickupDate,
+        [Description("Return date in YYYY-MM-DD format, after pickupDate.")] string returnDate,
+        [Description("Optional notes from the user for the rental.")] string? notes = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (turn.UserId is null)
+            return new ToolError(ToolErrorCodes.AuthenticationRequired,
+                "The user must sign in to book a car. Ask them to sign in and then repeat the request.");
+
+        if (ParseDates(pickupDate, returnDate) is not { } dates)
+            return InvalidDates(pickupDate, returnDate);
+
+        var (pickup, ret) = dates;
+        if (RentalRules.ValidateDates(pickup, ret, TodayAsDateTime) is { IsSuccess: false } rule)
+            return new ToolError(ToolErrorCodes.BusinessRule, rule.Error!);
+
+        var car = await uow.Cars.GetWithCategoryAsync(carId);
+        if (car is null)
+            return new ToolError(ToolErrorCodes.NotFound, $"Car {carId} does not exist.");
+
+        if (car.Status != CarStatus.Available)
+            return new ToolError(ToolErrorCodes.BusinessRule, $"{car.FullName} is {car.Status} and cannot be booked.");
+
+        if (await uow.Rentals.HasOverlapAsync(carId, pickup, ret))
+            return new ToolError(ToolErrorCodes.BusinessRule,
+                $"{car.FullName} is already booked for some of these dates. Offer other dates or another car.");
+
+        if (await uow.Rentals.GetActiveRentalCountAsync(turn.UserId) >= RentalRules.MaxActiveRentalsPerUser)
+            return new ToolError(ToolErrorCodes.BusinessRule,
+                $"The user already has {RentalRules.MaxActiveRentalsPerUser} active rentals and must cancel one first.");
+
+        var now = clock.UtcNow;
+
+        // A new draft replaces older unconfirmed drafts of the same conversation.
+        foreach (var previous in await uow.PendingActions.GetPendingBySessionAsync(turn.SessionId, cancellationToken))
+        {
+            previous.Status = PendingActionStatus.Cancelled;
+            previous.CompletedAt = now;
+        }
+
+        var draft = new RentalDraft
+        {
+            PendingActionId = Guid.NewGuid(),
+            CarId = car.Id,
+            CarName = car.FullName,
+            ImageUrl = car.ImageUrl,
+            PickupDate = FormatDate(pickup),
+            ReturnDate = FormatDate(ret),
+            Days = RentalRules.CountDays(pickup, ret),
+            PricePerDay = car.PricePerDay,
+            TotalPrice = RentalRules.CalculateTotalPrice(car.PricePerDay, pickup, ret),
+            Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim()[..Math.Min(notes.Trim().Length, MaxNotesLength)],
+            ExpiresAt = now.AddMinutes(options.PendingActionTtlMinutes)
+        };
+
+        await uow.PendingActions.AddAsync(new PendingAction
+        {
+            Id = draft.PendingActionId,
+            SessionId = turn.SessionId,
+            UserId = turn.UserId,
+            Type = PendingActionType.CreateRental,
+            PayloadJson = JsonSerializer.Serialize(draft, PendingActionService.PayloadJsonOptions),
+            Status = PendingActionStatus.Pending,
+            CreatedAt = now,
+            ExpiresAt = draft.ExpiresAt
+        }, cancellationToken);
+        await uow.CommitAsync(cancellationToken);
+
+        turn.Draft = draft;
+
+        return new RentalDraftCreated(
+            draft.PendingActionId, draft.CarName, draft.PickupDate, draft.ReturnDate, draft.Days, draft.TotalPrice,
+            options.PendingActionTtlMinutes,
+            "The booking is NOT created yet. Tell the user, in their language, to check the card below and press its confirm button within the time limit. Do not name the button in English.");
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private DateTime TodayAsDateTime => turn.Today.ToDateTime(TimeOnly.MinValue);
@@ -230,7 +324,11 @@ public sealed class BookingTools(IUnitOfWork uow, ICarService carService, AgentT
 }
 
 /// <summary>Creates <see cref="BookingTools"/> bound to one agent turn.</summary>
-public sealed class BookingToolsFactory(IUnitOfWork uow, ICarService carService)
+public sealed class BookingToolsFactory(
+    IUnitOfWork uow,
+    ICarService carService,
+    AgentClock clock,
+    IOptions<AiOptions> options)
 {
-    public BookingTools Create(AgentTurnContext turn) => new(uow, carService, turn);
+    public BookingTools Create(AgentTurnContext turn) => new(uow, carService, clock, options.Value, turn);
 }

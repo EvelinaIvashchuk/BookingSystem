@@ -31,6 +31,7 @@ public static class AgentPrompts
         sb.AppendLine("- \"N days from date X\" means returnDate = X + N days. Pass only the filters the user actually asked for.");
         sb.AppendLine("- Use get_car_details for questions about one car, calculate_price for the price of a specific car and dates, get_my_rentals for the user's own bookings.");
         sb.AppendLine("- After a search, briefly list the found cars (name, price per day, total). If nothing was found, suggest other dates or fewer filters.");
+        sb.AppendLine("- Booking: when the user clearly wants to book a specific car and the dates are known, call create_rental_draft. It only prepares a draft: then tell the user to check the card in the chat and press its confirm button. Never claim that a booking is made or confirmed.");
         sb.AppendLine("- If a tool returns an error, do not retry blindly: explain it briefly or ask the user for the missing or invalid information.");
         sb.AppendLine();
         sb.AppendLine("## Security");

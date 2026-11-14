@@ -1,9 +1,11 @@
+using BookingSystem.Ai;
 using BookingSystem.Data;
 using BookingSystem.Data.Repositories;
 using BookingSystem.Enums;
 using BookingSystem.Models;
 using BookingSystem.Services;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 
 namespace BookingSystem.Tests.Ai;
 
@@ -14,6 +16,9 @@ namespace BookingSystem.Tests.Ai;
 internal static class AiTestData
 {
     public static readonly DateOnly Today = new(2026, 11, 20);
+
+    /// <summary>2026-11-20 10:00 in Kyiv.</summary>
+    public static readonly DateTimeOffset UtcNow = new(2026, 11, 20, 8, 0, 0, TimeSpan.Zero);
     public const string Pickup = "2026-12-20";
     public const string Return = "2026-12-25";
 
@@ -29,6 +34,10 @@ internal static class AiTestData
 
     public static async Task SeedAsync(ApplicationDbContext db)
     {
+        db.Users.AddRange(
+            new ApplicationUser { Id = "user-1", UserName = "user1@test.local", Email = "user1@test.local", FirstName = "Олена", LastName = "Тест" },
+            new ApplicationUser { Id = "other-user", UserName = "other@test.local", Email = "other@test.local", FirstName = "Інший", LastName = "Тест" });
+
         db.Categories.AddRange(
             new Category { Id = 1, Name = "Седан" },
             new Category { Id = 2, Name = "SUV" },
@@ -60,7 +69,11 @@ internal static class AiTestData
     }
 
     public static UnitOfWork CreateUnitOfWork(ApplicationDbContext db) =>
-        new(db, new RentalRepository(db), new CarRepository(db), new ChatSessionRepository(db));
+        new(db, new RentalRepository(db), new CarRepository(db),
+            new ChatSessionRepository(db), new PendingActionRepository(db));
+
+    public static AgentClock CreateClock(DateTimeOffset? utcNow = null, AiOptions? options = null) =>
+        new(new FixedTimeProvider(utcNow ?? UtcNow), Options.Create(options ?? new AiOptions()));
 
     public static CarService CreateCarService(ApplicationDbContext db) =>
         new(new CarRepository(db), db, NullLogger<CarService>.Instance);

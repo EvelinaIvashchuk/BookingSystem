@@ -15,7 +15,10 @@ public sealed record AgentReply
     public IReadOnlyList<CarCardDto> Cars { get; init; } = [];
 
     /// <summary>Set when the agent prepared a booking that waits for the user's confirmation.</summary>
-    public Guid? PendingActionId { get; init; }
+    public Guid? PendingActionId => Draft?.PendingActionId;
+
+    /// <summary>Booking draft to show as a confirmation card.</summary>
+    public RentalDraft? Draft { get; init; }
 
     /// <summary>Required parameters the agent asked the user for.</summary>
     public IReadOnlyList<string> MissingSlots { get; init; } = [];

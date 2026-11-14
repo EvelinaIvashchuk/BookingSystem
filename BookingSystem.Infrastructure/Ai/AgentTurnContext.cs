@@ -20,4 +20,7 @@ public sealed class AgentTurnContext(Guid sessionId, string? userId, DateOnly to
 
     /// <summary>Cars returned by the latest successful search, shown as cards in the widget.</summary>
     public IReadOnlyList<CarCardDto> Cars { get; set; } = [];
+
+    /// <summary>Booking draft created in this turn; the widget shows a confirmation card for it.</summary>
+    public RentalDraft? Draft { get; set; }
 }

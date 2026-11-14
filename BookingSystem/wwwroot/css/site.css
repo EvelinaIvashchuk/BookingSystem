@@ -465,7 +465,29 @@ body {
     color: #212529;
     align-self: flex-start;
     border-bottom-left-radius: 3px;
+    white-space: pre-line;
 }
+
+/* Booking confirmation card */
+.chat-card {
+    align-self: stretch;
+    border: 1px solid #b6d4fe;
+    background: #f8fbff;
+    border-radius: 12px;
+    padding: .65rem .75rem;
+    font-size: .85rem;
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+}
+.chat-card__title { font-weight: 600; color: #0d6efd; }
+.chat-card__car   { font-weight: 600; }
+.chat-card__total { font-weight: 600; }
+.chat-card__hint  { color: #6c757d; font-size: .78rem; }
+.chat-card__actions { display: flex; gap: .5rem; margin-top: .35rem; }
+.chat-card__link  { font-size: .8rem; margin-top: .2rem; }
+.chat-card--done   { border-color: #a3cfbb; background: #f3faf6; }
+.chat-card--closed { opacity: .7; }
 
 /* Typing dots */
 .chat-msg--typing {

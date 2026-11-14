@@ -22,6 +22,7 @@ public class AiServiceRegistrationTests
         services.AddScoped<IRentalRepository, RentalRepository>();
         services.AddScoped<ICarRepository, CarRepository>();
         services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
+        services.AddScoped<IPendingActionRepository, PendingActionRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ICarService, CarService>();
         services.AddAiAgent(configuration);

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingSystem.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261118070254_AddAiAgent")]
+    [Migration("20261118073618_AddAiAgent")]
     partial class AddAiAgent
     {
         /// <inheritdoc />
@@ -468,6 +468,7 @@ namespace BookingSystem.Infrastructure.Data.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Status")
+                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");

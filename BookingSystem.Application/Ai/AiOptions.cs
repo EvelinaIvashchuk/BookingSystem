@@ -23,6 +23,9 @@ public sealed class AiOptions
     /// <summary>Maximum length of a single user message.</summary>
     public int MaxMessageLength { get; set; } = 1000;
 
+    /// <summary>How long a booking draft prepared by the agent can be confirmed.</summary>
+    public int PendingActionTtlMinutes { get; set; } = 15;
+
     /// <summary>IANA time zone used to tell the model what "today" is.</summary>
     public string TimeZone { get; set; } = "Europe/Kyiv";
 

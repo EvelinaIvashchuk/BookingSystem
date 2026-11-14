@@ -77,3 +77,13 @@ public sealed record UserRentalInfo(
     decimal TotalPrice);
 
 public sealed record UserRentalsResult(int Total, IReadOnlyList<UserRentalInfo> Rentals);
+
+public sealed record RentalDraftCreated(
+    Guid PendingActionId,
+    string CarName,
+    string PickupDate,
+    string ReturnDate,
+    int Days,
+    decimal TotalPrice,
+    int ExpiresInMinutes,
+    string Instruction);

@@ -162,9 +162,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
              .HasConversion<string>()
              .HasMaxLength(30);
 
+            // Concurrency token: two simultaneous "Confirm" clicks cannot both move
+            // the action out of Pending (the second UPDATE affects 0 rows).
             e.Property(a => a.Status)
              .HasConversion<string>()
-             .HasMaxLength(20);
+             .HasMaxLength(20)
+             .IsConcurrencyToken();
 
             e.HasOne(a => a.Session)
              .WithMany()
