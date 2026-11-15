@@ -1,5 +1,6 @@
 using BookingSystem.Ai;
 using BookingSystem.Ai.Dtos;
+using BookingSystem.Ai.Slots;
 using BookingSystem.Ai.Tools;
 using BookingSystem.Data;
 using BookingSystem.Models;
@@ -34,11 +35,14 @@ public class AgentServiceTests : IAsyncLifetime
     {
         var options = Options.Create(_options);
         var uow = AiTestData.CreateUnitOfWork(_db);
+        var validator = new SlotValidator(uow);
 
         return new AgentService(
             _factory.Object,
             uow,
             new BookingToolsFactory(uow, AiTestData.CreateCarService(_db), new AgentClock(new FixedTimeProvider(UtcNow), options), options),
+            new SlotFillingEngine(validator),
+            validator,
             new AgentClock(new FixedTimeProvider(UtcNow), options),
             options,
             NullLoggerFactory.Instance,
@@ -288,6 +292,7 @@ public class AgentServiceTests : IAsyncLifetime
     [Fact]
     public async Task ChatAsync_ToolReturnsError_IsRecordedAsFailedCall()
     {
+        _options.SlotFilling.Enabled = false;
         UseModelCallingTool(BookingTools.SearchAvailableCarsName, new()
         {
             ["pickupDate"] = "20.12.2026",
@@ -303,8 +308,9 @@ public class AgentServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task ChatAsync_ModelOmitsRequiredArgument_IsRecordedAsInvalidArguments()
+    public async Task ChatAsync_ModelOmitsRequiredArgument_WithoutSlotFilling_FailsInsideTheTool()
     {
+        _options.SlotFilling.Enabled = false;
         var client = UseModelCallingTool(BookingTools.SearchAvailableCarsName, new()
         {
             ["pickupDate"] = AiTestData.Pickup
@@ -315,7 +321,10 @@ public class AgentServiceTests : IAsyncLifetime
         var call = reply.ToolCalls.Should().ContainSingle().Subject;
         call.Success.Should().BeFalse();
         call.Error.Should().Be(ToolErrorCodes.InvalidArguments);
+        call.Intercepted.Should().BeFalse();
+        call.ProposedMissing.Should().Equal(SlotNames.ReturnDate);   // shadow validation
         ToolResultText(client.Calls[1].Messages).Should().Contain(ToolErrorCodes.InvalidArguments);
+        reply.MissingSlots.Should().BeEmpty();
     }
 
     [Fact]
@@ -359,5 +368,150 @@ public class AgentServiceTests : IAsyncLifetime
 
         reply.ToolCalls.Single().Error.Should().Be(ToolErrorCodes.AuthenticationRequired);
         ToolResultText(client.Calls[1].Messages).Should().NotContain("Camry");
+    }
+
+    // ── Slot filling ─────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task SlotFilling_MissingRequiredSlot_BlocksToolAndReportsMissingSlot()
+    {
+        var client = UseModelCallingTool(BookingTools.SearchAvailableCarsName, new()
+        {
+            ["pickupDate"] = AiTestData.Pickup
+        });
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "Авто з 20 грудня");
+
+        var call = reply.ToolCalls.Should().ContainSingle().Subject;
+        call.Intercepted.Should().BeTrue();
+        call.Error.Should().Be(ToolErrorCodes.InvalidSlots);
+        call.ProposedMissing.Should().Equal(SlotNames.ReturnDate);
+        reply.MissingSlots.Should().Equal(SlotNames.ReturnDate);
+        reply.Cars.Should().BeEmpty("the tool must not run");
+
+        var toolResult = ToolResultText(client.Calls[1].Messages);
+        toolResult.Should().Contain(ToolErrorCodes.InvalidSlots).And.Contain("return date");
+    }
+
+    [Fact]
+    public async Task SlotFilling_MergesSlotsFromEarlierTurns()
+    {
+        var turn = 0;
+        var client = new FakeChatClient((messages, _) =>
+        {
+            if (HasToolResult(messages)) return Say("ok");
+            return turn == 0
+                ? CallTool(BookingTools.SearchAvailableCarsName, new()
+                {
+                    ["pickupDate"] = AiTestData.Pickup, ["returnDate"] = AiTestData.Return, ["category"] = "SUV"
+                })
+                : CallTool(BookingTools.SearchAvailableCarsName, new() { ["fuelType"] = "дизель" });
+        });
+        _factory.Setup(f => f.Create(It.IsAny<string>())).Returns(client);
+        var sut = CreateSut();
+
+        var first = await sut.ChatAsync(Guid.Empty, null, "SUV з 20 по 25 грудня");
+        turn = 1;
+        var second = await sut.ChatAsync(first.SessionId, null, "А дизельний?");
+
+        var session = await _db.ChatSessions.SingleAsync();
+        var slots = BookingSlots.FromJson(session.SlotsJson);
+        slots.PickupDate.Should().Be(new DateOnly(2026, 12, 20));
+        slots.Category.Should().Be("SUV");
+        slots.FuelType.Should().Be(BookingSystem.Enums.FuelType.Diesel);
+
+        var call = second.ToolCalls.Should().ContainSingle().Subject;
+        call.Success.Should().BeTrue();
+        call.MergedSlots.Should().BeEquivalentTo([SlotNames.PickupDate, SlotNames.ReturnDate, SlotNames.Category]);
+        call.EffectiveArgumentsJson.Should().Contain("2026-12-25").And.Contain("Diesel");
+        second.Cars.Select(c => c.Id).Should().Equal(AiTestData.DusterId);
+
+        // Known parameters are given to the model at the start of the second turn.
+        client.Calls[2].Options!.Instructions.Should().Contain("Known booking parameters").And.Contain("PickupDate: 2026-12-20");
+    }
+
+    [Fact]
+    public async Task SlotFilling_AnyClearsAKnownFilter()
+    {
+        var turn = 0;
+        var client = new FakeChatClient((messages, _) =>
+        {
+            if (HasToolResult(messages)) return Say("ok");
+            return turn == 0
+                ? CallTool(BookingTools.SearchAvailableCarsName, new()
+                {
+                    ["pickupDate"] = AiTestData.Pickup, ["returnDate"] = AiTestData.Return, ["transmission"] = "Manual"
+                })
+                : CallTool(BookingTools.SearchAvailableCarsName, new() { ["transmission"] = "any" });
+        });
+        _factory.Setup(f => f.Create(It.IsAny<string>())).Returns(client);
+        var sut = CreateSut();
+
+        var first = await sut.ChatAsync(Guid.Empty, null, "Механіка з 20 по 25 грудня");
+        turn = 1;
+        var second = await sut.ChatAsync(first.SessionId, null, "Коробка не важлива");
+
+        first.Cars.Should().HaveCount(2);                 // Golf, Duster
+        second.Cars.Should().HaveCount(5);                // filter dropped
+        BookingSlots.FromJson((await _db.ChatSessions.SingleAsync()).SlotsJson).Transmission.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task SlotFilling_WeekdayContradictingUserText_IsBlockedAndModelCanSelfCorrect()
+    {
+        // Today is Friday 2026-11-20; "з понеділка" = Monday 2026-11-23, not Wednesday 2026-11-25.
+        var attempt = 0;
+        var client = new FakeChatClient((messages, _) =>
+        {
+            var results = messages.SelectMany(m => m.Contents).OfType<FunctionResultContent>().Count();
+            if (results == 2) return Say("ok");
+            attempt++;
+            return attempt == 1
+                ? CallTool(BookingTools.SearchAvailableCarsName, new() { ["pickupDate"] = "2026-11-25", ["returnDate"] = "2026-11-28" }, "c1")
+                : CallTool(BookingTools.SearchAvailableCarsName, new() { ["pickupDate"] = "2026-11-23", ["returnDate"] = "2026-11-26" }, "c2");
+        });
+        _factory.Setup(f => f.Create(It.IsAny<string>())).Returns(client);
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "Потрібне авто з понеділка на 3 дні");
+
+        reply.ToolCalls.Should().HaveCount(2);
+        reply.ToolCalls[0].Intercepted.Should().BeTrue();
+        reply.ToolCalls[0].ProposedInvalid.Should().ContainSingle(i => i.Contains("Monday"));
+        reply.ToolCalls[1].Success.Should().BeTrue();
+        reply.ToolCalls[1].ProposedValid.Should().BeTrue();
+        reply.Cars.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async Task SlotFillingDisabled_ExecutesWrongDatesAndKeepsNoSlots()
+    {
+        _options.SlotFilling.Enabled = false;
+        var client = UseModelCallingTool(BookingTools.SearchAvailableCarsName, new()
+        {
+            ["pickupDate"] = "2026-11-25", ["returnDate"] = "2026-11-28"
+        });
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "Потрібне авто з понеділка на 3 дні");
+
+        var call = reply.ToolCalls.Should().ContainSingle().Subject;
+        call.Success.Should().BeTrue("baseline runs the tool with the model's arguments as is");
+        call.Intercepted.Should().BeFalse();
+        call.ProposedValid.Should().BeFalse("shadow validation still records the wrong weekday");
+        call.EffectiveArgumentsJson.Should().BeNull();
+
+        (await _db.ChatSessions.SingleAsync()).SlotsJson.Should().Be("{}");
+        client.Calls[0].Options!.Instructions.Should().NotContain("Known booking parameters");
+    }
+
+    [Fact]
+    public async Task SlotFilling_PerCallOverrideDisablesIt()
+    {
+        UseModelCallingTool(BookingTools.SearchAvailableCarsName, new() { ["pickupDate"] = AiTestData.Pickup });
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "Авто з 20 грудня",
+            new AgentChatOptions { SlotFillingEnabled = false });
+
+        reply.ToolCalls.Single().Intercepted.Should().BeFalse();
+        reply.ToolCalls.Single().Error.Should().Be(ToolErrorCodes.InvalidArguments);
     }
 }

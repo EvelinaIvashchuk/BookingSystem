@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using BookingSystem.Ai.Slots;
 
 namespace BookingSystem.Ai;
 
@@ -9,7 +10,10 @@ namespace BookingSystem.Ai;
 /// </summary>
 public static class AgentPrompts
 {
-    public static string BuildInstructions(DateTimeOffset now, bool isAuthenticated)
+    /// <param name="knownSlots">
+    /// Booking parameters collected so far (slot filling step 1); <c>null</c> when slot filling is off.
+    /// </param>
+    public static string BuildInstructions(DateTimeOffset now, bool isAuthenticated, BookingSlots? knownSlots = null)
     {
         var sb = new StringBuilder();
 
@@ -28,6 +32,7 @@ public static class AgentPrompts
         sb.AppendLine("## Tools");
         sb.AppendLine("- Cars, prices and availability may come ONLY from tool results. Never name a car, price or availability you did not get from a tool in this conversation.");
         sb.AppendLine("- To find cars call search_available_cars. It needs pickupDate and returnDate (YYYY-MM-DD). If the user has not given the dates, ask for them in one short question; never invent dates.");
+        sb.AppendLine("- Only the two dates are required. Do not ask for a city, category or other filters unless the user wants them; search without them.");
         sb.AppendLine("- \"N days from date X\" means returnDate = X + N days. Pass only the filters the user actually asked for.");
         sb.AppendLine("- Use get_car_details for questions about one car, calculate_price for the price of a specific car and dates, get_my_rentals for the user's own bookings.");
         sb.AppendLine("- After a search, briefly list the found cars (name, price per day, total). If nothing was found, suggest other dates or fewer filters.");
@@ -50,6 +55,18 @@ public static class AgentPrompts
         AppendCalendar(sb, DateOnly.FromDateTime(now.DateTime), CalendarDays);
         sb.Append("- The user is ")
           .AppendLine(isAuthenticated ? "signed in." : "not signed in (anonymous). Booking requires signing in.");
+
+        if (knownSlots is not null)
+        {
+            sb.AppendLine();
+            sb.AppendLine("## Known booking parameters");
+            sb.AppendLine("Collected earlier in this conversation. Reuse them unless the user changes them; to drop a filter pass \"any\".");
+            var known = knownSlots.Describe();
+            if (known.Count == 0)
+                sb.AppendLine("- none yet");
+            foreach (var (slot, value) in known)
+                sb.Append("- ").Append(slot).Append(": ").AppendLine(value);
+        }
 
         return sb.ToString();
     }

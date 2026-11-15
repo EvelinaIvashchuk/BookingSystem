@@ -6,6 +6,7 @@ using BookingSystem.Models;
 using BookingSystem.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.AI;
 using static BookingSystem.Tests.Ai.AiTestData;
 
 namespace BookingSystem.Tests.Ai;
@@ -287,5 +288,39 @@ public class BookingToolsTests : IAsyncLifetime
 
         (await _db.PendingActions.SingleAsync(x => x.Id == a.PendingActionId)).Status.Should().Be(PendingActionStatus.Cancelled);
         (await _db.PendingActions.SingleAsync(x => x.Id == b.PendingActionId)).Status.Should().Be(PendingActionStatus.Pending);
+    }
+
+    // ── AIFunction schema ────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task AIFunction_AcceptsNumbersWrittenAsStrings()
+    {
+        var (tools, _) = CreateSut();
+        var search = tools.AsAITools().OfType<AIFunction>().Single(f => f.Name == BookingTools.SearchAvailableCarsName);
+
+        var minSeatsType = search.JsonSchema.GetProperty("properties").GetProperty("minSeats").GetProperty("type").ToString();
+        var result = await search.InvokeAsync(new AIFunctionArguments
+        {
+            ["pickupDate"] = Pickup, ["returnDate"] = Return, ["minSeats"] = "7", ["maxPricePerDay"] = "2500"
+        });
+
+        minSeatsType.Should().Contain("integer").And.Contain("string");
+        result!.ToString().Should().Contain("Sienna").And.NotContain("Camry");
+    }
+
+    [Fact]
+    public void AIFunction_NamesAndDescriptionsAreExposedToTheModel()
+    {
+        var (tools, _) = CreateSut();
+
+        var functions = tools.AsAITools().OfType<AIFunction>().ToList();
+
+        functions.Select(f => f.Name).Should().BeEquivalentTo(
+            BookingTools.SearchAvailableCarsName, BookingTools.GetCarDetailsName, BookingTools.CalculatePriceName,
+            BookingTools.GetMyRentalsName, BookingTools.CreateRentalDraftName);
+        functions.Should().OnlyContain(f => !string.IsNullOrWhiteSpace(f.Description));
+        functions.Single(f => f.Name == BookingTools.SearchAvailableCarsName)
+            .JsonSchema.GetProperty("required").EnumerateArray().Select(e => e.GetString())
+            .Should().BeEquivalentTo("pickupDate", "returnDate");
     }
 }

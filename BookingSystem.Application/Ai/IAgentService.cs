@@ -22,4 +22,7 @@ public sealed class AgentChatOptions
 {
     /// <summary>Model in <c>provider:model</c> form; <c>null</c> means the configured default.</summary>
     public string? Model { get; init; }
+
+    /// <summary>Overrides <c>Ai:SlotFilling:Enabled</c> for this call (ablation experiments).</summary>
+    public bool? SlotFillingEnabled { get; init; }
 }

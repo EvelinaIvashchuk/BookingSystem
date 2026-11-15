@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using BookingSystem.Ai.Dtos;
 using BookingSystem.Ai.Slots;
 using BookingSystem.Data;
@@ -40,12 +42,52 @@ public sealed class BookingTools(
 
     public IList<AITool> AsAITools() =>
     [
-        AIFunctionFactory.Create(SearchAvailableCarsAsync, SearchAvailableCarsName),
-        AIFunctionFactory.Create(GetCarDetailsAsync, GetCarDetailsName),
-        AIFunctionFactory.Create(CalculatePriceAsync, CalculatePriceName),
-        AIFunctionFactory.Create(GetMyRentalsAsync, GetMyRentalsName),
-        AIFunctionFactory.Create(CreateRentalDraftAsync, CreateRentalDraftName)
+        Create(SearchAvailableCarsAsync, SearchAvailableCarsName),
+        Create(GetCarDetailsAsync, GetCarDetailsName),
+        Create(CalculatePriceAsync, CalculatePriceName),
+        Create(GetMyRentalsAsync, GetMyRentalsName),
+        Create(CreateRentalDraftAsync, CreateRentalDraftName)
     ];
+
+    /// <summary>Numbers written as strings ("5") are accepted when binding arguments.</summary>
+    private static readonly JsonSerializerOptions ToolJsonOptions = new(AIJsonUtilities.DefaultOptions)
+    {
+        NumberHandling = JsonNumberHandling.AllowReadingFromString
+    };
+
+    /// <summary>
+    /// Numeric parameters are declared as "number or string". Some providers (Groq) validate
+    /// tool calls against the schema server-side and reject the whole response with
+    /// <c>tool_use_failed</c> when a model writes <c>"5"</c> instead of <c>5</c>;
+    /// our own validation parses both forms.
+    /// </summary>
+    private static readonly AIJsonSchemaCreateOptions LenientNumbersSchema = new()
+    {
+        TransformSchemaNode = (_, node) =>
+        {
+            if (node is JsonObject schema && schema["type"] is { } type)
+            {
+                var types = type is JsonArray array
+                    ? array.Select(t => t!.GetValue<string>()).ToList()
+                    : [type.GetValue<string>()];
+
+                if (types.Any(t => t is "integer" or "number") && !types.Contains("string"))
+                {
+                    types.Add("string");
+                    schema["type"] = new JsonArray([.. types.Select(t => (JsonNode)JsonValue.Create(t))]);
+                }
+            }
+            return node;
+        }
+    };
+
+    private static AIFunction Create(Delegate method, string name) =>
+        AIFunctionFactory.Create(method, new AIFunctionFactoryOptions
+        {
+            Name = name,
+            SerializerOptions = ToolJsonOptions,
+            JsonSchemaCreateOptions = LenientNumbersSchema
+        });
 
     // ── search_available_cars ────────────────────────────────────────────────
 
@@ -56,10 +98,10 @@ public sealed class BookingTools(
     public async Task<object> SearchAvailableCarsAsync(
         [Description("Pickup date in YYYY-MM-DD format.")] string pickupDate,
         [Description("Return date in YYYY-MM-DD format, after pickupDate.")] string returnDate,
-        [Description("City name, e.g. Київ, Львів, Одеса. Omit if the user did not mention a city.")] string? location = null,
-        [Description("Car category: Седан (sedan), SUV (crossover), Хетчбек (hatchback), Мінівен (minivan), Купе (coupe).")] string? category = null,
-        [Description("Transmission: Automatic or Manual.")] string? transmission = null,
-        [Description("Fuel type: Petrol, Diesel, Electric or Hybrid.")] string? fuelType = null,
+        [Description("City name, e.g. Київ, Львів, Одеса. Omit if the user did not mention a city; \"any\" drops an earlier city.")] string? location = null,
+        [Description("Car category: Седан (sedan), SUV (crossover), Хетчбек (hatchback), Мінівен (minivan), Купе (coupe); \"any\" drops it.")] string? category = null,
+        [Description("Transmission: Automatic or Manual; \"any\" drops it.")] string? transmission = null,
+        [Description("Fuel type: Petrol, Diesel, Electric or Hybrid; \"any\" drops it.")] string? fuelType = null,
         [Description("Minimum number of seats.")] int? minSeats = null,
         [Description("Maximum price per day in UAH.")] decimal? maxPricePerDay = null,
         CancellationToken cancellationToken = default)
@@ -70,6 +112,12 @@ public sealed class BookingTools(
         var (pickup, ret) = dates;
         if (RentalRules.ValidateDates(pickup, ret, TodayAsDateTime) is { IsSuccess: false } rule)
             return new ToolError(ToolErrorCodes.BusinessRule, rule.Error!);
+
+        // "any" means "no preference" (the model uses it to drop a filter mentioned earlier).
+        location = SlotValues.IsAny(location) ? null : location;
+        category = SlotValues.IsAny(category) ? null : category;
+        transmission = SlotValues.IsAny(transmission) ? null : transmission;
+        fuelType = SlotValues.IsAny(fuelType) ? null : fuelType;
 
         var criteria = new CarSearchCriteria(pickup, ret) { MinSeats = minSeats, MaxPricePerDay = maxPricePerDay };
         var invalid = new List<string>();

@@ -1,3 +1,4 @@
+using BookingSystem.Ai.Slots;
 using BookingSystem.Ai.Tools;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -18,6 +19,8 @@ public static class AiServiceCollectionExtensions
         services.AddSingleton<AgentClock>();
         services.AddSingleton<IChatClientFactory, ChatClientFactory>();
         services.AddScoped<BookingToolsFactory>();
+        services.AddScoped<ISlotValidator, SlotValidator>();
+        services.AddScoped<SlotFillingEngine>();
         services.AddScoped<IAgentService, AgentService>();
         services.AddScoped<IPendingActionService, PendingActionService>();
 

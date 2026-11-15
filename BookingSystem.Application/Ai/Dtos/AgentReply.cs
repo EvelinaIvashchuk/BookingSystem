@@ -41,9 +41,30 @@ public sealed record CarCardDto(
     decimal? TotalPrice,
     string? ImageUrl);
 
+/// <summary>One tool call of a turn, with the data needed for the experiments.</summary>
+/// <param name="ArgumentsJson">Arguments exactly as the model produced them.</param>
 public sealed record ToolCallRecord(
     string Name,
     string ArgumentsJson,
     bool Success,
     long DurationMs,
-    string? Error = null);
+    string? Error = null)
+{
+    /// <summary>Arguments the tool actually received after slot merge and normalization.</summary>
+    public string? EffectiveArgumentsJson { get; init; }
+
+    /// <summary>The call was blocked by slot validation; the tool did not run.</summary>
+    public bool Intercepted { get; init; }
+
+    /// <summary>Slots filled in from the conversation state.</summary>
+    public IReadOnlyList<string>? MergedSlots { get; init; }
+
+    /// <summary>
+    /// Validator verdict on the model's own arguments (before merge). Recorded in both modes
+    /// (shadow mode when slot filling is off) so invalid-call rates are comparable.
+    /// </summary>
+    public IReadOnlyList<string>? ProposedMissing { get; init; }
+    public IReadOnlyList<string>? ProposedInvalid { get; init; }
+
+    public bool ProposedValid => (ProposedMissing?.Count ?? 0) == 0 && (ProposedInvalid?.Count ?? 0) == 0;
+}

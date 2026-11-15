@@ -6,6 +6,9 @@ public static class ToolErrorCodes
     /// <summary>Arguments could not be parsed (bad date format, unknown enum value...).</summary>
     public const string InvalidArguments = "invalid_arguments";
 
+    /// <summary>Slot filling blocked the call: required parameters missing or invalid (tool not executed).</summary>
+    public const string InvalidSlots = "invalid_slots";
+
     /// <summary>Arguments are well-formed but violate a rental rule (past date, too long...).</summary>
     public const string BusinessRule = "business_rule";
 

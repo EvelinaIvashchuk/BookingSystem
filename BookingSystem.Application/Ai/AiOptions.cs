@@ -34,6 +34,8 @@ public sealed class AiOptions
 
     public AiEmbeddingOptions Embedding { get; set; } = new();
 
+    public SlotFillingOptions SlotFilling { get; set; } = new();
+
     /// <summary>
     /// Prices per model. A list (not a dictionary) because model ids contain ':'
     /// which is the configuration key separator in .NET.
@@ -46,6 +48,17 @@ public sealed class AiProviderOptions
     public string Endpoint { get; set; } = string.Empty;
     public string ApiKey { get; set; } = string.Empty;
     public int TimeoutSeconds { get; set; } = 60;
+}
+
+/// <summary>Ablation switch for the slot filling algorithm (<c>Ai:SlotFilling:Enabled</c>).</summary>
+public sealed class SlotFillingOptions
+{
+    /// <summary>
+    /// When false, tools run with the model's arguments as is: no merge with known slots,
+    /// no pre-validation, no known-parameters block in the prompt (baseline for experiments).
+    /// Arguments are still validated in shadow mode for logging.
+    /// </summary>
+    public bool Enabled { get; set; } = true;
 }
 
 public sealed class AiEmbeddingOptions
