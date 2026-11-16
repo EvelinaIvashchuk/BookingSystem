@@ -7,6 +7,7 @@ using BookingSystem.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
+using Moq;
 using static BookingSystem.Tests.Ai.AiTestData;
 
 namespace BookingSystem.Tests.Ai;
@@ -24,11 +25,12 @@ public class BookingToolsTests : IAsyncLifetime
     }
 
     private readonly AiOptions _options = new() { PendingActionTtlMinutes = 15 };
+    private readonly Mock<IKnowledgeSearch> _knowledge = new();
 
     private (BookingTools Tools, AgentTurnContext Turn) CreateSut(string? userId = null, Guid? sessionId = null)
     {
         var turn = new AgentTurnContext(sessionId ?? Guid.NewGuid(), userId, Today);
-        var tools = new BookingTools(CreateUnitOfWork(_db), CreateCarService(_db), CreateClock(), _options, turn);
+        var tools = new BookingTools(CreateUnitOfWork(_db), CreateCarService(_db), _knowledge.Object, CreateClock(), _options, turn);
         return (tools, turn);
     }
 
@@ -317,10 +319,43 @@ public class BookingToolsTests : IAsyncLifetime
 
         functions.Select(f => f.Name).Should().BeEquivalentTo(
             BookingTools.SearchAvailableCarsName, BookingTools.GetCarDetailsName, BookingTools.CalculatePriceName,
-            BookingTools.GetMyRentalsName, BookingTools.CreateRentalDraftName);
+            BookingTools.GetMyRentalsName, BookingTools.CreateRentalDraftName, BookingTools.SearchRentalPoliciesName);
         functions.Should().OnlyContain(f => !string.IsNullOrWhiteSpace(f.Description));
         functions.Single(f => f.Name == BookingTools.SearchAvailableCarsName)
             .JsonSchema.GetProperty("required").EnumerateArray().Select(e => e.GetString())
             .Should().BeEquivalentTo("pickupDate", "returnDate");
+    }
+
+    // ── search_rental_policies ───────────────────────────────────────────────
+
+    [Fact]
+    public async Task SearchPolicies_ReturnsFragmentsWithSourcesUsingConfiguredTopK()
+    {
+        _options.Search.TopK = 3;
+        _knowledge.Setup(k => k.SearchAsync("Який депозит?", 3, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new KnowledgeSearchResult(KnowledgeSearchMode.HybridAdaptive,
+            [
+                new KnowledgeHit("deposit#2", "deposit", "Розмір депозиту за категоріями", "Хетчбек — 5 000 ₴ ...", 0.03),
+                new KnowledgeHit("deposit#1", "deposit", "Що таке депозит", "Депозит — це сума ...", 0.02)
+            ]));
+        var (tools, _) = CreateSut();
+
+        var result = (PolicySearchResult)await tools.SearchRentalPoliciesAsync("  Який депозит?  ");
+
+        result.Fragments.Select(f => f.Source).Should().Equal("deposit#2", "deposit#1");
+        result.Note.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task SearchPolicies_NothingFound_TellsModelNotToInvent()
+    {
+        _knowledge.Setup(k => k.SearchAsync(It.IsAny<string>(), It.IsAny<int>(), null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new KnowledgeSearchResult(KnowledgeSearchMode.HybridAdaptive, []));
+        var (tools, _) = CreateSut();
+
+        var result = (PolicySearchResult)await tools.SearchRentalPoliciesAsync("Чи можна на Марс?");
+
+        result.Fragments.Should().BeEmpty();
+        result.Note.Should().Contain("support");
     }
 }

@@ -40,7 +40,8 @@ public class AgentServiceTests : IAsyncLifetime
         return new AgentService(
             _factory.Object,
             uow,
-            new BookingToolsFactory(uow, AiTestData.CreateCarService(_db), new AgentClock(new FixedTimeProvider(UtcNow), options), options),
+            new BookingToolsFactory(uow, AiTestData.CreateCarService(_db), Mock.Of<IKnowledgeSearch>(),
+                new AgentClock(new FixedTimeProvider(UtcNow), options), options),
             new SlotFillingEngine(validator),
             validator,
             new AgentClock(new FixedTimeProvider(UtcNow), options),

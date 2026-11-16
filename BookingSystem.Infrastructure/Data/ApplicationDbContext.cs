@@ -17,6 +17,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<ChatSession>        ChatSessions   { get; set; } = null!;
     public DbSet<ChatSessionMessage> ChatMessages   { get; set; } = null!;
     public DbSet<PendingAction>      PendingActions { get; set; } = null!;
+    public DbSet<KnowledgeChunk>     KnowledgeChunks { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -180,6 +181,26 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
              .OnDelete(DeleteBehavior.Cascade);
 
             e.HasIndex(a => new { a.UserId, a.Status });
+        });
+
+        // ── KnowledgeChunk ────────────────────────────────────────────────────
+        // The FULLTEXT index on SearchText is created in the migration with raw SQL.
+        builder.Entity<KnowledgeChunk>(e =>
+        {
+            e.ToTable("KnowledgeChunks");
+            e.HasKey(c => c.Id);
+            e.Ignore(c => c.Key);
+            e.Property(c => c.DocumentId).IsRequired().HasMaxLength(64);
+            e.Property(c => c.Category).IsRequired().HasMaxLength(32);
+            e.Property(c => c.Title).IsRequired().HasMaxLength(300);
+            e.Property(c => c.Content).IsRequired().HasColumnType("text");
+            e.Property(c => c.SearchText).IsRequired().HasColumnType("text");
+            e.Property(c => c.Embedding).HasColumnType("longblob");
+            e.Property(c => c.EmbeddingModel).HasMaxLength(100);
+            e.Property(c => c.SourceHash).IsRequired().HasMaxLength(64);
+
+            e.HasIndex(c => new { c.DocumentId, c.ChunkIndex }).IsUnique();
+            e.HasIndex(c => c.Category);
         });
     }
 

@@ -25,6 +25,7 @@ namespace BookingSystem.Ai.Tools;
 public sealed class BookingTools(
     IUnitOfWork uow,
     ICarService carService,
+    IKnowledgeSearch knowledge,
     AgentClock clock,
     AiOptions options,
     AgentTurnContext turn)
@@ -34,6 +35,7 @@ public sealed class BookingTools(
     public const string CalculatePriceName = "calculate_price";
     public const string GetMyRentalsName = "get_my_rentals";
     public const string CreateRentalDraftName = "create_rental_draft";
+    public const string SearchRentalPoliciesName = "search_rental_policies";
 
     internal const int MaxSearchResults = 5;
     internal const int MaxRentalsListed = 10;
@@ -46,7 +48,8 @@ public sealed class BookingTools(
         Create(GetCarDetailsAsync, GetCarDetailsName),
         Create(CalculatePriceAsync, CalculatePriceName),
         Create(GetMyRentalsAsync, GetMyRentalsName),
-        Create(CreateRentalDraftAsync, CreateRentalDraftName)
+        Create(CreateRentalDraftAsync, CreateRentalDraftName),
+        Create(SearchRentalPoliciesAsync, SearchRentalPoliciesName)
     ];
 
     /// <summary>Numbers written as strings ("5") are accepted when binding arguments.</summary>
@@ -325,6 +328,29 @@ public sealed class BookingTools(
             "The booking is NOT created yet. Tell the user, in their language, to check the card below and press its confirm button within the time limit. Do not name the button in English.");
     }
 
+    // ── search_rental_policies ───────────────────────────────────────────────
+
+    [Description(
+        "Searches the rental rules knowledge base: documents and driver age, deposit and payment, insurance and excess, " +
+        "cancellation and refunds, fuel, mileage limits, late or early return, damage and accidents, travel abroad, " +
+        "extras (child seats, second driver), pickup and return, booking rules. Returns the most relevant fragments " +
+        "with their source. Answer rule questions only from these fragments.")]
+    public async Task<object> SearchRentalPoliciesAsync(
+        [Description("The user's question about rental rules, in the user's language.")] string query,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return new ToolError(ToolErrorCodes.InvalidArguments, "The query is empty.");
+
+        var result = await knowledge.SearchAsync(query.Trim(), options.Search.TopK, ct: cancellationToken);
+
+        return new PolicySearchResult(
+            [.. result.Hits.Select(h => new PolicyFragment(h.Key, h.Title, h.Content))],
+            result.Hits.Count == 0
+                ? "Nothing relevant found. Say you do not have this information and suggest contacting support."
+                : null);
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private DateTime TodayAsDateTime => turn.Today.ToDateTime(TimeOnly.MinValue);
@@ -375,8 +401,9 @@ public sealed class BookingTools(
 public sealed class BookingToolsFactory(
     IUnitOfWork uow,
     ICarService carService,
+    IKnowledgeSearch knowledge,
     AgentClock clock,
     IOptions<AiOptions> options)
 {
-    public BookingTools Create(AgentTurnContext turn) => new(uow, carService, clock, options.Value, turn);
+    public BookingTools Create(AgentTurnContext turn) => new(uow, carService, knowledge, clock, options.Value, turn);
 }

@@ -1,3 +1,4 @@
+using BookingSystem.Ai.Knowledge;
 using BookingSystem.Ai.Slots;
 using BookingSystem.Ai.Tools;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -23,6 +24,15 @@ public static class AiServiceCollectionExtensions
         services.AddScoped<SlotFillingEngine>();
         services.AddScoped<IAgentService, AgentService>();
         services.AddScoped<IPendingActionService, PendingActionService>();
+
+        // Knowledge base and retrieval
+        services.AddSingleton<IEmbeddingGeneratorFactory, EmbeddingGeneratorFactory>();
+        services.AddSingleton<QueryEmbeddingCache>();
+        services.AddSingleton<KnowledgeStore>();
+        services.AddScoped<IFullTextIndex, MySqlFullTextIndex>();
+        services.AddScoped<IKnowledgeSearch, KnowledgeSearch>();
+        services.AddScoped<KnowledgeIndexer>();
+        services.AddHostedService<KnowledgeIndexingHostedService>();
 
         return services;
     }

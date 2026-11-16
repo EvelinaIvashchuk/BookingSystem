@@ -36,6 +36,10 @@ public sealed class AiOptions
 
     public SlotFillingOptions SlotFilling { get; set; } = new();
 
+    public KnowledgeBaseOptions KnowledgeBase { get; set; } = new();
+
+    public SearchOptions Search { get; set; } = new();
+
     /// <summary>
     /// Prices per model. A list (not a dictionary) because model ids contain ':'
     /// which is the configuration key separator in .NET.
@@ -59,6 +63,56 @@ public sealed class SlotFillingOptions
     /// Arguments are still validated in shadow mode for logging.
     /// </summary>
     public bool Enabled { get; set; } = true;
+}
+
+public sealed class KnowledgeBaseOptions
+{
+    /// <summary>Folder with markdown files, relative to the content root.</summary>
+    public string Path { get; set; } = "KnowledgeBase";
+
+    /// <summary>Index changed files in the background when the application starts.</summary>
+    public bool IndexOnStartup { get; set; } = true;
+
+    /// <summary>Sections longer than this (approx. tokens) are split by paragraphs.</summary>
+    public int MaxChunkTokens { get; set; } = 350;
+
+    public int EmbeddingBatchSize { get; set; } = 50;
+}
+
+/// <summary>Retrieval settings (<c>Ai:Search</c>).</summary>
+public sealed class SearchOptions
+{
+    /// <summary>Method used by the <c>search_rental_policies</c> tool.</summary>
+    public KnowledgeSearchMode Mode { get; set; } = KnowledgeSearchMode.HybridAdaptive;
+
+    /// <summary>Fragments returned to the agent.</summary>
+    public int TopK { get; set; } = 3;
+
+    /// <summary>Candidates taken from each method before fusion.</summary>
+    public int Candidates { get; set; } = 20;
+
+    /// <summary>RRF constant k.</summary>
+    public int RrfK { get; set; } = 60;
+
+    public AdaptiveFusionOptions Adaptive { get; set; } = new();
+}
+
+/// <summary>
+/// Parameters of the adaptive fusion:
+/// w_ft = clamp(A + B·d − C·max(0, n − N0) + E·num, MinWeight, MaxWeight), w_vec = 1 − w_ft;
+/// score = (w_vec/(k + r_vec) + w_ft/(k + r_ft)) · (1 + Beta·[category matches]).
+/// Tuned on the dev split only.
+/// </summary>
+public sealed class AdaptiveFusionOptions
+{
+    public double A { get; set; } = 0.45;
+    public double B { get; set; } = 0.40;
+    public double C { get; set; } = 0.05;
+    public int N0 { get; set; } = 4;
+    public double E { get; set; } = 0.10;
+    public double Beta { get; set; } = 0.25;
+    public double MinWeight { get; set; } = 0.15;
+    public double MaxWeight { get; set; } = 0.85;
 }
 
 public sealed class AiEmbeddingOptions

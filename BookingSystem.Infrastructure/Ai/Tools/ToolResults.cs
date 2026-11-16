@@ -81,6 +81,11 @@ public sealed record UserRentalInfo(
 
 public sealed record UserRentalsResult(int Total, IReadOnlyList<UserRentalInfo> Rentals);
 
+/// <param name="Source">Fragment id (document#chunk).</param>
+public sealed record PolicyFragment(string Source, string Title, string Content);
+
+public sealed record PolicySearchResult(IReadOnlyList<PolicyFragment> Fragments, string? Note = null);
+
 public sealed record RentalDraftCreated(
     Guid PendingActionId,
     string CarName,
