@@ -252,6 +252,7 @@
   <data name="Chat_Placeholder" xml:space="preserve"><value>Задайте питання...</value></data>
   <data name="Chat_AriaOpen" xml:space="preserve"><value>Відкрити чат</value></data>
   <data name="Chat_Error" xml:space="preserve"><value>Щось пішло не так. Спробуйте ще раз.</value></data>
+  <data name="Chat_RateLimited" xml:space="preserve"><value>Забагато повідомлень. Зачекайте трохи й спробуйте ще раз.</value></data>
   <data name="Chat_Thinking" xml:space="preserve"><value>Помічник думає…</value></data>
   <data name="Chat_PerDay" xml:space="preserve"><value>за добу</value></data>
   <data name="Chat_Details" xml:space="preserve"><value>Детальніше</value></data>

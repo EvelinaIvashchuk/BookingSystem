@@ -101,6 +101,15 @@ public class AiControllerTests
         _pendingActions.Verify(p => p.ConfirmAsync(id, UserId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
+    [Fact]
+    public void Chat_RequiresPostAndAntiForgeryToken()
+    {
+        var method = typeof(AiController).GetMethod(nameof(AiController.Chat))!;
+
+        method.GetCustomAttribute<HttpPostAttribute>().Should().NotBeNull();
+        method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>().Should().NotBeNull();
+    }
+
     [Theory]
     [InlineData(nameof(AiController.Confirm))]
     [InlineData(nameof(AiController.Cancel))]

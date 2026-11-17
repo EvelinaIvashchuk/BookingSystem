@@ -15,8 +15,10 @@ public class AiController(
     IOptions<AiOptions> aiOptions,
     IStringLocalizer<SharedResources> localizer) : Controller
 {
-    // POST /Ai/Chat
+    // POST /Ai/Chat — rate limited (see Security/AiRateLimiting); the antiforgery token
+    // stops other sites from driving the assistant with a signed-in user's cookie.
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Chat([FromBody] ChatRequest? request, CancellationToken cancellationToken)
     {
         var message = request?.Message?.Trim();

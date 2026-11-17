@@ -36,6 +36,8 @@ public sealed class AiOptions
 
     public SlotFillingOptions SlotFilling { get; set; } = new();
 
+    public RateLimitOptions RateLimit { get; set; } = new();
+
     public KnowledgeBaseOptions KnowledgeBase { get; set; } = new();
 
     public SearchOptions Search { get; set; } = new();
@@ -63,6 +65,18 @@ public sealed class SlotFillingOptions
     /// Arguments are still validated in shadow mode for logging.
     /// </summary>
     public bool Enabled { get; set; } = true;
+}
+
+/// <summary>Limits for <c>POST /Ai/Chat</c> (<c>Ai:RateLimit</c>).</summary>
+public sealed class RateLimitOptions
+{
+    public bool Enabled { get; set; } = true;
+
+    /// <summary>Requests per minute from one IP address.</summary>
+    public int PerIpPerMinute { get; set; } = 20;
+
+    /// <summary>Requests per hour for one user (signed in) or chat session (anonymous).</summary>
+    public int PerSessionPerHour { get; set; } = 60;
 }
 
 public sealed class KnowledgeBaseOptions

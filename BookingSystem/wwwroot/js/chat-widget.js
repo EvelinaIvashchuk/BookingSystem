@@ -198,9 +198,12 @@
         setBusy(true);
         const thinking = appendThinking();
 
+        const headers = { 'Content-Type': 'application/json', 'RequestVerificationToken': antiForgeryToken };
+        if (sessionId) headers['X-Chat-Session'] = sessionId;   // per-session rate limit
+
         fetch('/Ai/Chat', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: headers,
             body: JSON.stringify({ message: text, sessionId: sessionId })
         })
         .then(function (r) { return r.json(); })

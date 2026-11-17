@@ -8,6 +8,8 @@ using BookingSystem.Services.Interfaces;
 using BookingSystem.Validators;
 using BookingSystem.ViewModels;
 using FluentValidation;
+using BookingSystem.Security;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -84,6 +86,18 @@ builder.Services.AddSingleton<IStorageService, S3StorageService>();
 
 // ── AI agent ──────────────────────────────────────────────────────────────────
 builder.Services.AddAiAgent(builder.Configuration);
+builder.Services.AddAiRateLimiting();
+
+// ── Reverse proxy (Railway) ───────────────────────────────────────────────────
+// TLS terminates at the proxy; take the client IP and scheme from X-Forwarded-*.
+// The app is reachable only through the proxy, which appends the real client IP
+// as the last X-Forwarded-For entry (ForwardLimit = 1 reads exactly that one).
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 // ── AutoMapper ────────────────────────────────────────────────────────────────
 builder.Services.AddAutoMapper(typeof(RentalMappingProfile).Assembly);
@@ -112,6 +126,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ── Pipeline ──────────────────────────────────────────────────────────────────
+app.UseForwardedHeaders();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -158,6 +174,9 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// After authentication: the hourly AI chat limit is keyed by the signed-in user.
+app.UseRateLimiter();
 
 app.MapStaticAssets();
 
