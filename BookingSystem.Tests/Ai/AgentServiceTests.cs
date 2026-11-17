@@ -515,4 +515,60 @@ public class AgentServiceTests : IAsyncLifetime
         reply.ToolCalls.Single().Intercepted.Should().BeFalse();
         reply.ToolCalls.Single().Error.Should().Be(ToolErrorCodes.InvalidArguments);
     }
+
+    // ── History for the widget ───────────────────────────────────────────────
+
+    [Fact]
+    public async Task History_ReturnsMessagesWithoutInternalNotes()
+    {
+        UseModelReplying("Вітаю!");
+        var sut = CreateSut();
+        var sessionId = (await sut.ChatAsync(Guid.Empty, "user-1", "Привіт")).SessionId;
+        _db.ChatMessages.Add(new ChatSessionMessage
+        {
+            SessionId = sessionId, Role = ChatSessionMessage.AssistantRole,
+            Content = "[Booking confirmed by the user: rental #1.]"
+        });
+        await _db.SaveChangesAsync();
+
+        var history = await sut.GetHistoryAsync(sessionId, "user-1");
+
+        history!.Messages.Select(m => (m.Role, m.Content)).Should().Equal(
+            (ChatSessionMessage.UserRole, "Привіт"),
+            (ChatSessionMessage.AssistantRole, "Вітаю!"));
+    }
+
+    [Fact]
+    public async Task History_OfAnotherUsersSession_IsNotReturned()
+    {
+        UseModelReplying("ok");
+        var sut = CreateSut();
+        var sessionId = (await sut.ChatAsync(Guid.Empty, "user-1", "Мої дані")).SessionId;
+
+        (await sut.GetHistoryAsync(sessionId, "other-user")).Should().BeNull();
+        (await sut.GetHistoryAsync(sessionId, null)).Should().BeNull();
+        (await sut.GetHistoryAsync(Guid.NewGuid(), "user-1")).Should().BeNull();
+    }
+
+    [Fact]
+    public async Task History_IncludesPendingDraftUntilItExpires()
+    {
+        var client = UseModelCallingTool(BookingTools.CreateRentalDraftName, new()
+        {
+            ["carId"] = AiTestData.CrvId, ["pickupDate"] = AiTestData.Pickup, ["returnDate"] = AiTestData.Return
+        });
+        var sut = CreateSut();
+        var reply = await sut.ChatAsync(Guid.Empty, "user-1", "Бронюй Honda CR-V з 20 по 25 грудня");
+
+        var history = await sut.GetHistoryAsync(reply.SessionId, "user-1");
+
+        history!.PendingDraft.Should().NotBeNull();
+        history.PendingDraft!.PendingActionId.Should().Be(reply.PendingActionId!.Value);
+
+        var action = await _db.PendingActions.SingleAsync();
+        action.ExpiresAt = UtcNow.UtcDateTime.AddMinutes(-1);
+        await _db.SaveChangesAsync();
+
+        (await sut.GetHistoryAsync(reply.SessionId, "user-1"))!.PendingDraft.Should().BeNull();
+    }
 }

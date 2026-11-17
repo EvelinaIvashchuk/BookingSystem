@@ -1,6 +1,12 @@
+@* AI assistant widget. Behaviour: wwwroot/js/chat-widget.js; texts come from SharedResources via data-* attributes. *@
 <div id="chat-widget"
      data-greeting="@L["Chat_Greeting"]"
      data-error="@L["Chat_Error"]"
+     data-thinking="@L["Chat_Thinking"]"
+     data-per-day="@L["Chat_PerDay"]"
+     data-details="@L["Chat_Details"]"
+     data-select="@L["Chat_Select"]"
+     data-select-message="@L["Chat_SelectMessage"]"
      data-draft-title="@L["Chat_DraftTitle"]"
      data-draft-dates="@L["Chat_DraftDates"]"
      data-draft-total="@L["Chat_DraftTotal"]"
@@ -13,197 +19,28 @@
     @* Token for Confirm/Cancel; sent in the RequestVerificationToken header. *@
     @Html.AntiForgeryToken()
 
-    <button id="chat-toggle" title="@L["Chat_Title"]" aria-label="@L["Chat_AriaOpen"]">
-        <i class="bi bi-chat-dots-fill" id="chat-icon-open"></i>
-        <i class="bi bi-x-lg d-none" id="chat-icon-close"></i>
+    <button id="chat-toggle" type="button" title="@L["Chat_Title"]" aria-label="@L["Chat_AriaOpen"]" aria-expanded="false" aria-controls="chat-window">
+        <i class="bi bi-chat-dots-fill" id="chat-icon-open" aria-hidden="true"></i>
+        <i class="bi bi-x-lg d-none" id="chat-icon-close" aria-hidden="true"></i>
     </button>
 
-    <div id="chat-window" class="d-none">
+    <div id="chat-window" class="d-none" role="dialog" aria-label="@L["Chat_Title"]">
         <div id="chat-header">
-            <i class="bi bi-robot me-2"></i>
-            <span>@L["Chat_Title"]</span>
+            <i class="bi bi-robot me-2" aria-hidden="true"></i>
+            <span class="flex-grow-1">@L["Chat_Title"]</span>
+            <button id="chat-new" type="button" title="@L["Chat_NewChat"]" aria-label="@L["Chat_NewChat"]">
+                <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+            </button>
         </div>
-        <div id="chat-messages"></div>
+        <div id="chat-messages" aria-live="polite"></div>
         <div id="chat-input-area">
-            <input id="chat-input" type="text" placeholder="@L["Chat_Placeholder"]" autocomplete="off" maxlength="1000" />
-            <button id="chat-send" title="Send">
-                <i class="bi bi-send-fill"></i>
+            <input id="chat-input" type="text" placeholder="@L["Chat_Placeholder"]" autocomplete="off" maxlength="1000"
+                   aria-label="@L["Chat_Placeholder"]" />
+            <button id="chat-send" type="button" title="@L["Chat_Send"]" aria-label="@L["Chat_Send"]">
+                <i class="bi bi-send-fill" aria-hidden="true"></i>
             </button>
         </div>
     </div>
 </div>
 
-<script>
-    (function () {
-        const widget   = document.getElementById('chat-widget');
-        const toggle   = document.getElementById('chat-toggle');
-        const window_  = document.getElementById('chat-window');
-        const iconOpen = document.getElementById('chat-icon-open');
-        const iconClose= document.getElementById('chat-icon-close');
-        const messages = document.getElementById('chat-messages');
-        const input    = document.getElementById('chat-input');
-        const sendBtn  = document.getElementById('chat-send');
-
-        const greeting = widget.dataset.greeting;
-        const errorMsg = widget.dataset.error;
-
-        // The server owns the conversation history; the widget only remembers the session id.
-        const SESSION_KEY = 'carrental.chat.sessionId';
-        function loadSessionId() {
-            try { return localStorage.getItem(SESSION_KEY); } catch (e) { return null; }
-        }
-        function saveSessionId(id) {
-            try { if (id) localStorage.setItem(SESSION_KEY, id); } catch (e) { /* storage unavailable */ }
-        }
-        let sessionId = loadSessionId();
-
-        appendMessage(greeting, 'bot');
-
-        toggle.addEventListener('click', function () {
-            const isOpen = !window_.classList.contains('d-none');
-            window_.classList.toggle('d-none', isOpen);
-            iconOpen.classList.toggle('d-none', !isOpen);
-            iconClose.classList.toggle('d-none', isOpen);
-            if (!isOpen) input.focus();
-        });
-
-        input.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-        });
-        sendBtn.addEventListener('click', sendMessage);
-
-        function sendMessage() {
-            const text = input.value.trim();
-            if (!text) return;
-
-            appendMessage(text, 'user');
-            input.value = '';
-            input.disabled = true;
-            sendBtn.disabled = true;
-
-            const typing = appendTyping();
-
-            fetch('/Ai/Chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text, sessionId: sessionId })
-            })
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                typing.remove();
-                if (data.sessionId) { sessionId = data.sessionId; saveSessionId(sessionId); }
-                appendMessage(data.reply || errorMsg, 'bot');
-                if (data.draft) appendDraftCard(data.draft);
-            })
-            .catch(function () {
-                typing.remove();
-                appendMessage(errorMsg, 'bot');
-            })
-            .finally(function () {
-                input.disabled = false;
-                sendBtn.disabled = false;
-                input.focus();
-            });
-        }
-
-        function appendMessage(text, who) {
-            const div = document.createElement('div');
-            div.className = 'chat-msg chat-msg--' + who;
-            div.textContent = text;
-            messages.appendChild(div);
-            messages.scrollTop = messages.scrollHeight;
-            return div;
-        }
-
-        // ── Booking confirmation card (human-in-the-loop) ──────────────────
-        // All text goes through textContent: nothing from the model is parsed as HTML.
-        const labels = widget.dataset;
-        const antiForgeryToken = (widget.querySelector('input[name="__RequestVerificationToken"]') || {}).value || '';
-
-        function format(template, args) {
-            return template.replace(/\{(\d+)\}/g, function (_, i) { return args[i] !== undefined ? args[i] : ''; });
-        }
-        function formatDate(iso) {
-            const p = (iso || '').split('-');
-            return p.length === 3
-                ? new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString(document.documentElement.lang || undefined)
-                : iso;
-        }
-        function minutesLeft(expiresAtUtc) {
-            const ms = Date.parse(expiresAtUtc.endsWith('Z') ? expiresAtUtc : expiresAtUtc + 'Z') - Date.now();
-            return Math.max(0, Math.round(ms / 60000));
-        }
-        function el(tag, className, text) {
-            const node = document.createElement(tag);
-            if (className) node.className = className;
-            if (text !== undefined) node.textContent = text;
-            return node;
-        }
-
-        function appendDraftCard(draft) {
-            const card = el('div', 'chat-card');
-            card.appendChild(el('div', 'chat-card__title', labels.draftTitle));
-            card.appendChild(el('div', 'chat-card__car', draft.carName));
-            card.appendChild(el('div', 'chat-card__line',
-                format(labels.draftDates, [formatDate(draft.pickupDate), formatDate(draft.returnDate), draft.days])));
-            card.appendChild(el('div', 'chat-card__total',
-                format(labels.draftTotal, [Number(draft.totalPrice).toLocaleString(document.documentElement.lang || undefined)])));
-            const hint = el('div', 'chat-card__hint', format(labels.draftHint, [minutesLeft(draft.expiresAt)]));
-            card.appendChild(hint);
-
-            const actions = el('div', 'chat-card__actions');
-            const confirmBtn = el('button', 'btn btn-sm btn-primary', labels.confirm);
-            const cancelBtn = el('button', 'btn btn-sm btn-outline-secondary', labels.cancel);
-            confirmBtn.type = cancelBtn.type = 'button';
-            confirmBtn.addEventListener('click', function () { decide('Confirm', draft.pendingActionId, card, actions, hint); });
-            cancelBtn.addEventListener('click', function () { decide('Cancel', draft.pendingActionId, card, actions, hint); });
-            actions.appendChild(confirmBtn);
-            actions.appendChild(cancelBtn);
-            card.appendChild(actions);
-
-            messages.appendChild(card);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        function decide(action, id, card, actions, hint) {
-            actions.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
-
-            fetch('/Ai/' + action + '/' + encodeURIComponent(id), {
-                method: 'POST',
-                headers: { 'RequestVerificationToken': antiForgeryToken }
-            })
-            .then(function (r) {
-                // [Authorize] redirects anonymous users to the login page (HTML, not JSON).
-                const isJson = (r.headers.get('content-type') || '').indexOf('application/json') !== -1;
-                if (r.redirected || !isJson) return { ok: false, message: labels.signIn, retry: true };
-                return r.json();
-            })
-            .then(function (data) {
-                if (data.ok || !data.retry) { actions.remove(); hint.remove(); }
-                else actions.querySelectorAll('button').forEach(function (b) { b.disabled = false; });
-
-                card.classList.add(data.ok && action === 'Confirm' ? 'chat-card--done' : 'chat-card--closed');
-                appendMessage(data.message || errorMsg, 'bot');
-
-                if (data.ok && data.url) {
-                    const link = el('a', 'chat-card__link', labels.myRentals);
-                    link.href = data.url;
-                    card.appendChild(link);
-                }
-            })
-            .catch(function () {
-                actions.querySelectorAll('button').forEach(function (b) { b.disabled = false; });
-                appendMessage(errorMsg, 'bot');
-            });
-        }
-
-        function appendTyping() {
-            const div = document.createElement('div');
-            div.className = 'chat-msg chat-msg--bot chat-msg--typing';
-            div.innerHTML = '<span></span><span></span><span></span>';
-            messages.appendChild(div);
-            messages.scrollTop = messages.scrollHeight;
-            return div;
-        }
-    })();
-</script>
+<script src="~/js/chat-widget.js" asp-append-version="true"></script>

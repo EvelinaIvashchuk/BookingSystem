@@ -68,7 +68,7 @@ public sealed class AgentService(
 
             stopwatch.Stop();
 
-            var text = response.Text.Trim();
+            var text = ReplyFormatter.ToPlainText(response.Text);
             if (text.Length == 0)
             {
                 // Iteration limit reached or the model returned only tool calls.
@@ -114,6 +114,38 @@ public sealed class AgentService(
             logger.LogError(ex, "AI provider call failed for session {SessionId}, model {Model}", session.Id, model);
             return Degraded(UnavailableText, session.Id, model, stopwatch);
         }
+    }
+
+    internal const int HistoryMessagesShown = 50;
+
+    public async Task<ChatHistory?> GetHistoryAsync(Guid sessionId, string? userId, CancellationToken cancellationToken = default)
+    {
+        var session = sessionId == Guid.Empty ? null : await uow.ChatSessions.GetAsync(sessionId, cancellationToken);
+
+        // Same ownership rule as ChatAsync: a signed-in user's session is visible only to them.
+        if (session is null || (session.UserId is not null && session.UserId != userId))
+            return null;
+
+        var messages = (await uow.ChatSessions.GetRecentMessagesAsync(session.Id, HistoryMessagesShown, cancellationToken))
+            .Where(m => !m.IsInternalNote)
+            .Select(m => new ChatHistoryMessage(
+                m.Role,
+                m.Role == ChatSessionMessage.AssistantRole ? ReplyFormatter.ToPlainText(m.Content) : m.Content,
+                m.CreatedAt))
+            .ToList();
+
+        RentalDraft? draft = null;
+        if (userId is not null)
+        {
+            var pending = (await uow.PendingActions.GetPendingBySessionAsync(session.Id, cancellationToken))
+                .Where(a => a.UserId == userId && a.ExpiresAt > clock.UtcNow)
+                .OrderByDescending(a => a.CreatedAt)
+                .FirstOrDefault();
+            if (pending is not null)
+                draft = JsonSerializer.Deserialize<RentalDraft>(pending.PayloadJson, PendingActionService.PayloadJsonOptions);
+        }
+
+        return new ChatHistory(session.Id, messages, draft);
     }
 
     /// <summary>

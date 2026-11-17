@@ -252,6 +252,13 @@
   <data name="Chat_Placeholder" xml:space="preserve"><value>Задайте питання...</value></data>
   <data name="Chat_AriaOpen" xml:space="preserve"><value>Відкрити чат</value></data>
   <data name="Chat_Error" xml:space="preserve"><value>Щось пішло не так. Спробуйте ще раз.</value></data>
+  <data name="Chat_Thinking" xml:space="preserve"><value>Помічник думає…</value></data>
+  <data name="Chat_PerDay" xml:space="preserve"><value>за добу</value></data>
+  <data name="Chat_Details" xml:space="preserve"><value>Детальніше</value></data>
+  <data name="Chat_Select" xml:space="preserve"><value>Обрати</value></data>
+  <data name="Chat_SelectMessage" xml:space="preserve"><value>Обираю {0} (авто №{1})</value></data>
+  <data name="Chat_NewChat" xml:space="preserve"><value>Новий чат</value></data>
+  <data name="Chat_Send" xml:space="preserve"><value>Надіслати</value></data>
   <data name="Chat_DraftTitle" xml:space="preserve"><value>Підтвердіть бронювання</value></data>
   <data name="Chat_DraftDates" xml:space="preserve"><value>{0} — {1} ({2} дн.)</value></data>
   <data name="Chat_DraftTotal" xml:space="preserve"><value>Разом: {0} ₴</value></data>

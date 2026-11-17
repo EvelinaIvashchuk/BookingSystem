@@ -15,7 +15,18 @@ public interface IAgentService
         string message,
         AgentChatOptions? options = null,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Messages of a session for the widget to restore after page navigation, plus a booking draft
+    /// that still waits for confirmation. <c>null</c> if the session is unknown or belongs to another user.
+    /// </summary>
+    Task<ChatHistory?> GetHistoryAsync(Guid sessionId, string? userId, CancellationToken cancellationToken = default);
 }
+
+public sealed record ChatHistory(Guid SessionId, IReadOnlyList<ChatHistoryMessage> Messages, RentalDraft? PendingDraft);
+
+/// <param name="Role"><c>user</c> or <c>assistant</c>.</param>
+public sealed record ChatHistoryMessage(string Role, string Content, DateTime CreatedAt);
 
 /// <summary>Per-call overrides for <see cref="IAgentService.ChatAsync"/>.</summary>
 public sealed class AgentChatOptions

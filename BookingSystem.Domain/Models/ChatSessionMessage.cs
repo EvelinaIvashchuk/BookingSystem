@@ -8,6 +8,13 @@ public class ChatSessionMessage
     public const string UserRole = "user";
     public const string AssistantRole = "assistant";
 
+    /// <summary>
+    /// Service notes for the model (e.g. "[Booking confirmed by the user: ...]") are stored as
+    /// assistant messages in square brackets and are not shown to the user.
+    /// </summary>
+    public bool IsInternalNote =>
+        Role == AssistantRole && Content.StartsWith('[') && Content.EndsWith(']');
+
     public long Id { get; set; }
 
     public Guid SessionId { get; set; }

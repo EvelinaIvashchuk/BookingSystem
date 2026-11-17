@@ -137,4 +137,30 @@ public class AiControllerTests
         _agent.Verify(a => a.ChatAsync(Guid.Empty, null, "hi",
             It.IsAny<AgentChatOptions?>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    // ── History ──────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task History_UnknownOrForeignSession_Returns404()
+    {
+        _agent.Setup(a => a.GetHistoryAsync(It.IsAny<Guid>(), UserId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ChatHistory?)null);
+
+        var result = await CreateSut().History(Guid.NewGuid(), CancellationToken.None);
+
+        result.Should().BeOfType<NotFoundResult>();
+    }
+
+    [Fact]
+    public async Task History_ReturnsMessagesForTheWidget()
+    {
+        var sessionId = Guid.NewGuid();
+        _agent.Setup(a => a.GetHistoryAsync(sessionId, UserId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ChatHistory(sessionId, [new ChatHistoryMessage("user", "Привіт", DateTime.UtcNow)], null));
+
+        var result = await CreateSut().History(sessionId, CancellationToken.None);
+
+        result.Should().BeOfType<OkObjectResult>()
+            .Which.Value.Should().BeEquivalentTo(new { sessionId, messages = new[] { new { role = "user", text = "Привіт" } } });
+    }
 }

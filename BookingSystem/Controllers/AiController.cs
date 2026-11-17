@@ -47,6 +47,22 @@ public class AiController(
         return reply.IsDegraded ? StatusCode(StatusCodes.Status503ServiceUnavailable, body) : Ok(body);
     }
 
+    // GET /Ai/History?sessionId=... — restores the conversation after navigation.
+    [HttpGet]
+    public async Task<IActionResult> History(Guid sessionId, CancellationToken cancellationToken)
+    {
+        var userId = User.Identity?.IsAuthenticated == true ? User.FindFirstValue(ClaimTypes.NameIdentifier) : null;
+        var history = await agentService.GetHistoryAsync(sessionId, userId, cancellationToken);
+        if (history is null) return NotFound();
+
+        return Ok(new
+        {
+            sessionId = history.SessionId,
+            messages = history.Messages.Select(m => new { role = m.Role, text = m.Content }),
+            draft = history.PendingDraft
+        });
+    }
+
     // POST /Ai/Confirm/{id} — the only way a booking prepared by the agent becomes a rental.
     [HttpPost]
     [Authorize]
