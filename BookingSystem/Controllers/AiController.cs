@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using BookingSystem.Ai;
+using BookingSystem.Helpers;
 using BookingSystem.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +41,8 @@ public class AiController(
         {
             reply = reply.Text,
             sessionId = reply.SessionId,
-            cars = reply.Cars,
+            // ImageUrl may be an S3 object key; resolve it like the catalog views do.
+            cars = reply.Cars.Select(c => c with { ImageUrl = NullIfEmpty(ImageHelper.Src(c.ImageUrl)) }),
             pendingActionId = reply.PendingActionId,
             draft = reply.Draft,
             missingSlots = reply.MissingSlots
@@ -90,6 +92,8 @@ public class AiController(
         var outcome = await pendingActions.CancelAsync(id, userId, cancellationToken);
         return ToActionResult(outcome);
     }
+
+    private static string? NullIfEmpty(string value) => value.Length == 0 ? null : value;
 
     private IActionResult ToActionResult(PendingActionOutcome outcome) => outcome.Status switch
     {

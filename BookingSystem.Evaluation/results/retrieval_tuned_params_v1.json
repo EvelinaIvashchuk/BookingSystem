@@ -1,0 +1,17 @@
+{
+  "grid": "v1",
+  "tunedOn": "dev",
+  "queries": 17,
+  "combinations": 2304,
+  "selection": "max MRR@10 on dev; ties: Recall@3, then closest to defaults",
+  "A": 0.4,
+  "B": 0.2,
+  "C": 0.06,
+  "N0": 4,
+  "E": 0.1,
+  "Beta": 0.3,
+  "MinWeight": 0.15,
+  "MaxWeight": 0.85,
+  "devMrr10": 0.8382352941176472,
+  "devRecall3": 0.9411764705882353
+}

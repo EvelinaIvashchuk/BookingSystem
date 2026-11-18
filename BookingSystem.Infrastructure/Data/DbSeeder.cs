@@ -67,6 +67,14 @@ public static class DbSeeder
                     logger.LogError("Failed to seed admin account: {Errors}", errors);
                 }
             }
+
+            // Demo fleet: adds only missing cars (by licence plate), never changes existing ones.
+            if (!string.Equals(config["Seed:DemoFleet"], "false", StringComparison.OrdinalIgnoreCase))
+            {
+                var added = await DemoFleet.EnsureAsync(db, keepIds: false);
+                if (added > 0)
+                    logger.LogInformation("Demo fleet seeded: {Count} cars added", added);
+            }
         }
         catch (Exception ex)
         {

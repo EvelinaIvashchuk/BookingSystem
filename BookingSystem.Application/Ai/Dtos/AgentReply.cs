@@ -32,6 +32,9 @@ public sealed record AgentReply
 
     /// <summary>True when the provider was unavailable and a fallback text was returned.</summary>
     public bool IsDegraded { get; init; }
+
+    /// <summary>Provider error behind a degraded reply (for logs and experiments, not for users).</summary>
+    public string? ErrorDetail { get; init; }
 }
 
 public sealed record CarCardDto(

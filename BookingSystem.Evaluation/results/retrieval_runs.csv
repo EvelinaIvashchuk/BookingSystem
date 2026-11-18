@@ -1,0 +1,337 @@
+query_id,split,kind,lang,method,recall3,recall5,mrr10,top5,relevant,query
+Q-01,test,keyword,uk,Vector,1,1,1,deposit#2|deposit#6|deposit#1|deposit#5|deposit#4,deposit#2,депозит SUV
+Q-01,test,keyword,uk,FullText,1,1,1,deposit#2|deposit#6|deposit#1|deposit#5|extras#6,deposit#2,депозит SUV
+Q-01,test,keyword,uk,HybridRrf,1,1,1,deposit#2|deposit#6|deposit#1|deposit#5|deposit#4,deposit#2,депозит SUV
+Q-01,test,keyword,uk,HybridAdaptive(initial),1,1,1,deposit#2|deposit#6|deposit#1|deposit#5|deposit#4,deposit#2,депозит SUV
+Q-01,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,deposit#2|deposit#6|deposit#1|deposit#5|deposit#4,deposit#2,депозит SUV
+Q-01,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,deposit#2|deposit#6|deposit#1|deposit#5|deposit#4,deposit#2,депозит SUV
+Q-02,dev,keyword,uk,Vector,1,1,0.5,insurance#2|insurance#3|insurance#4|insurance#1|insurance#5,insurance#3,розмір франшизи
+Q-02,dev,keyword,uk,FullText,1,1,0.5,deposit#2|insurance#3|insurance#2|fuel#6|insurance#4,insurance#3,розмір франшизи
+Q-02,dev,keyword,uk,HybridRrf,1,1,0.5,insurance#2|insurance#3|insurance#4|deposit#2|insurance#1,insurance#3,розмір франшизи
+Q-02,dev,keyword,uk,HybridAdaptive(initial),1,1,1,insurance#3|insurance#2|insurance#4|insurance#1|insurance#5,insurance#3,розмір франшизи
+Q-02,dev,keyword,uk,HybridAdaptive(tuned v1),1,1,1,insurance#3|insurance#2|insurance#4|insurance#1|insurance#5,insurance#3,розмір франшизи
+Q-02,dev,keyword,uk,HybridAdaptive(tuned v2),1,1,1,insurance#3|insurance#2|insurance#4|insurance#1|insurance#5,insurance#3,розмір франшизи
+Q-03,test,keyword,uk,Vector,1,1,1,extras#1|extras#2|booking#6|extras#5|extras#4,extras#1,дитяче крісло ціна
+Q-03,test,keyword,uk,FullText,1,1,1,extras#1|booking#6|booking#7|documents#2|extras#8,extras#1,дитяче крісло ціна
+Q-03,test,keyword,uk,HybridRrf,1,1,1,extras#1|booking#6|documents#2|insurance#1|extras#8,extras#1,дитяче крісло ціна
+Q-03,test,keyword,uk,HybridAdaptive(initial),1,1,1,extras#1|extras#8|booking#6|documents#2|insurance#1,extras#1,дитяче крісло ціна
+Q-03,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,extras#1|extras#8|booking#6|documents#2|insurance#1,extras#1,дитяче крісло ціна
+Q-03,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,extras#1|extras#8|booking#6|extras#2|extras#5,extras#1,дитяче крісло ціна
+Q-04,test,keyword,uk,Vector,1,1,1,documents#2|documents#3|documents#4|documents#5|documents#8,documents#2,мінімальний вік водія
+Q-04,test,keyword,uk,FullText,1,1,1,documents#2|documents#3|booking#3|documents#5|documents#8,documents#2,мінімальний вік водія
+Q-04,test,keyword,uk,HybridRrf,1,1,1,documents#2|documents#3|documents#5|documents#8|documents#4,documents#2,мінімальний вік водія
+Q-04,test,keyword,uk,HybridAdaptive(initial),1,1,1,documents#2|documents#3|documents#5|documents#8|documents#4,documents#2,мінімальний вік водія
+Q-04,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,documents#2|documents#3|documents#5|documents#8|documents#4,documents#2,мінімальний вік водія
+Q-04,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,documents#2|documents#3|documents#5|documents#4|documents#8,documents#2,мінімальний вік водія
+Q-05,dev,keyword,uk,Vector,1,1,1,mileage#1|mileage#4|mileage#7|mileage#2|mileage#3,mileage#1,ліміт пробігу
+Q-05,dev,keyword,uk,FullText,1,1,1,mileage#1|mileage#4|mileage#2|mileage#3|mileage#7,mileage#1,ліміт пробігу
+Q-05,dev,keyword,uk,HybridRrf,1,1,1,mileage#1|mileage#4|mileage#2|mileage#7|mileage#3,mileage#1,ліміт пробігу
+Q-05,dev,keyword,uk,HybridAdaptive(initial),1,1,1,mileage#1|mileage#4|mileage#2|mileage#3|mileage#7,mileage#1,ліміт пробігу
+Q-05,dev,keyword,uk,HybridAdaptive(tuned v1),1,1,1,mileage#1|mileage#4|mileage#2|mileage#7|mileage#3,mileage#1,ліміт пробігу
+Q-05,dev,keyword,uk,HybridAdaptive(tuned v2),1,1,1,mileage#1|mileage#4|mileage#2|mileage#3|mileage#7,mileage#1,ліміт пробігу
+Q-06,test,keyword,uk,Vector,1,1,1,borders#3|borders#8|extras#4|booking#6|borders#7,borders#3,Зелена карта вартість
+Q-06,test,keyword,uk,FullText,1,1,1,borders#3|borders#7|borders#8|extras#4|booking#6,borders#3,Зелена карта вартість
+Q-06,test,keyword,uk,HybridRrf,1,1,1,borders#3|borders#8|borders#7|extras#4|booking#6,borders#3,Зелена карта вартість
+Q-06,test,keyword,uk,HybridAdaptive(initial),1,1,1,borders#3|borders#7|borders#8|extras#4|booking#6,borders#3,Зелена карта вартість
+Q-06,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,borders#3|borders#8|borders#7|extras#4|booking#6,borders#3,Зелена карта вартість
+Q-06,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,borders#3|borders#8|extras#4|borders#7|booking#6,borders#3,Зелена карта вартість
+Q-07,test,keyword,uk,Vector,1,1,1,cancellation#1|cancellation#3|cancellation#7|cancellation#9|cancellation#2,cancellation#1,безкоштовне скасування
+Q-07,test,keyword,uk,FullText,1,1,1,cancellation#1|cancellation#9|cancellation#3|booking#8|damage#8,cancellation#1,безкоштовне скасування
+Q-07,test,keyword,uk,HybridRrf,1,1,1,cancellation#1|cancellation#3|cancellation#9|cancellation#7|cancellation#2,cancellation#1,безкоштовне скасування
+Q-07,test,keyword,uk,HybridAdaptive(initial),1,1,1,cancellation#1|cancellation#9|cancellation#3|cancellation#2|cancellation#5,cancellation#1,безкоштовне скасування
+Q-07,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,cancellation#1|cancellation#3|cancellation#9|cancellation#2|cancellation#7,cancellation#1,безкоштовне скасування
+Q-07,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,cancellation#1|cancellation#9|cancellation#3|cancellation#2|cancellation#7,cancellation#1,безкоштовне скасування
+Q-08,dev,keyword,uk,Vector,1,1,1,cancellation#4|late-return#5|late-return#2|documents#9|late-return#4,cancellation#4,неявка
+Q-08,dev,keyword,uk,FullText,1,1,1,cancellation#4|documents#9,cancellation#4,неявка
+Q-08,dev,keyword,uk,HybridRrf,1,1,1,cancellation#4|documents#9|late-return#5|late-return#2|late-return#4,cancellation#4,неявка
+Q-08,dev,keyword,uk,HybridAdaptive(initial),1,1,1,cancellation#4|documents#9|cancellation#8|cancellation#3|late-return#5,cancellation#4,неявка
+Q-08,dev,keyword,uk,HybridAdaptive(tuned v1),1,1,1,cancellation#4|documents#9|cancellation#8|cancellation#3|cancellation#7,cancellation#4,неявка
+Q-08,dev,keyword,uk,HybridAdaptive(tuned v2),1,1,1,cancellation#4|documents#9|cancellation#8|cancellation#3|cancellation#7,cancellation#4,неявка
+Q-09,test,keyword,uk,Vector,1,1,1,damage#4|borders#9|borders#4|damage#3|extras#4,damage#4,європротокол
+Q-09,test,keyword,uk,FullText,1,1,1,damage#4,damage#4,європротокол
+Q-09,test,keyword,uk,HybridRrf,1,1,1,damage#4|borders#9|borders#4|damage#3|extras#4,damage#4,європротокол
+Q-09,test,keyword,uk,HybridAdaptive(initial),1,1,1,damage#4|borders#9|borders#4|damage#3|extras#4,damage#4,європротокол
+Q-09,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,damage#4|borders#9|borders#4|damage#3|extras#4,damage#4,європротокол
+Q-09,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,damage#4|borders#9|borders#4|damage#3|extras#4,damage#4,європротокол
+Q-10,test,keyword,uk,Vector,1,1,1,extras#3|documents#8|insurance#9|documents#5|documents#4,extras#3|documents#8,другий водій
+Q-10,test,keyword,uk,FullText,1,1,1,extras#3|documents#8|booking#6|damage#5|documents#5,extras#3|documents#8,другий водій
+Q-10,test,keyword,uk,HybridRrf,1,1,1,extras#3|documents#8|documents#5|pickup#2|documents#1,extras#3|documents#8,другий водій
+Q-10,test,keyword,uk,HybridAdaptive(initial),1,1,1,extras#3|documents#8|documents#5|pickup#2|insurance#6,extras#3|documents#8,другий водій
+Q-10,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,extras#3|documents#8|documents#5|pickup#2|documents#1,extras#3|documents#8,другий водій
+Q-10,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,extras#3|documents#8|documents#5|pickup#2|insurance#6,extras#3|documents#8,другий водій
+Q-11,dev,keyword,uk,Vector,1,1,1,insurance#5|insurance#7|deposit#6|insurance#10|insurance#4,insurance#5,пакет Повний захист
+Q-11,dev,keyword,uk,FullText,1,1,1,insurance#5|deposit#6|insurance#7|mileage#5|insurance#4,insurance#5,пакет Повний захист
+Q-11,dev,keyword,uk,HybridRrf,1,1,1,insurance#5|deposit#6|insurance#7|insurance#10|mileage#5,insurance#5,пакет Повний захист
+Q-11,dev,keyword,uk,HybridAdaptive(initial),1,1,1,insurance#5|insurance#7|insurance#4|insurance#10|insurance#8,insurance#5,пакет Повний захист
+Q-11,dev,keyword,uk,HybridAdaptive(tuned v1),1,1,1,insurance#5|insurance#7|insurance#4|insurance#10|insurance#8,insurance#5,пакет Повний захист
+Q-11,dev,keyword,uk,HybridAdaptive(tuned v2),1,1,1,insurance#5|insurance#7|insurance#10|insurance#4|insurance#8,insurance#5,пакет Повний захист
+Q-12,test,keyword,uk,Vector,1,1,1,deposit#5|deposit#1|cancellation#6|documents#6|pickup#5,deposit#5,депозит готівкою
+Q-12,test,keyword,uk,FullText,1,1,1,deposit#5|cancellation#6|deposit#8|deposit#1|deposit#2,deposit#5,депозит готівкою
+Q-12,test,keyword,uk,HybridRrf,1,1,1,deposit#5|cancellation#6|deposit#1|deposit#2|deposit#3,deposit#5,депозит готівкою
+Q-12,test,keyword,uk,HybridAdaptive(initial),1,1,1,deposit#5|deposit#1|deposit#8|deposit#2|deposit#3,deposit#5,депозит готівкою
+Q-12,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,deposit#5|deposit#1|deposit#2|deposit#8|deposit#3,deposit#5,депозит готівкою
+Q-12,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,deposit#5|deposit#1|deposit#2|deposit#8|deposit#3,deposit#5,депозит готівкою
+Q-13,test,keyword,uk,Vector,1,1,1,extras#2|insurance#4|extras#6|extras#9|extras#1,extras#2,бустер
+Q-13,test,keyword,uk,FullText,1,1,1,extras#2,extras#2,бустер
+Q-13,test,keyword,uk,HybridRrf,1,1,1,extras#2|insurance#4|extras#6|extras#9|extras#1,extras#2,бустер
+Q-13,test,keyword,uk,HybridAdaptive(initial),1,1,1,extras#2|extras#6|extras#9|extras#1|extras#4,extras#2,бустер
+Q-13,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,extras#2|extras#6|extras#9|extras#1|extras#4,extras#2,бустер
+Q-13,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,extras#2|extras#6|extras#9|extras#1|extras#4,extras#2,бустер
+Q-14,dev,keyword,uk,Vector,1,1,1,extras#5|extras#1|insurance#7|booking#6|extras#2,extras#5,зимові ланцюги
+Q-14,dev,keyword,uk,FullText,1,1,1,extras#5,extras#5,зимові ланцюги
+Q-14,dev,keyword,uk,HybridRrf,1,1,1,extras#5|extras#1|insurance#7|booking#6|extras#2,extras#5,зимові ланцюги
+Q-14,dev,keyword,uk,HybridAdaptive(initial),1,1,1,extras#5|extras#1|extras#2|extras#4|extras#6,extras#5,зимові ланцюги
+Q-14,dev,keyword,uk,HybridAdaptive(tuned v1),1,1,1,extras#5|extras#1|extras#2|extras#4|extras#6,extras#5,зимові ланцюги
+Q-14,dev,keyword,uk,HybridAdaptive(tuned v2),1,1,1,extras#5|extras#1|extras#2|extras#4|extras#6,extras#5,зимові ланцюги
+Q-15,test,keyword,uk,Vector,1,1,1,pickup#8|damage#9|damage#7|mileage#3|pickup#9,pickup#8,штраф за паління
+Q-15,test,keyword,uk,FullText,1,1,1,pickup#8|damage#9|borders#1|deposit#1|late-return#4,pickup#8,штраф за паління
+Q-15,test,keyword,uk,HybridRrf,1,1,1,pickup#8|damage#9|late-return#4|borders#1|damage#7,pickup#8,штраф за паління
+Q-15,test,keyword,uk,HybridAdaptive(initial),1,1,1,pickup#8|damage#9|borders#1|late-return#4|deposit#1,pickup#8,штраф за паління
+Q-15,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,pickup#8|damage#9|borders#1|late-return#4|deposit#1,pickup#8,штраф за паління
+Q-15,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,pickup#8|damage#9|borders#1|late-return#4|deposit#1,pickup#8,штраф за паління
+Q-16,test,keyword,uk,Vector,1,1,0.5,late-return#8|pickup#1|pickup#4|cancellation#6|borders#4,pickup#1,графік роботи офісів
+Q-16,test,keyword,uk,FullText,1,1,1,pickup#1|late-return#8|pickup#4|pickup#6|booking#7,pickup#1,графік роботи офісів
+Q-16,test,keyword,uk,HybridRrf,1,1,0.5,late-return#8|pickup#1|pickup#4|pickup#6|cancellation#6,pickup#1,графік роботи офісів
+Q-16,test,keyword,uk,HybridAdaptive(initial),1,1,1,pickup#1|pickup#4|pickup#6|pickup#5|late-return#8,pickup#1,графік роботи офісів
+Q-16,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,pickup#1|pickup#4|pickup#6|pickup#5|late-return#8,pickup#1,графік роботи офісів
+Q-16,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,pickup#1|pickup#4|pickup#6|pickup#5|late-return#8,pickup#1,графік роботи офісів
+Q-17,dev,keyword,uk,Vector,1,1,1,pickup#6|late-return#8|pickup#5|cancellation#6|pickup#4,pickup#6,повернення в іншому місті
+Q-17,dev,keyword,uk,FullText,1,1,1,pickup#6|extras#8|borders#4|late-return#1|late-return#7,pickup#6,повернення в іншому місті
+Q-17,dev,keyword,uk,HybridRrf,1,1,1,pickup#6|extras#8|late-return#8|cancellation#6|late-return#7,pickup#6,повернення в іншому місті
+Q-17,dev,keyword,uk,HybridAdaptive(initial),1,1,1,pickup#6|extras#8|late-return#8|late-return#1|late-return#7,pickup#6,повернення в іншому місті
+Q-17,dev,keyword,uk,HybridAdaptive(tuned v1),1,1,1,pickup#6|extras#8|late-return#8|cancellation#6|late-return#7,pickup#6,повернення в іншому місті
+Q-17,dev,keyword,uk,HybridAdaptive(tuned v2),1,1,1,pickup#6|late-return#8|extras#8|cancellation#6|late-return#7,pickup#6,повернення в іншому місті
+Q-18,test,keyword,uk,Vector,1,1,1,fuel#6|fuel#5|fuel#3|extras#6|extras#4,fuel#6,кабель Type 2
+Q-18,test,keyword,uk,FullText,1,1,1,fuel#6,fuel#6,кабель Type 2
+Q-18,test,keyword,uk,HybridRrf,1,1,1,fuel#6|fuel#5|fuel#3|extras#6|extras#4,fuel#6,кабель Type 2
+Q-18,test,keyword,uk,HybridAdaptive(initial),1,1,1,fuel#6|fuel#5|fuel#3|extras#6|extras#4,fuel#6,кабель Type 2
+Q-18,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,fuel#6|fuel#5|fuel#3|extras#6|extras#4,fuel#6,кабель Type 2
+Q-18,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,fuel#6|fuel#5|fuel#3|extras#6|extras#4,fuel#6,кабель Type 2
+Q-19,test,keyword,uk,Vector,1,1,1,insurance#4|insurance#5|extras#9|extras#1|insurance#7,insurance#4,Стандарт+
+Q-19,test,keyword,uk,FullText,1,1,1,insurance#4,insurance#4,Стандарт+
+Q-19,test,keyword,uk,HybridRrf,1,1,1,insurance#4|insurance#5|extras#9|extras#1|insurance#7,insurance#4,Стандарт+
+Q-19,test,keyword,uk,HybridAdaptive(initial),1,1,1,insurance#4|insurance#5|extras#9|extras#1|insurance#7,insurance#4,Стандарт+
+Q-19,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,insurance#4|insurance#5|extras#9|extras#1|insurance#7,insurance#4,Стандарт+
+Q-19,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,insurance#4|insurance#5|extras#9|extras#1|insurance#7,insurance#4,Стандарт+
+Q-20,dev,keyword,uk,Vector,1,1,1,documents#4|documents#3|documents#2|borders#10|documents#5,documents#4,водійський стаж
+Q-20,dev,keyword,uk,FullText,1,1,1,documents#4|documents#6|documents#8|extras#3|documents#1,documents#4,водійський стаж
+Q-20,dev,keyword,uk,HybridRrf,1,1,1,documents#4|extras#3|documents#8|documents#6|documents#1,documents#4,водійський стаж
+Q-20,dev,keyword,uk,HybridAdaptive(initial),1,1,1,documents#4|documents#6|documents#8|documents#1|documents#7,documents#4,водійський стаж
+Q-20,dev,keyword,uk,HybridAdaptive(tuned v1),1,1,1,documents#4|documents#8|documents#6|documents#1|extras#3,documents#4,водійський стаж
+Q-20,dev,keyword,uk,HybridAdaptive(tuned v2),1,1,1,documents#4|documents#8|documents#6|documents#1|extras#3,documents#4,водійський стаж
+Q-21,test,keyword,uk,Vector,1,1,1,borders#4|borders#8|borders#5|borders#2|mileage#7,borders#4,дозволені країни
+Q-21,test,keyword,uk,FullText,1,1,1,borders#4|borders#8|borders#1|borders#2,borders#4,дозволені країни
+Q-21,test,keyword,uk,HybridRrf,1,1,1,borders#4|borders#8|borders#2|borders#1|borders#5,borders#4,дозволені країни
+Q-21,test,keyword,uk,HybridAdaptive(initial),1,1,1,borders#4|borders#8|borders#1|borders#2|borders#5,borders#4,дозволені країни
+Q-21,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,borders#4|borders#8|borders#2|borders#1|borders#5,borders#4,дозволені країни
+Q-21,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,borders#4|borders#8|borders#2|borders#1|borders#5,borders#4,дозволені країни
+Q-22,test,keyword,uk,Vector,1,1,1,documents#5|extras#3|documents#2|documents#8|documents#3,documents#5,молодий водій доплата
+Q-22,test,keyword,uk,FullText,1,1,1,documents#5|damage#5|extras#3|insurance#6|cancellation#7,documents#5,молодий водій доплата
+Q-22,test,keyword,uk,HybridRrf,1,1,1,documents#5|extras#3|documents#8|late-return#1|booking#6,documents#5,молодий водій доплата
+Q-22,test,keyword,uk,HybridAdaptive(initial),1,1,1,documents#5|extras#3|late-return#1|documents#8|booking#6,documents#5,молодий водій доплата
+Q-22,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,documents#5|extras#3|documents#8|late-return#1|booking#6,documents#5,молодий водій доплата
+Q-22,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,documents#5|extras#3|documents#8|booking#6|late-return#1,documents#5,молодий водій доплата
+Q-23,dev,keyword,uk,Vector,1,1,1,mileage#3|mileage#7|mileage#6|mileage#1|mileage#4,mileage#3,перевищення пробігу
+Q-23,dev,keyword,uk,FullText,1,1,1,mileage#3|mileage#1|mileage#4|mileage#6|mileage#7,mileage#3,перевищення пробігу
+Q-23,dev,keyword,uk,HybridRrf,1,1,1,mileage#3|mileage#1|mileage#7|mileage#6|mileage#4,mileage#3,перевищення пробігу
+Q-23,dev,keyword,uk,HybridAdaptive(initial),1,1,1,mileage#3|mileage#1|mileage#4|mileage#6|mileage#7,mileage#3,перевищення пробігу
+Q-23,dev,keyword,uk,HybridAdaptive(tuned v1),1,1,1,mileage#3|mileage#1|mileage#6|mileage#7|mileage#4,mileage#3,перевищення пробігу
+Q-23,dev,keyword,uk,HybridAdaptive(tuned v2),1,1,1,mileage#3|mileage#1|mileage#4|mileage#6|mileage#7,mileage#3,перевищення пробігу
+Q-24,test,keyword,uk,Vector,1,1,1,late-return#1|mileage#4|mileage#7|late-return#8|documents#5,late-return#1,пільговий період
+Q-24,test,keyword,uk,FullText,1,1,1,late-return#1|extras#5|mileage#2,late-return#1,пільговий період
+Q-24,test,keyword,uk,HybridRrf,1,1,1,late-return#1|extras#5|mileage#2|mileage#4|mileage#7,late-return#1,пільговий період
+Q-24,test,keyword,uk,HybridAdaptive(initial),1,1,1,late-return#1|extras#5|mileage#2|mileage#4|mileage#7,late-return#1,пільговий період
+Q-24,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,late-return#1|extras#5|mileage#2|mileage#4|mileage#7,late-return#1,пільговий період
+Q-24,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,late-return#1|extras#5|mileage#2|mileage#4|mileage#7,late-return#1,пільговий період
+Q-25,test,keyword,uk,Vector,1,1,1,booking#7|insurance#5|insurance#4|mileage#4|deposit#6,booking#7,промокод
+Q-25,test,keyword,uk,FullText,1,1,1,booking#7,booking#7,промокод
+Q-25,test,keyword,uk,HybridRrf,1,1,1,booking#7|insurance#5|insurance#4|mileage#4|deposit#6,booking#7,промокод
+Q-25,test,keyword,uk,HybridAdaptive(initial),1,1,1,booking#7|insurance#5|insurance#4|mileage#4|deposit#6,booking#7,промокод
+Q-25,test,keyword,uk,HybridAdaptive(tuned v1),1,1,1,booking#7|insurance#5|insurance#4|mileage#4|deposit#6,booking#7,промокод
+Q-25,test,keyword,uk,HybridAdaptive(tuned v2),1,1,1,booking#7|insurance#5|insurance#4|mileage#4|deposit#6,booking#7,промокод
+Q-26,dev,keyword,en,Vector,1,1,0.333333,deposit#1|deposit#6|deposit#2|deposit#4|deposit#5,deposit#2,deposit amount
+Q-26,dev,keyword,en,FullText,0,0,0,,deposit#2,deposit amount
+Q-26,dev,keyword,en,HybridRrf,1,1,0.333333,deposit#1|deposit#6|deposit#2|deposit#4|deposit#5,deposit#2,deposit amount
+Q-26,dev,keyword,en,HybridAdaptive(initial),1,1,0.333333,deposit#1|deposit#6|deposit#2|deposit#4|deposit#5,deposit#2,deposit amount
+Q-26,dev,keyword,en,HybridAdaptive(tuned v1),1,1,0.333333,deposit#1|deposit#6|deposit#2|deposit#4|deposit#5,deposit#2,deposit amount
+Q-26,dev,keyword,en,HybridAdaptive(tuned v2),1,1,0.333333,deposit#1|deposit#6|deposit#2|deposit#4|deposit#5,deposit#2,deposit amount
+Q-27,test,keyword,en,Vector,0.5,0.5,1,insurance#2|damage#5|damage#2|mileage#3|deposit#7,insurance#3|insurance#2,insurance excess
+Q-27,test,keyword,en,FullText,0,0,0,,insurance#3|insurance#2,insurance excess
+Q-27,test,keyword,en,HybridRrf,0.5,0.5,1,insurance#2|damage#5|damage#2|mileage#3|deposit#7,insurance#3|insurance#2,insurance excess
+Q-27,test,keyword,en,HybridAdaptive(initial),0.5,1,1,insurance#2|insurance#4|insurance#6|insurance#3|insurance#7,insurance#3|insurance#2,insurance excess
+Q-27,test,keyword,en,HybridAdaptive(tuned v1),0.5,1,1,insurance#2|insurance#4|insurance#6|insurance#3|insurance#7,insurance#3|insurance#2,insurance excess
+Q-27,test,keyword,en,HybridAdaptive(tuned v2),0.5,1,1,insurance#2|insurance#4|insurance#6|insurance#3|insurance#7,insurance#3|insurance#2,insurance excess
+Q-28,test,keyword,en,Vector,1,1,1,extras#1|extras#2|documents#8|extras#6|insurance#9,extras#1,child seat
+Q-28,test,keyword,en,FullText,0,0,0,,extras#1,child seat
+Q-28,test,keyword,en,HybridRrf,1,1,1,extras#1|extras#2|documents#8|extras#6|insurance#9,extras#1,child seat
+Q-28,test,keyword,en,HybridAdaptive(initial),1,1,1,extras#1|extras#2|documents#8|extras#6|insurance#9,extras#1,child seat
+Q-28,test,keyword,en,HybridAdaptive(tuned v1),1,1,1,extras#1|extras#2|documents#8|extras#6|insurance#9,extras#1,child seat
+Q-28,test,keyword,en,HybridAdaptive(tuned v2),1,1,1,extras#1|extras#2|documents#8|extras#6|insurance#9,extras#1,child seat
+Q-29,test,descriptive,uk,Vector,1,1,0.333333,late-return#3|late-return#1|late-return#2|late-return#7|late-return#6,late-return#2,"Що буде, якщо я поверну машину на дві години пізніше, ніж домовлялися?"
+Q-29,test,descriptive,uk,FullText,0,0,0,late-return#8|late-return#3|cancellation#9|late-return#6|pickup#4,late-return#2,"Що буде, якщо я поверну машину на дві години пізніше, ніж домовлялися?"
+Q-29,test,descriptive,uk,HybridRrf,0,1,0.25,late-return#3|late-return#6|late-return#7|late-return#2|late-return#8,late-return#2,"Що буде, якщо я поверну машину на дві години пізніше, ніж домовлялися?"
+Q-29,test,descriptive,uk,HybridAdaptive(initial),0,1,0.2,late-return#3|late-return#6|late-return#8|late-return#7|late-return#2,late-return#2,"Що буде, якщо я поверну машину на дві години пізніше, ніж домовлялися?"
+Q-29,test,descriptive,uk,HybridAdaptive(tuned v1),0,1,0.25,late-return#3|late-return#6|late-return#7|late-return#2|late-return#8,late-return#2,"Що буде, якщо я поверну машину на дві години пізніше, ніж домовлялися?"
+Q-29,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,0.333333,late-return#3|late-return#1|late-return#2|late-return#7|late-return#6,late-return#2,"Що буде, якщо я поверну машину на дві години пізніше, ніж домовлялися?"
+Q-30,dev,descriptive,uk,Vector,1,1,0.333333,deposit#1|deposit#4|deposit#2|mileage#3|deposit#3,deposit#2,"Скільки грошей заблокують на моїй картці, коли я братиму кросовер?"
+Q-30,dev,descriptive,uk,FullText,0,0,0,booking#1|deposit#1|deposit#4,deposit#2,"Скільки грошей заблокують на моїй картці, коли я братиму кросовер?"
+Q-30,dev,descriptive,uk,HybridRrf,0,1,0.25,deposit#1|deposit#4|booking#1|deposit#2|mileage#3,deposit#2,"Скільки грошей заблокують на моїй картці, коли я братиму кросовер?"
+Q-30,dev,descriptive,uk,HybridAdaptive(initial),0,1,0.25,deposit#1|deposit#4|booking#1|deposit#2|deposit#3,deposit#2,"Скільки грошей заблокують на моїй картці, коли я братиму кросовер?"
+Q-30,dev,descriptive,uk,HybridAdaptive(tuned v1),1,1,0.333333,deposit#1|deposit#4|deposit#2|deposit#3|deposit#9,deposit#2,"Скільки грошей заблокують на моїй картці, коли я братиму кросовер?"
+Q-30,dev,descriptive,uk,HybridAdaptive(tuned v2),1,1,0.333333,deposit#1|deposit#4|deposit#2|deposit#3|deposit#9,deposit#2,"Скільки грошей заблокують на моїй картці, коли я братиму кросовер?"
+Q-31,test,descriptive,uk,Vector,0,1,0.25,damage#2|damage#6|insurance#7|insurance#2|damage#5,damage#5|insurance#2,"Я подряпав бампер на парковці, хто платитиме за ремонт?"
+Q-31,test,descriptive,uk,FullText,0.5,0.5,0.5,damage#6|insurance#2|cancellation#7|damage#7|damage#8,damage#5|insurance#2,"Я подряпав бампер на парковці, хто платитиме за ремонт?"
+Q-31,test,descriptive,uk,HybridRrf,0.5,0.5,0.5,damage#6|insurance#2|damage#7|fuel#4|damage#8,damage#5|insurance#2,"Я подряпав бампер на парковці, хто платитиме за ремонт?"
+Q-31,test,descriptive,uk,HybridAdaptive(initial),0,0.5,0.25,damage#6|damage#7|damage#8|insurance#2|fuel#4,damage#5|insurance#2,"Я подряпав бампер на парковці, хто платитиме за ремонт?"
+Q-31,test,descriptive,uk,HybridAdaptive(tuned v1),0,0.5,0.25,damage#6|damage#7|damage#8|insurance#2|fuel#4,damage#5|insurance#2,"Я подряпав бампер на парковці, хто платитиме за ремонт?"
+Q-31,test,descriptive,uk,HybridAdaptive(tuned v2),0,0.5,0.25,damage#6|damage#2|damage#7|damage#5|damage#10,damage#5|insurance#2,"Я подряпав бампер на парковці, хто платитиме за ремонт?"
+Q-32,test,descriptive,uk,Vector,0.5,1,1,borders#1|borders#2|borders#5|borders#6|borders#4,borders#1|borders#4,Чи можна поїхати на орендованій машині до Польщі на відпочинок?
+Q-32,test,descriptive,uk,FullText,1,1,1,borders#1|borders#4,borders#1|borders#4,Чи можна поїхати на орендованій машині до Польщі на відпочинок?
+Q-32,test,descriptive,uk,HybridRrf,1,1,1,borders#1|borders#4|borders#2|borders#5|borders#6,borders#1|borders#4,Чи можна поїхати на орендованій машині до Польщі на відпочинок?
+Q-32,test,descriptive,uk,HybridAdaptive(initial),1,1,1,borders#1|borders#4|borders#2|borders#5|borders#6,borders#1|borders#4,Чи можна поїхати на орендованій машині до Польщі на відпочинок?
+Q-32,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,borders#1|borders#4|borders#2|borders#5|borders#6,borders#1|borders#4,Чи можна поїхати на орендованій машині до Польщі на відпочинок?
+Q-32,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,borders#1|borders#4|borders#2|borders#5|borders#6,borders#1|borders#4,Чи можна поїхати на орендованій машині до Польщі на відпочинок?
+Q-33,dev,descriptive,uk,Vector,1,1,1,documents#2|documents#4|documents#5|documents#3|mileage#4,documents#2,"Мені 22 роки, чи дадуть мені спортивне купе?"
+Q-33,dev,descriptive,uk,FullText,1,1,1,documents#2|documents#4|documents#3|documents#5|borders#6,documents#2,"Мені 22 роки, чи дадуть мені спортивне купе?"
+Q-33,dev,descriptive,uk,HybridRrf,1,1,1,documents#2|documents#4|documents#3|documents#5|borders#6,documents#2,"Мені 22 роки, чи дадуть мені спортивне купе?"
+Q-33,dev,descriptive,uk,HybridAdaptive(initial),1,1,1,documents#2|documents#4|documents#3|documents#5|borders#6,documents#2,"Мені 22 роки, чи дадуть мені спортивне купе?"
+Q-33,dev,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,documents#2|documents#4|documents#5|documents#3|borders#6,documents#2,"Мені 22 роки, чи дадуть мені спортивне купе?"
+Q-33,dev,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,documents#2|documents#4|documents#5|documents#3|documents#8,documents#2,"Мені 22 роки, чи дадуть мені спортивне купе?"
+Q-34,test,descriptive,uk,Vector,1,1,1,late-return#7|cancellation#3|cancellation#2|cancellation#1|cancellation#7,late-return#7,"Я хочу повернути авто на два дні раніше, чи повернуть мені гроші?"
+Q-34,test,descriptive,uk,FullText,1,1,1,late-return#7|cancellation#6|borders#2|deposit#10|late-return#5,late-return#7,"Я хочу повернути авто на два дні раніше, чи повернуть мені гроші?"
+Q-34,test,descriptive,uk,HybridRrf,1,1,1,late-return#7|pickup#6|pickup#4|late-return#1|fuel#8,late-return#7,"Я хочу повернути авто на два дні раніше, чи повернуть мені гроші?"
+Q-34,test,descriptive,uk,HybridAdaptive(initial),1,1,1,late-return#7|pickup#6|pickup#4|late-return#1|fuel#8,late-return#7,"Я хочу повернути авто на два дні раніше, чи повернуть мені гроші?"
+Q-34,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,late-return#7|pickup#6|late-return#1|pickup#4|pickup#5,late-return#7,"Я хочу повернути авто на два дні раніше, чи повернуть мені гроші?"
+Q-34,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,late-return#7|cancellation#3|cancellation#2|pickup#6|cancellation#1,late-return#7,"Я хочу повернути авто на два дні раніше, чи повернуть мені гроші?"
+Q-35,test,descriptive,uk,Vector,1,1,1,damage#8|damage#3|borders#9|fuel#4|borders#2,damage#8,"Що робити, якщо машина зламалася посеред траси?"
+Q-35,test,descriptive,uk,FullText,0,0,0,damage#3,damage#8,"Що робити, якщо машина зламалася посеред траси?"
+Q-35,test,descriptive,uk,HybridRrf,1,1,0.5,damage#3|damage#8|borders#9|fuel#4|borders#2,damage#8,"Що робити, якщо машина зламалася посеред траси?"
+Q-35,test,descriptive,uk,HybridAdaptive(initial),1,1,0.5,damage#3|damage#8|borders#9|fuel#4|borders#2,damage#8,"Що робити, якщо машина зламалася посеред траси?"
+Q-35,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,0.5,damage#3|damage#8|borders#9|fuel#4|borders#2,damage#8,"Що робити, якщо машина зламалася посеред траси?"
+Q-35,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,0.5,damage#3|damage#8|borders#9|fuel#4|borders#2,damage#8,"Що робити, якщо машина зламалася посеред траси?"
+Q-36,dev,descriptive,uk,Vector,1,1,1,pickup#9|borders#4|mileage#7|borders#2|borders#5,pickup#9,Можна взяти собаку з собою в поїздку?
+Q-36,dev,descriptive,uk,FullText,0,0,0.125,pickup#2|mileage#5|borders#4|borders#2|borders#3,pickup#9,Можна взяти собаку з собою в поїздку?
+Q-36,dev,descriptive,uk,HybridRrf,1,1,0.333333,borders#4|borders#2|pickup#9|mileage#7|pickup#2,pickup#9,Можна взяти собаку з собою в поїздку?
+Q-36,dev,descriptive,uk,HybridAdaptive(initial),0,0,0.166667,pickup#2|borders#4|borders#2|mileage#7|borders#6,pickup#9,Можна взяти собаку з собою в поїздку?
+Q-36,dev,descriptive,uk,HybridAdaptive(tuned v1),1,1,0.333333,borders#4|borders#2|pickup#9|mileage#7|pickup#2,pickup#9,Можна взяти собаку з собою в поїздку?
+Q-36,dev,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,pickup#9|borders#4|mileage#7|borders#2|borders#6,pickup#9,Можна взяти собаку з собою в поїздку?
+Q-37,test,descriptive,uk,Vector,0.5,1,1,cancellation#5|cancellation#1|cancellation#7|cancellation#2|cancellation#6,cancellation#5|cancellation#6,"Я передумав їхати, як мені відмінити бронювання і коли повернуться гроші?"
+Q-37,test,descriptive,uk,FullText,0.5,0.5,1,cancellation#6|deposit#1|booking#2|booking#9|booking#8,cancellation#5|cancellation#6,"Я передумав їхати, як мені відмінити бронювання і коли повернуться гроші?"
+Q-37,test,descriptive,uk,HybridRrf,1,1,1,cancellation#6|cancellation#5|cancellation#1|booking#8|cancellation#2,cancellation#5|cancellation#6,"Я передумав їхати, як мені відмінити бронювання і коли повернуться гроші?"
+Q-37,test,descriptive,uk,HybridAdaptive(initial),0,0.5,0.2,booking#8|booking#2|booking#9|booking#4|cancellation#6,cancellation#5|cancellation#6,"Я передумав їхати, як мені відмінити бронювання і коли повернуться гроші?"
+Q-37,test,descriptive,uk,HybridAdaptive(tuned v1),0,0.5,0.2,booking#8|booking#2|booking#4|booking#9|cancellation#5,cancellation#5|cancellation#6,"Я передумав їхати, як мені відмінити бронювання і коли повернуться гроші?"
+Q-37,test,descriptive,uk,HybridAdaptive(tuned v2),0,0.5,0.2,booking#8|booking#4|booking#2|booking#9|cancellation#5,cancellation#5|cancellation#6,"Я передумав їхати, як мені відмінити бронювання і коли повернуться гроші?"
+Q-38,test,descriptive,uk,Vector,1,1,1,fuel#1|fuel#2|fuel#8|fuel#7|pickup#5,fuel#1|fuel#2,Чи обовʼязково повертати машину з повним баком?
+Q-38,test,descriptive,uk,FullText,1,1,1,fuel#1|fuel#2|fuel#8|borders#9|insurance#1,fuel#1|fuel#2,Чи обовʼязково повертати машину з повним баком?
+Q-38,test,descriptive,uk,HybridRrf,1,1,1,fuel#1|fuel#2|fuel#8|fuel#7|pickup#7,fuel#1|fuel#2,Чи обовʼязково повертати машину з повним баком?
+Q-38,test,descriptive,uk,HybridAdaptive(initial),1,1,1,fuel#1|fuel#2|fuel#8|fuel#7|fuel#3,fuel#1|fuel#2,Чи обовʼязково повертати машину з повним баком?
+Q-38,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,fuel#1|fuel#2|fuel#8|fuel#7|fuel#3,fuel#1|fuel#2,Чи обовʼязково повертати машину з повним баком?
+Q-38,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,fuel#1|fuel#2|fuel#8|fuel#7|fuel#5,fuel#1|fuel#2,Чи обовʼязково повертати машину з повним баком?
+Q-39,dev,descriptive,uk,Vector,1,1,1,mileage#1|mileage#4|mileage#2|mileage#5|mileage#7,mileage#4|mileage#1,Скільки кілометрів я можу проїхати за тиждень оренди?
+Q-39,dev,descriptive,uk,FullText,0,0,0,mileage#2|mileage#3|mileage#7|booking#3|late-return#6,mileage#4|mileage#1,Скільки кілометрів я можу проїхати за тиждень оренди?
+Q-39,dev,descriptive,uk,HybridRrf,0,0.5,0.2,mileage#2|mileage#3|mileage#7|booking#3|mileage#4,mileage#4|mileage#1,Скільки кілометрів я можу проїхати за тиждень оренди?
+Q-39,dev,descriptive,uk,HybridAdaptive(initial),0,0.5,0.25,mileage#2|mileage#3|mileage#7|mileage#4|booking#3,mileage#4|mileage#1,Скільки кілометрів я можу проїхати за тиждень оренди?
+Q-39,dev,descriptive,uk,HybridAdaptive(tuned v1),0,0.5,0.25,mileage#2|mileage#3|mileage#7|mileage#4|booking#3,mileage#4|mileage#1,Скільки кілометрів я можу проїхати за тиждень оренди?
+Q-39,dev,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,mileage#4|mileage#2|mileage#1|mileage#7|mileage#3,mileage#4|mileage#1,Скільки кілометрів я можу проїхати за тиждень оренди?
+Q-40,test,descriptive,uk,Vector,1,1,1,documents#7|documents#1|deposit#8|borders#10|documents#10,documents#7,"Чи можна оформити оренду, якщо в мене тільки цифрові права в Дії?"
+Q-40,test,descriptive,uk,FullText,1,1,0.5,documents#10|documents#7|damage#4|insurance#10|booking#3,documents#7,"Чи можна оформити оренду, якщо в мене тільки цифрові права в Дії?"
+Q-40,test,descriptive,uk,HybridRrf,1,1,1,documents#7|documents#10|deposit#8|borders#10|booking#9,documents#7,"Чи можна оформити оренду, якщо в мене тільки цифрові права в Дії?"
+Q-40,test,descriptive,uk,HybridAdaptive(initial),1,1,0.5,documents#10|documents#7|deposit#8|insurance#1|booking#9,documents#7,"Чи можна оформити оренду, якщо в мене тільки цифрові права в Дії?"
+Q-40,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,documents#7|documents#10|deposit#8|borders#10|booking#9,documents#7,"Чи можна оформити оренду, якщо в мене тільки цифрові права в Дії?"
+Q-40,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,documents#7|documents#10|documents#1|documents#2|documents#6,documents#7,"Чи можна оформити оренду, якщо в мене тільки цифрові права в Дії?"
+Q-41,test,descriptive,uk,Vector,1,1,1,documents#6|documents#1|documents#10|borders#7|pickup#2,documents#6,"Я іноземець з американськими правами, що мені потрібно для оренди?"
+Q-41,test,descriptive,uk,FullText,0,0,0,documents#10|booking#3|late-return#6|booking#5|cancellation#5,documents#6,"Я іноземець з американськими правами, що мені потрібно для оренди?"
+Q-41,test,descriptive,uk,HybridRrf,0,0,0.142857,documents#10|booking#3|deposit#9|borders#6|borders#10,documents#6,"Я іноземець з американськими правами, що мені потрібно для оренди?"
+Q-41,test,descriptive,uk,HybridAdaptive(initial),0,0,0,documents#10|booking#3|deposit#9|borders#6|booking#9,documents#6,"Я іноземець з американськими правами, що мені потрібно для оренди?"
+Q-41,test,descriptive,uk,HybridAdaptive(tuned v1),0,0,0.142857,documents#10|booking#3|deposit#9|borders#6|borders#10,documents#6,"Я іноземець з американськими правами, що мені потрібно для оренди?"
+Q-41,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,0.5,documents#10|documents#6|documents#1|documents#3|documents#9,documents#6,"Я іноземець з американськими правами, що мені потрібно для оренди?"
+Q-42,dev,descriptive,uk,Vector,1,1,1,fuel#4|fuel#3|fuel#2|fuel#1|fuel#8,fuel#4,"Що станеться, якщо я заллю дизель у бензинову машину?"
+Q-42,dev,descriptive,uk,FullText,0,0,0,,fuel#4,"Що станеться, якщо я заллю дизель у бензинову машину?"
+Q-42,dev,descriptive,uk,HybridRrf,1,1,1,fuel#4|fuel#3|fuel#2|fuel#1|fuel#8,fuel#4,"Що станеться, якщо я заллю дизель у бензинову машину?"
+Q-42,dev,descriptive,uk,HybridAdaptive(initial),1,1,1,fuel#4|fuel#3|fuel#2|fuel#1|fuel#8,fuel#4,"Що станеться, якщо я заллю дизель у бензинову машину?"
+Q-42,dev,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,fuel#4|fuel#3|fuel#2|fuel#1|fuel#8,fuel#4,"Що станеться, якщо я заллю дизель у бензинову машину?"
+Q-42,dev,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,fuel#4|fuel#3|fuel#2|fuel#1|fuel#8,fuel#4,"Що станеться, якщо я заллю дизель у бензинову машину?"
+Q-43,test,descriptive,uk,Vector,1,1,1,deposit#3|cancellation#6|deposit#1|deposit#7|pickup#5,deposit#3,"Як довго чекати, поки банк поверне гроші з депозиту?"
+Q-43,test,descriptive,uk,FullText,1,1,1,deposit#3|deposit#1|mileage#5|documents#6|cancellation#6,deposit#3,"Як довго чекати, поки банк поверне гроші з депозиту?"
+Q-43,test,descriptive,uk,HybridRrf,1,1,1,deposit#3|deposit#1|cancellation#6|deposit#7|deposit#5,deposit#3,"Як довго чекати, поки банк поверне гроші з депозиту?"
+Q-43,test,descriptive,uk,HybridAdaptive(initial),1,1,1,deposit#3|deposit#1|deposit#7|deposit#5|deposit#2,deposit#3,"Як довго чекати, поки банк поверне гроші з депозиту?"
+Q-43,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,deposit#3|deposit#1|deposit#7|deposit#5|deposit#2,deposit#3,"Як довго чекати, поки банк поверне гроші з депозиту?"
+Q-43,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,deposit#3|deposit#1|deposit#7|deposit#5|deposit#2,deposit#3,"Як довго чекати, поки банк поверне гроші з депозиту?"
+Q-44,test,descriptive,uk,Vector,1,1,1,pickup#4|late-return#8|booking#4|late-return#7|cancellation#4,pickup#4,"Чи можна забрати машину о шостій ранку, до відкриття офісу?"
+Q-44,test,descriptive,uk,FullText,0,0,0,extras#8|pickup#1|pickup#6|booking#7|borders#7,pickup#4,"Чи можна забрати машину о шостій ранку, до відкриття офісу?"
+Q-44,test,descriptive,uk,HybridRrf,0,0,0.125,extras#8|late-return#8|documents#9|pickup#6|cancellation#5,pickup#4,"Чи можна забрати машину о шостій ранку, до відкриття офісу?"
+Q-44,test,descriptive,uk,HybridAdaptive(initial),0,0,0.125,pickup#6|pickup#5|extras#8|late-return#8|documents#9,pickup#4,"Чи можна забрати машину о шостій ранку, до відкриття офісу?"
+Q-44,test,descriptive,uk,HybridAdaptive(tuned v1),0,0,0.166667,pickup#6|pickup#5|extras#8|late-return#8|documents#9,pickup#4,"Чи можна забрати машину о шостій ранку, до відкриття офісу?"
+Q-44,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,pickup#4|pickup#3|pickup#5|pickup#6|late-return#8,pickup#4,"Чи можна забрати машину о шостій ранку, до відкриття офісу?"
+Q-45,dev,descriptive,uk,Vector,1,1,1,booking#5|booking#9|booking#4|cancellation#5|booking#2,booking#5,Скільки бронювань я можу мати одночасно на одному акаунті?
+Q-45,dev,descriptive,uk,FullText,1,1,1,booking#5|borders#3|insurance#9|booking#1|booking#7,booking#5,Скільки бронювань я можу мати одночасно на одному акаунті?
+Q-45,dev,descriptive,uk,HybridRrf,1,1,1,booking#5|booking#1|booking#9|borders#3|booking#4,booking#5,Скільки бронювань я можу мати одночасно на одному акаунті?
+Q-45,dev,descriptive,uk,HybridAdaptive(initial),1,1,1,booking#5|booking#1|booking#7|borders#3|insurance#9,booking#5,Скільки бронювань я можу мати одночасно на одному акаунті?
+Q-45,dev,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,booking#5|booking#1|booking#9|booking#4|booking#2,booking#5,Скільки бронювань я можу мати одночасно на одному акаунті?
+Q-45,dev,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,booking#5|booking#9|booking#4|booking#2|booking#3,booking#5,Скільки бронювань я можу мати одночасно на одному акаунті?
+Q-46,test,descriptive,uk,Vector,1,1,1,booking#4|booking#3|booking#1|cancellation#1|deposit#9,booking#4,За скільки днів наперед можна забронювати авто на новорічні свята?
+Q-46,test,descriptive,uk,FullText,1,1,1,booking#4|booking#1|deposit#3|borders#3|fuel#8,booking#4,За скільки днів наперед можна забронювати авто на новорічні свята?
+Q-46,test,descriptive,uk,HybridRrf,1,1,1,booking#4|booking#1|deposit#3|borders#2|borders#6,booking#4,За скільки днів наперед можна забронювати авто на новорічні свята?
+Q-46,test,descriptive,uk,HybridAdaptive(initial),1,1,1,booking#4|booking#1|deposit#3|borders#2|borders#6,booking#4,За скільки днів наперед можна забронювати авто на новорічні свята?
+Q-46,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,booking#4|booking#1|borders#2|deposit#3|borders#6,booking#4,За скільки днів наперед можна забронювати авто на новорічні свята?
+Q-46,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,booking#4|booking#1|booking#3|booking#8|booking#9,booking#4,За скільки днів наперед можна забронювати авто на новорічні свята?
+Q-47,test,descriptive,uk,Vector,1,1,1,pickup#2|documents#9|documents#1|pickup#3|borders#7,pickup#2|documents#1,"Що мені потрібно взяти з собою, коли я приїду забирати машину?"
+Q-47,test,descriptive,uk,FullText,0.5,0.5,1,pickup#2,pickup#2|documents#1,"Що мені потрібно взяти з собою, коли я приїду забирати машину?"
+Q-47,test,descriptive,uk,HybridRrf,1,1,1,pickup#2|documents#9|documents#1|pickup#3|borders#7,pickup#2|documents#1,"Що мені потрібно взяти з собою, коли я приїду забирати машину?"
+Q-47,test,descriptive,uk,HybridAdaptive(initial),1,1,1,pickup#2|documents#9|documents#1|pickup#3|borders#7,pickup#2|documents#1,"Що мені потрібно взяти з собою, коли я приїду забирати машину?"
+Q-47,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,pickup#2|documents#9|documents#1|pickup#3|borders#7,pickup#2|documents#1,"Що мені потрібно взяти з собою, коли я приїду забирати машину?"
+Q-47,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,pickup#2|documents#9|documents#1|pickup#3|borders#7,pickup#2|documents#1,"Що мені потрібно взяти з собою, коли я приїду забирати машину?"
+Q-48,dev,descriptive,uk,Vector,1,1,1,insurance#8|pickup#10|insurance#6|damage#10|late-return#4,insurance#8|pickup#10,"Хто відповідає, якщо машину викрадуть, поки я в магазині?"
+Q-48,dev,descriptive,uk,FullText,0,1,0.25,damage#5|documents#9|insurance#1|insurance#8|pickup#10,insurance#8|pickup#10,"Хто відповідає, якщо машину викрадуть, поки я в магазині?"
+Q-48,dev,descriptive,uk,HybridRrf,1,1,1,insurance#8|pickup#10|insurance#1|damage#5|documents#9,insurance#8|pickup#10,"Хто відповідає, якщо машину викрадуть, поки я в магазині?"
+Q-48,dev,descriptive,uk,HybridAdaptive(initial),1,1,1,insurance#8|pickup#10|damage#5|insurance#1|documents#9,insurance#8|pickup#10,"Хто відповідає, якщо машину викрадуть, поки я в магазині?"
+Q-48,dev,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,insurance#8|pickup#10|insurance#1|damage#5|insurance#6,insurance#8|pickup#10,"Хто відповідає, якщо машину викрадуть, поки я в магазині?"
+Q-48,dev,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,insurance#8|pickup#10|insurance#1|insurance#6|damage#10,insurance#8|pickup#10,"Хто відповідає, якщо машину викрадуть, поки я в магазині?"
+Q-49,test,descriptive,uk,Vector,1,1,1,damage#3|borders#9|damage#4|damage#8|insurance#9,damage#3,"Що робити, якщо я потрапив у аварію з іншою машиною?"
+Q-49,test,descriptive,uk,FullText,1,1,0.5,pickup#6|damage#3|borders#4,damage#3,"Що робити, якщо я потрапив у аварію з іншою машиною?"
+Q-49,test,descriptive,uk,HybridRrf,1,1,1,damage#3|pickup#6|borders#9|borders#4|damage#4,damage#3,"Що робити, якщо я потрапив у аварію з іншою машиною?"
+Q-49,test,descriptive,uk,HybridAdaptive(initial),1,1,1,damage#3|pickup#6|borders#4|damage#4|damage#8,damage#3,"Що робити, якщо я потрапив у аварію з іншою машиною?"
+Q-49,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,damage#3|damage#4|damage#8|damage#5|damage#1,damage#3,"Що робити, якщо я потрапив у аварію з іншою машиною?"
+Q-49,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,damage#3|damage#4|damage#8|damage#5|damage#1,damage#3,"Що робити, якщо я потрапив у аварію з іншою машиною?"
+Q-50,test,descriptive,uk,Vector,1,1,1,extras#8|pickup#4|late-return#8|pickup#6|pickup#5,extras#8,"Чи можна привезти машину мені додому, а не забирати в офісі?"
+Q-50,test,descriptive,uk,FullText,0,0,0,pickup#1|pickup#6|booking#7|borders#7|cancellation#5,extras#8,"Чи можна привезти машину мені додому, а не забирати в офісі?"
+Q-50,test,descriptive,uk,HybridRrf,0,0,0.166667,pickup#6|late-return#8|cancellation#5|documents#9|pickup#5,extras#8,"Чи можна привезти машину мені додому, а не забирати в офісі?"
+Q-50,test,descriptive,uk,HybridAdaptive(initial),0,0,0,pickup#6|pickup#5|late-return#8|cancellation#5|documents#9,extras#8,"Чи можна привезти машину мені додому, а не забирати в офісі?"
+Q-50,test,descriptive,uk,HybridAdaptive(tuned v1),0,0,0.1,pickup#6|pickup#5|late-return#8|documents#9|cancellation#5,extras#8,"Чи можна привезти машину мені додому, а не забирати в офісі?"
+Q-50,test,descriptive,uk,HybridAdaptive(tuned v2),0,0,0.125,pickup#6|pickup#4|pickup#5|pickup#3|pickup#2,extras#8,"Чи можна привезти машину мені додому, а не забирати в офісі?"
+Q-51,test,descriptive,uk,Vector,1,1,1,damage#9|mileage#3|borders#1|late-return#4|cancellation#3,damage#9,"Мене оштрафувала камера за перевищення швидкості під час оренди, що буде?"
+Q-51,test,descriptive,uk,FullText,1,1,0.5,mileage#3|damage#9|damage#3|booking#3|late-return#1,damage#9,"Мене оштрафувала камера за перевищення швидкості під час оренди, що буде?"
+Q-51,test,descriptive,uk,HybridRrf,1,1,1,damage#9|mileage#3|documents#10|late-return#1|cancellation#1,damage#9,"Мене оштрафувала камера за перевищення швидкості під час оренди, що буде?"
+Q-51,test,descriptive,uk,HybridAdaptive(initial),1,1,0.5,mileage#3|damage#9|documents#10|late-return#1|cancellation#1,damage#9,"Мене оштрафувала камера за перевищення швидкості під час оренди, що буде?"
+Q-51,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,damage#9|mileage#3|documents#10|late-return#1|cancellation#1,damage#9,"Мене оштрафувала камера за перевищення швидкості під час оренди, що буде?"
+Q-51,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,damage#9|mileage#3|borders#1|late-return#4|cancellation#3,damage#9,"Мене оштрафувала камера за перевищення швидкості під час оренди, що буде?"
+Q-52,dev,descriptive,en,Vector,1,1,1,late-return#3|cancellation#4|late-return#4|late-return#1|late-return#2,late-return#4|late-return#3,What happens if I bring the car back a day late without calling?
+Q-52,dev,descriptive,en,FullText,0,0,0,,late-return#4|late-return#3,What happens if I bring the car back a day late without calling?
+Q-52,dev,descriptive,en,HybridRrf,1,1,1,late-return#3|cancellation#4|late-return#4|late-return#1|late-return#2,late-return#4|late-return#3,What happens if I bring the car back a day late without calling?
+Q-52,dev,descriptive,en,HybridAdaptive(initial),1,1,1,late-return#3|late-return#4|late-return#1|late-return#2|late-return#7,late-return#4|late-return#3,What happens if I bring the car back a day late without calling?
+Q-52,dev,descriptive,en,HybridAdaptive(tuned v1),1,1,1,late-return#3|late-return#4|late-return#1|late-return#2|late-return#7,late-return#4|late-return#3,What happens if I bring the car back a day late without calling?
+Q-52,dev,descriptive,en,HybridAdaptive(tuned v2),1,1,1,late-return#3|late-return#4|late-return#1|late-return#2|late-return#7,late-return#4|late-return#3,What happens if I bring the car back a day late without calling?
+Q-53,test,descriptive,en,Vector,1,1,1,cancellation#1|cancellation#2|cancellation#9|cancellation#3|cancellation#5,cancellation#1|cancellation#2,Can I cancel my booking for free two days before pickup?
+Q-53,test,descriptive,en,FullText,0,0,0,,cancellation#1|cancellation#2,Can I cancel my booking for free two days before pickup?
+Q-53,test,descriptive,en,HybridRrf,1,1,1,cancellation#1|cancellation#2|cancellation#9|cancellation#3|cancellation#5,cancellation#1|cancellation#2,Can I cancel my booking for free two days before pickup?
+Q-53,test,descriptive,en,HybridAdaptive(initial),1,1,1,cancellation#1|cancellation#2|cancellation#9|cancellation#3|cancellation#5,cancellation#1|cancellation#2,Can I cancel my booking for free two days before pickup?
+Q-53,test,descriptive,en,HybridAdaptive(tuned v1),1,1,1,cancellation#1|cancellation#2|cancellation#9|cancellation#3|cancellation#5,cancellation#1|cancellation#2,Can I cancel my booking for free two days before pickup?
+Q-53,test,descriptive,en,HybridAdaptive(tuned v2),1,1,1,cancellation#1|cancellation#2|cancellation#9|cancellation#3|cancellation#5,cancellation#1|cancellation#2,Can I cancel my booking for free two days before pickup?
+Q-54,test,descriptive,en,Vector,1,1,1,borders#7|borders#2|borders#1|borders#6|borders#8,borders#7|borders#2,Do I need any special documents to drive the rental car abroad?
+Q-54,test,descriptive,en,FullText,0,0,0,,borders#7|borders#2,Do I need any special documents to drive the rental car abroad?
+Q-54,test,descriptive,en,HybridRrf,1,1,1,borders#7|borders#2|borders#1|borders#6|borders#8,borders#7|borders#2,Do I need any special documents to drive the rental car abroad?
+Q-54,test,descriptive,en,HybridAdaptive(initial),1,1,1,borders#7|borders#2|borders#1|borders#6|borders#8,borders#7|borders#2,Do I need any special documents to drive the rental car abroad?
+Q-54,test,descriptive,en,HybridAdaptive(tuned v1),1,1,1,borders#7|borders#2|borders#1|borders#6|borders#8,borders#7|borders#2,Do I need any special documents to drive the rental car abroad?
+Q-54,test,descriptive,en,HybridAdaptive(tuned v2),1,1,1,borders#7|borders#2|borders#1|borders#6|borders#8,borders#7|borders#2,Do I need any special documents to drive the rental car abroad?
+Q-55,test,descriptive,uk,Vector,1,1,1,deposit#8|deposit#5|deposit#9|documents#7|deposit#4,deposit#8,Чи можна платити за оренду готівкою або через Apple Pay?
+Q-55,test,descriptive,uk,FullText,1,1,1,deposit#8|documents#7|deposit#5|cancellation#6|booking#3,deposit#8,Чи можна платити за оренду готівкою або через Apple Pay?
+Q-55,test,descriptive,uk,HybridRrf,1,1,1,deposit#8|deposit#5|documents#7|deposit#9|cancellation#1,deposit#8,Чи можна платити за оренду готівкою або через Apple Pay?
+Q-55,test,descriptive,uk,HybridAdaptive(initial),1,1,1,deposit#8|deposit#5|deposit#9|documents#7|cancellation#1,deposit#8,Чи можна платити за оренду готівкою або через Apple Pay?
+Q-55,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,deposit#8|deposit#5|deposit#9|documents#7|cancellation#1,deposit#8,Чи можна платити за оренду готівкою або через Apple Pay?
+Q-55,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,deposit#8|deposit#5|deposit#9|deposit#4|deposit#10,deposit#8,Чи можна платити за оренду готівкою або через Apple Pay?
+Q-56,test,descriptive,uk,Vector,1,1,1,deposit#10|deposit#8|deposit#9|extras#9|booking#7,deposit#10,Компанія може оплатити оренду для свого працівника безготівково?
+Q-56,test,descriptive,uk,FullText,1,1,1,deposit#10|damage#5|cancellation#7|deposit#8|deposit#9,deposit#10,Компанія може оплатити оренду для свого працівника безготівково?
+Q-56,test,descriptive,uk,HybridRrf,1,1,1,deposit#10|deposit#8|deposit#9|fuel#8|deposit#1,deposit#10,Компанія може оплатити оренду для свого працівника безготівково?
+Q-56,test,descriptive,uk,HybridAdaptive(initial),1,1,1,deposit#10|deposit#8|deposit#9|deposit#1|fuel#8,deposit#10,Компанія може оплатити оренду для свого працівника безготівково?
+Q-56,test,descriptive,uk,HybridAdaptive(tuned v1),1,1,1,deposit#10|deposit#8|deposit#9|deposit#1|fuel#8,deposit#10,Компанія може оплатити оренду для свого працівника безготівково?
+Q-56,test,descriptive,uk,HybridAdaptive(tuned v2),1,1,1,deposit#10|deposit#8|deposit#9|deposit#5|deposit#1,deposit#10,Компанія може оплатити оренду для свого працівника безготівково?

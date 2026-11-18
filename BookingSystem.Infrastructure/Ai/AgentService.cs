@@ -107,12 +107,12 @@ public sealed class AgentService(
         catch (AiNotConfiguredException ex)
         {
             logger.LogWarning("AI turn skipped: {Reason}", ex.Message);
-            return Degraded(NotConfiguredText, session.Id, model, stopwatch);
+            return Degraded(NotConfiguredText, session.Id, model, stopwatch, ex.Message);
         }
         catch (Exception ex) when (IsProviderFailure(ex, cancellationToken))
         {
             logger.LogError(ex, "AI provider call failed for session {SessionId}, model {Model}", session.Id, model);
-            return Degraded(UnavailableText, session.Id, model, stopwatch);
+            return Degraded(UnavailableText, session.Id, model, stopwatch, ex.Message);
         }
     }
 
@@ -413,8 +413,9 @@ public sealed class AgentService(
         _ => false
     };
 
-    private static AgentReply Degraded(string text, Guid sessionId, string model, Stopwatch stopwatch) => new()
+    private static AgentReply Degraded(string text, Guid sessionId, string model, Stopwatch stopwatch, string? error = null) => new()
     {
+        ErrorDetail = error,
         Text = text,
         SessionId = sessionId,
         Model = model,

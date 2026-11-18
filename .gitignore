@@ -94,3 +94,7 @@ error.txt
 output.txt
 
 # End of standard Visual Studio gitignore
+
+# Python environment for tools/plot.py
+tools/.venv/
+BookingSystem.Evaluation/results/smoke/
