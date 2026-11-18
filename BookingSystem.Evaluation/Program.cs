@@ -31,8 +31,12 @@ Console.CancelKeyPress += (_, e) => { e.Cancel = true; cts.Cancel(); };
 
 try
 {
-    await using (var scope = services.CreateAsyncScope())
+    // summary / rescore only read the CSV: preparing the database would wipe chat sessions of a run in progress.
+    if (command is not ("summary" or "rescore"))
+    {
+        await using var scope = services.CreateAsyncScope();
         await ActivatorUtilities.CreateInstance<EvalDatabase>(scope.ServiceProvider).PrepareAsync(cts.Token);
+    }
 
     switch (command)
     {
