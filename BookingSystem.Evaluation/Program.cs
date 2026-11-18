@@ -10,13 +10,14 @@ using Microsoft.Extensions.Logging;
 //   dotnet run --project BookingSystem.Evaluation -- ablation --model gemini:gemini-3.8-flash --model gemini:gemini-3.5-flash-lite --repeats 3
 //   dotnet run --project BookingSystem.Evaluation -- retrieval --tune-on dev --eval-on test
 //   dotnet run --project BookingSystem.Evaluation -- summary
+//   dotnet run --project BookingSystem.Evaluation -- rescore      (re-apply the clarification criterion to stored rows)
 // Options: --types simple,faq  --ids S-01,F-02  --delay-ms 2000  --out results/x.csv  --max-cost 4.80
 //          model@N sets repeats per model, e.g. gemini:gemini-3.8-flash@3   (+ any --Ai:... config override)
 
 var command = args.FirstOrDefault()?.ToLowerInvariant();
 if (command is null or "help" or "--help")
 {
-    Console.WriteLine("Commands: index | agent | ablation | retrieval | summary  (see Program.cs for options)");
+    Console.WriteLine("Commands: index | agent | ablation | retrieval | summary | rescore  (see Program.cs for options)");
     return 0;
 }
 
@@ -75,6 +76,17 @@ try
             await ActivatorUtilities.CreateInstance<RetrievalExperiment>(services)
                 .RunAsync(Value("--tune-on") ?? "dev", Value("--eval-on") ?? "test", cts.Token);
             break;
+
+        case "rescore":
+        {
+            // Re-applies the current clarification criterion to stored rows (see AgentRescore), then rebuilds summaries.
+            var runs = OutputPath("agent_runs.csv");
+            var result = AgentRescore.Run(runs, Path.Combine(paths.Datasets, "agent_scenarios.json"));
+            logger.LogInformation("Rescored {Rows} rows: clarification changed in {Clarification}, task success in {Success}",
+                result.Rows, result.ClarificationChanged, result.SuccessChanged);
+            AgentSummary.Write(runs, Path.GetDirectoryName(runs)!);
+            break;
+        }
 
         case "summary":
         {

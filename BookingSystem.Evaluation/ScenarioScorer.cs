@@ -34,8 +34,9 @@ public sealed record ScenarioScore
 ///       (or no tool when none is expected). Calls blocked by slot filling are not "executed".</item>
 /// <item>Argument Accuracy — expected arguments of the last executed call of the expected tool (effective
 ///       arguments after slot merge when slot filling is on); dates, enums, cities and numbers normalized.</item>
-/// <item>Clarification — for incomplete requests: no forbidden tool ran, the reply is a question and mentions
-///       every missing slot (keyword heuristics, Ukrainian and English).</item>
+/// <item>Clarification — for incomplete requests: no forbidden tool ran, the reply asks the user (a question mark
+///       or a polite request such as "Вкажіть, будь ласка, …") and mentions every missing slot
+///       (keyword heuristics, Ukrainian and English).</item>
 /// <item>Task Success — all of the above plus content checks and no forbidden calls.</item>
 /// <item>Invalid calls — proposed (validator verdict on the model's own arguments, both modes) and executed
 ///       (the tool actually ran with invalid arguments).</item>
@@ -81,10 +82,7 @@ public static partial class ScenarioScorer
 
         // Clarification
         var clarificationExpected = expected.AsksFor.Count > 0;
-        var clarificationOk = clarificationExpected
-            && !forbidden
-            && last.Text.Contains('?')
-            && expected.AsksFor.All(slot => AsksAbout(last.Text, slot));
+        var clarificationOk = clarificationExpected && !forbidden && IsClarification(last.Text, expected.AsksFor);
 
         // Content
         var text = NormalizeText(last.Text);
@@ -194,6 +192,24 @@ public static partial class ScenarioScorer
         ],
         [SlotNames.SelectedCarId] = ["яке авто", "який автомобіль", "яку машину", "which car", "оберіть", "which vehicle"]
     };
+
+    /// <summary>
+    /// Polite imperative requests count as clarification questions: models often write
+    /// "Будь ласка, вкажіть дати оренди…" without a question mark.
+    /// </summary>
+    private static readonly string[] RequestMarkers =
+    [
+        "вкажіть", "укажіть", "уточніть", "напишіть", "повідомте", "підкажіть", "скажіть", "назвіть",
+        "please specify", "please provide", "please tell", "please let me know", "please share", "let me know"
+    ];
+
+    /// <summary>The reply asks the user for information and mentions every expected slot.</summary>
+    internal static bool IsClarification(string reply, IReadOnlyCollection<string> asksFor)
+    {
+        var text = reply.ToLowerInvariant();
+        var asks = text.Contains('?') || RequestMarkers.Any(text.Contains);
+        return asks && asksFor.All(slot => AsksAbout(reply, slot));
+    }
 
     internal static bool AsksAbout(string reply, string slot)
     {

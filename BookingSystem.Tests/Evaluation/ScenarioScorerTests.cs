@@ -90,9 +90,13 @@ public class ScenarioScorerTests
     [InlineData("На які дати вам потрібне авто?", true)]
     [InlineData("З якого числа і до якого вам потрібна машина?", true)]
     [InlineData("When would you like to pick it up and return it?", true)]
+    [InlineData("Будь ласка, вкажіть дати оренди (день отримання та день повернення).", true)]
+    [InlineData("Вкажіть, будь ласка, дати початку та завершення оренди, щоб я міг підібрати авто.", true)]
+    [InlineData("Please specify the rental dates.", true)]
+    [InlineData("Вкажіть, будь ласка, місто.", false)]
     [InlineData("Яке місто вас цікавить?", false)]
     [InlineData("Ось вільні авто на ці дати.", false)]
-    public void Clarification_RequiresQuestionAboutMissingSlots(string text, bool expected)
+    public void Clarification_RequiresQuestionOrRequestAboutMissingSlots(string text, bool expected)
     {
         var scenario = Scenario(null, asksFor: ["PickupDate", "ReturnDate"], mustNotCall: ["search_available_cars"]);
 
