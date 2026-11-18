@@ -18,6 +18,7 @@ COPY ["BookingSystem.Domain/BookingSystem.Domain.csproj",                     "B
 COPY ["BookingSystem.Application/BookingSystem.Application.csproj",           "BookingSystem.Application/"]
 COPY ["BookingSystem.Infrastructure/BookingSystem.Infrastructure.csproj",     "BookingSystem.Infrastructure/"]
 COPY ["BookingSystem.Tests/BookingSystem.Tests.csproj",                       "BookingSystem.Tests/"]
+COPY ["BookingSystem.Evaluation/BookingSystem.Evaluation.csproj",             "BookingSystem.Evaluation/"]
 
 # Відновлюємо залежності: основний проект + тести (окремо, щоб не тягнути xunit у prod)
 RUN dotnet restore "BookingSystem/BookingSystem.csproj"
