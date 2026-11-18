@@ -19,6 +19,7 @@ public static class AgentSummary
     {
         var rows = Csv.Read(runsCsv);
         if (rows.Count == 0) return;
+        rows.AddRange(ReusedE1Rows(rows));
 
         var groups = rows.GroupBy(r => (Experiment: r["experiment"], Model: r["model"], SlotFilling: r["slot_filling"]));
 
@@ -57,6 +58,25 @@ public static class AgentSummary
         Csv.Write(Path.Combine(resultsDir, "summary_agent.csv"), header, summary);
         Csv.Write(Path.Combine(resultsDir, "summary_agent_by_type.csv"),
             ["experiment", "model", "slot_filling", "type", "scenarios", "task_success_mean", "task_success_std"], byType);
+    }
+
+    /// <summary>
+    /// E2 runs only "slot filling off" by default; the "on" condition of an E2 model is its E1 rows
+    /// (same model, scenarios, repeats and code), relabelled as E2.
+    /// </summary>
+    internal static IEnumerable<Dictionary<string, string>> ReusedE1Rows(List<Dictionary<string, string>> rows)
+    {
+        var e2Models = rows.Where(r => r["experiment"] == "E2").Select(r => r["model"]).ToHashSet();
+        var e2OnModels = rows.Where(r => r["experiment"] == "E2" && r["slot_filling"] == "1").Select(r => r["model"]).ToHashSet();
+        var maxOffRepeat = rows.Where(r => r["experiment"] == "E2" && r["slot_filling"] == "0")
+            .GroupBy(r => r["model"]).ToDictionary(g => g.Key, g => g.Max(r => int.Parse(r["repeat"], CultureInfo.InvariantCulture)));
+
+        return rows
+            .Where(r => r["experiment"] == "E1" && r["slot_filling"] == "1"
+                        && e2Models.Contains(r["model"]) && !e2OnModels.Contains(r["model"])
+                        && int.Parse(r["repeat"], CultureInfo.InvariantCulture) <= maxOffRepeat.GetValueOrDefault(r["model"]))
+            .Select(r => new Dictionary<string, string>(r) { ["experiment"] = "E2" })
+            .ToList();
     }
 
     private static Dictionary<string, double> Compute(IEnumerable<Dictionary<string, string>> repeatRows)

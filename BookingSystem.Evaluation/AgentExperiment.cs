@@ -9,15 +9,32 @@ using Microsoft.Extensions.Options;
 
 namespace BookingSystem.Evaluation;
 
+/// <param name="Model">Model in <c>provider:model</c> form.</param>
+/// <param name="Repeats">Number of repeats for this model (repeats 1..N; existing rows are skipped).</param>
+public sealed record ModelRun(string Model, int Repeats)
+{
+    /// <summary>Parses "provider:model" or "provider:model@N" (per-model number of repeats).</summary>
+    public static ModelRun Parse(string spec, int defaultRepeats)
+    {
+        var at = spec.LastIndexOf('@');
+        return at > 0 && int.TryParse(spec[(at + 1)..], out var n)
+            ? new ModelRun(spec[..at].Trim(), n)
+            : new ModelRun(spec.Trim(), defaultRepeats);
+    }
+
+    public override string ToString() => $"{Model}×{Repeats}";
+}
+
+/// <param name="MaxCostUsd">Stop paid models once the estimated cost of all rows in the CSV reaches this amount.</param>
 public sealed record AgentRunPlan(
     string Experiment,
-    IReadOnlyList<string> Models,
-    int Repeats,
+    IReadOnlyList<ModelRun> Models,
     IReadOnlyList<bool> SlotFillingModes,
     string OutputCsv,
     IReadOnlySet<string>? Types = null,
     IReadOnlySet<string>? Ids = null,
-    int? DelayMs = null);
+    int? DelayMs = null,
+    decimal? MaxCostUsd = null);
 
 /// <summary>
 /// Runs agent scenarios (E1 models, E2 slot-filling ablation). One CSV row per
@@ -51,28 +68,48 @@ public sealed class AgentExperiment(
             .Where(s => plan.Ids is null || plan.Ids.Contains(s.Id))
             .ToList();
 
-        var done = Csv.Read(plan.OutputCsv).Select(Key).ToHashSet();
-        logger.LogInformation(
-            "{Experiment}: {Scenarios} scenarios × {Repeats} repeats × {Modes} mode(s) × models [{Models}]; {Done} rows already in {Csv}",
-            plan.Experiment, scenarios.Count, plan.Repeats, plan.SlotFillingModes.Count, string.Join(", ", plan.Models),
-            done.Count, Path.GetFileName(plan.OutputCsv));
+        var existing = Csv.Read(plan.OutputCsv);
+        var done = existing.Select(Key).ToHashSet();
+        lock (_costLock) _spentUsd = (decimal)existing.Sum(r => r.D("cost_usd"));
 
-        await Task.WhenAll(plan.Models.Select(model => RunModelAsync(plan, model, scenarios, file.Now, done, ct)));
+        logger.LogInformation(
+            "{Experiment}: {Scenarios} scenarios × {Modes} mode(s) × [{Models}]; {Done} rows already in {Csv}; spent so far ${Spent:0.00}{Cap}",
+            plan.Experiment, scenarios.Count, plan.SlotFillingModes.Count, string.Join(", ", plan.Models),
+            done.Count, Path.GetFileName(plan.OutputCsv), _spentUsd,
+            plan.MaxCostUsd is { } cap ? $" (cap ${cap:0.00})" : "");
+
+        await Task.WhenAll(plan.Models.Select(run => RunModelAsync(plan, run, scenarios, file.Now, done, ct)));
     }
 
+    private readonly object _costLock = new();
+    private decimal _spentUsd;
+
     private async Task RunModelAsync(
-        AgentRunPlan plan, string model, List<AgentScenario> scenarios, string defaultNow, HashSet<string> done, CancellationToken ct)
+        AgentRunPlan plan, ModelRun run, List<AgentScenario> scenarios, string defaultNow, HashSet<string> done, CancellationToken ct)
     {
+        var model = run.Model;
         var delay = plan.DelayMs ?? DefaultDelay(model);
+        var paid = Price(model) is { } price && (price.InputPer1M > 0 || price.OutputPer1M > 0);
         var completed = 0;
 
         foreach (var slotFilling in plan.SlotFillingModes)
-        for (var repeat = 1; repeat <= plan.Repeats; repeat++)
+        for (var repeat = 1; repeat <= run.Repeats; repeat++)
         foreach (var scenario in scenarios)
         {
             ct.ThrowIfCancellationRequested();
             var key = Key(plan.Experiment, model, slotFilling, scenario.Id, repeat);
             if (done.Contains(key)) continue;
+
+            if (paid && plan.MaxCostUsd is { } cap)
+            {
+                decimal spent;
+                lock (_costLock) spent = _spentUsd;
+                if (spent >= cap)
+                {
+                    logger.LogWarning("{Model}: cost cap ${Cap:0.00} reached (spent ${Spent:0.00}) — stopping.", model, cap, spent);
+                    return;
+                }
+            }
 
             var (replies, attempts, dailyLimit) = await RunWithRetriesAsync(model, slotFilling, scenario, defaultNow, delay, ct);
             if (dailyLimit)
@@ -82,7 +119,9 @@ public sealed class AgentExperiment(
             }
 
             var score = ScenarioScorer.Score(scenario, replies);
-            await Csv.AppendAsync(plan.OutputCsv, Header, Row(plan.Experiment, model, slotFilling, scenario, repeat, replies, score, attempts));
+            var row = Row(plan.Experiment, model, slotFilling, scenario, repeat, replies, score, attempts, out var cost);
+            await Csv.AppendAsync(plan.OutputCsv, Header, row);
+            lock (_costLock) _spentUsd += cost;
             completed++;
 
             logger.LogInformation("{Model} sf={SlotFilling} r{Repeat} {Scenario}: {Result} ({Tool}) [{Completed}]",
@@ -139,14 +178,17 @@ public sealed class AgentExperiment(
         return replies;
     }
 
+    private AiModelPricing? Price(string model) =>
+        aiOptions.Value.Pricing.FirstOrDefault(p => string.Equals(p.Model, model, StringComparison.OrdinalIgnoreCase));
+
     private IEnumerable<object?> Row(
         string experiment, string model, bool slotFilling, AgentScenario scenario, int repeat,
-        List<AgentReply> replies, ScenarioScore score, int attempts)
+        List<AgentReply> replies, ScenarioScore score, int attempts, out decimal cost)
     {
         var input = replies.Sum(r => r.InputTokens ?? 0);
         var output = replies.Sum(r => r.OutputTokens ?? 0);
-        var pricing = aiOptions.Value.Pricing.FirstOrDefault(p => string.Equals(p.Model, model, StringComparison.OrdinalIgnoreCase));
-        var cost = pricing is null ? 0m : (input * pricing.InputPer1M + output * pricing.OutputPer1M) / 1_000_000m;
+        var pricing = Price(model);
+        cost = pricing is null ? 0m : (input * pricing.InputPer1M + output * pricing.OutputPer1M) / 1_000_000m;
         var last = replies[^1];
 
         return
@@ -166,8 +208,9 @@ public sealed class AgentExperiment(
         ];
     }
 
+    /// <summary>Pause between turns per provider (Evaluation:DelayMsByProvider), e.g. groq 30000 for the 8K TPM free tier.</summary>
     private int DefaultDelay(string model) =>
-        model.StartsWith("gemini:", StringComparison.OrdinalIgnoreCase) ? 4500 : evalOptions.Value.DelayBetweenTurnsMs;
+        evalOptions.Value.DelayMsByProvider.TryGetValue(model.Split(':')[0], out var ms) ? ms : evalOptions.Value.DelayBetweenTurnsMs;
 
     /// <summary>Provider messages for daily quotas (Groq: "tokens per day (TPD)", Gemini: "PerDay", "RPD").</summary>
     internal static bool IsDailyLimit(string? error) =>

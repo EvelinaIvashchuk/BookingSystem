@@ -72,6 +72,7 @@ public sealed class EvaluationOptions
     /// <summary>Default local (Europe/Kyiv) "now" of scenarios, e.g. 2026-11-18T10:00:00 (Wednesday).</summary>
     public string Now { get; set; } = "2026-11-18T10:00:00";
     public int DelayBetweenTurnsMs { get; set; } = 1500;
+    public Dictionary<string, int> DelayMsByProvider { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public int MaxScenarioAttempts { get; set; } = 6;
 }
 
