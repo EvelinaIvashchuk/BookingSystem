@@ -88,7 +88,7 @@ public sealed class AgentService(
                 ToolCalls = [.. turn.ToolCalls],
                 Model = model,
                 InputTokens = ToInt(response.Usage?.InputTokenCount),
-                OutputTokens = ToInt(response.Usage?.OutputTokenCount),
+                OutputTokens = ToInt(BilledOutputTokens(response.Usage)),
                 LatencyMs = stopwatch.ElapsedMilliseconds
             };
 
@@ -424,4 +424,18 @@ public sealed class AgentService(
     };
 
     private static int? ToInt(long? value) => value is null ? null : (int)Math.Min(value.Value, int.MaxValue);
+
+    /// <summary>
+    /// Output tokens that are billed, including reasoning ("thinking") tokens. Gemini's OpenAI-compatible API
+    /// leaves thinking tokens out of <c>completion_tokens</c> and reports them only in <c>total_tokens</c>,
+    /// so the larger of the output count and total − input is used (for other providers both are equal).
+    /// </summary>
+    internal static long? BilledOutputTokens(UsageDetails? usage)
+    {
+        if (usage is null) return null;
+        var output = usage.OutputTokenCount;
+        if (usage is { TotalTokenCount: { } total, InputTokenCount: { } input } && total - input > (output ?? 0))
+            output = total - input;
+        return output;
+    }
 }

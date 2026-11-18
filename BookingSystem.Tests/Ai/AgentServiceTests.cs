@@ -59,6 +59,15 @@ public class AgentServiceTests : IAsyncLifetime
 
     // ── Basic turn ───────────────────────────────────────────────────────────
 
+    [Theory]
+    [InlineData(100L, 4L, 2448L, 2348L)]   // Gemini: thinking tokens only in total_tokens
+    [InlineData(100L, 40L, 140L, 40L)]     // OpenAI-style: total = input + output
+    [InlineData(100L, 40L, null, 40L)]     // no total reported
+    public void BilledOutputTokens_IncludesHiddenThinkingTokens(long input, long output, long? total, long expected) =>
+        AgentService.BilledOutputTokens(new UsageDetails { InputTokenCount = input, OutputTokenCount = output, TotalTokenCount = total })
+            .Should().Be(expected);
+
+
     [Fact]
     public async Task ChatAsync_ReturnsModelTextAndUsage()
     {
