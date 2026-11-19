@@ -83,11 +83,11 @@ dotnet run --project BookingSystem
 
 | Ключ | Значення за замовчуванням | Призначення |
 |---|---|---|
-| `DefaultModel` | `groq:openai/gpt-oss-120b` | модель чату, `provider:model`; змінюється без зміни коду |
+| `DefaultModel` | `gemini:gemini-3.6-flash` | модель чату, `provider:model`; змінюється без зміни коду (обрано за E1) |
 | `Providers:<name>:Endpoint`, `ApiKey`, `TimeoutSeconds` | Groq, Gemini | OpenAI-сумісні провайдери |
 | `Temperature`, `MaxOutputTokens`, `MaxAgentIterations`, `HistoryLength` | 0.2, 1024, 5, 12 | параметри агента |
 | `SlotFilling:Enabled` | `true` | внесок 1 (вимкнення — базовий варіант для ablation) |
-| `Search:Mode`, `TopK`, `Candidates`, `RrfK`, `Adaptive:*` | `HybridAdaptive`, 3, 20, 60 | внесок 2; параметри `Adaptive` підібрано на dev-вибірці |
+| `Search:Mode`, `TopK`, `Candidates`, `RrfK`, `Adaptive:*` | `Vector`, 3, 20, 60 | внесок 2 — режим `HybridAdaptive` (параметри `Adaptive` підібрано на dev-вибірці); на сайті `Vector` — найкращий у цілому за E3 |
 | `PendingActionTtlMinutes` | 15 | строк дії чернетки бронювання |
 | `RateLimit:PerIpPerMinute`, `PerSessionPerHour` | 20, 60 | обмеження запитів до чату |
 | `Pricing[]` | — | ціни моделей за 1M токенів (для оцінки вартості в логах і експериментах) |

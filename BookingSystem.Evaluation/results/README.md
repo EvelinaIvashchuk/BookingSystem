@@ -109,6 +109,8 @@ dotnet run --project BookingSystem.Evaluation -- rescore
 74 сценарії (simple 15, incomplete 12, constraints 10, multi-turn 10, faq 10, relative-dates 6, booking 6,
 out-of-scope 5), `temperature = 0.2`, `MaxAgentIterations = 5`, slot filling увімкнено, той самий системний промпт.
 Gemini — платний Tier 1 через OpenAI-сумісний ендпоінт, 3 повтори; Groq — free tier, 1 повтор.
+Інструмент `search_rental_policies` працював у режимі `HybridAdaptive` (v2); для експериментів режим закріплено в
+`BookingSystem.Evaluation/appsettings.json`, тож зміна режиму на сайті на них не впливає.
 Ціни (`Ai:Pricing`, перевірено 2026-11-18): 3.8-flash і 3.6-flash — $0.75 / $3.75, 3.5-flash-lite — $0.30 / $2.50,
 3.1-flash-lite — $0.25 / $1.50 за 1M вхідних / вихідних токенів.
 
