@@ -499,6 +499,11 @@ body {
 .chat-card--done   { border-color: #a3cfbb; background: #f3faf6; }
 .chat-card--closed { opacity: .7; }
 
+/* Date picker offered when the assistant asks for rental dates */
+.chat-dates__fields { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .2rem; }
+.chat-dates__field  { display: flex; flex-direction: column; gap: .15rem; flex: 1 1 120px; font-size: .78rem; color: #495057; }
+.chat-dates__error  { color: #dc3545; }
+
 /* Car cards from search results */
 .chat-cars {
     align-self: stretch;

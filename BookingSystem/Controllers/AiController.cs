@@ -45,7 +45,8 @@ public class AiController(
             cars = reply.Cars.Select(c => c with { ImageUrl = NullIfEmpty(ImageHelper.Src(c.ImageUrl)) }),
             pendingActionId = reply.PendingActionId,
             draft = reply.Draft,
-            missingSlots = reply.MissingSlots
+            missingSlots = reply.MissingSlots,
+            askedDates = reply.AskedDates
         };
 
         return reply.IsDegraded ? StatusCode(StatusCodes.Status503ServiceUnavailable, body) : Ok(body);

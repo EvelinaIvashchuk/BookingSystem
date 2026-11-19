@@ -59,6 +59,28 @@ public class AgentServiceTests : IAsyncLifetime
 
     // ── Basic turn ───────────────────────────────────────────────────────────
 
+    [Fact]
+    public async Task ChatAsync_ReplyAskingForDates_OffersDateInputs()
+    {
+        UseModelReplying("Вкажіть, будь ласка, дати оренди: з якого по яке число?");
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "Хочу орендувати авто");
+
+        reply.AskedDates.Should().Equal(SlotNames.PickupDate, SlotNames.ReturnDate);
+        reply.MissingSlots.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ChatAsync_ReplyWithoutDateQuestion_OffersNoDateInputs()
+    {
+        UseModelReplying("Вітаю! Чим допомогти?");
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "Привіт");
+
+        reply.AskedDates.Should().BeEmpty();
+    }
+
+
     [Theory]
     [InlineData(100L, 4L, 2448L, 2348L)]   // Gemini: thinking tokens only in total_tokens
     [InlineData(100L, 40L, 140L, 40L)]     // OpenAI-style: total = input + output

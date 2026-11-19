@@ -309,4 +309,12 @@
   <data name="Photos_Author" xml:space="preserve"><value>Автор</value></data>
   <data name="Photos_License" xml:space="preserve"><value>Ліцензія</value></data>
   <data name="Photos_Source" xml:space="preserve"><value>Джерело</value></data>
+  <data name="Chat_DatesTitle" xml:space="preserve"><value>Оберіть дати оренди</value></data>
+  <data name="Chat_PickupDate" xml:space="preserve"><value>Дата отримання</value></data>
+  <data name="Chat_ReturnDate" xml:space="preserve"><value>Дата повернення</value></data>
+  <data name="Chat_DatesSend" xml:space="preserve"><value>Надіслати дати</value></data>
+  <data name="Chat_DatesBoth" xml:space="preserve"><value>З {0} по {1}</value></data>
+  <data name="Chat_DatesPickup" xml:space="preserve"><value>Дата отримання — {0}</value></data>
+  <data name="Chat_DatesReturn" xml:space="preserve"><value>Дата повернення — {0}</value></data>
+  <data name="Chat_DatesInvalid" xml:space="preserve"><value>Дата повернення має бути пізніше за дату отримання.</value></data>
 </root>

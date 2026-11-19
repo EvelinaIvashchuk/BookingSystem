@@ -85,6 +85,7 @@ public sealed class AgentService(
                 Cars = turn.Cars,
                 Draft = turn.Draft,
                 MissingSlots = turn.MissingSlots,
+                AskedDates = DateClarification.DatesToAsk(turn, text),
                 ToolCalls = [.. turn.ToolCalls],
                 Model = model,
                 InputTokens = ToInt(response.Usage?.InputTokenCount),

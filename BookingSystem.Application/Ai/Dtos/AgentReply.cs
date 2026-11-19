@@ -23,6 +23,11 @@ public sealed record AgentReply
     /// <summary>Required parameters the agent asked the user for.</summary>
     public IReadOnlyList<string> MissingSlots { get; init; } = [];
 
+    /// <summary>
+    /// Rental dates the reply asks the user for (PickupDate / ReturnDate); the widget offers date inputs for them.
+    /// </summary>
+    public IReadOnlyList<string> AskedDates { get; init; } = [];
+
     public IReadOnlyList<ToolCallRecord> ToolCalls { get; init; } = [];
 
     public string Model { get; init; } = string.Empty;

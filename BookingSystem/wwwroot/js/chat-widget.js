@@ -191,11 +191,90 @@
         });
     }
 
+    // ── Date picker for clarifications ─────────────────────────────────────────
+    // Shown when the reply asks for rental dates (askedDates from the server). Submitting sends an ordinary
+    // message ("З 20 грудня 2026 р. по 22 грудня 2026 р."), so the agent handles it like typed text.
+    let openDateForm = null;
+
+    function isoToday(offsetDays) {
+        const d = new Date();
+        d.setDate(d.getDate() + (offsetDays || 0));
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    function longDate(iso) {
+        const p = iso.split('-');
+        return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    function closeDateForm() {
+        if (!openDateForm) return;
+        openDateForm.classList.add('chat-card--closed');
+        openDateForm.querySelectorAll('input, button').forEach(function (n) { n.disabled = true; });
+        openDateForm = null;
+    }
+
+    function appendDateForm(slots) {
+        const askPickup = slots.indexOf('PickupDate') >= 0;
+        const askReturn = slots.indexOf('ReturnDate') >= 0;
+        if (!askPickup && !askReturn) return;
+
+        const card = el('form', 'chat-card chat-dates');
+        card.noValidate = true;
+        card.appendChild(el('div', 'chat-card__title', L.datesTitle));
+        const fields = el('div', 'chat-dates__fields');
+        function field(label, min) {
+            const wrap = el('label', 'chat-dates__field');
+            wrap.appendChild(el('span', null, label));
+            const inputEl = el('input', 'form-control form-control-sm');
+            inputEl.type = 'date';
+            inputEl.min = min;
+            inputEl.required = true;
+            wrap.appendChild(inputEl);
+            fields.appendChild(wrap);
+            return inputEl;
+        }
+        const pickup = askPickup ? field(L.pickupDate, isoToday(0)) : null;
+        const ret = askReturn ? field(L.returnDate, isoToday(1)) : null;
+        if (pickup && ret) {
+            pickup.addEventListener('change', function () {
+                if (!pickup.value) return;
+                const next = new Date(pickup.value + 'T00:00');
+                next.setDate(next.getDate() + 1);
+                ret.min = next.getFullYear() + '-' + String(next.getMonth() + 1).padStart(2, '0') + '-' + String(next.getDate()).padStart(2, '0');
+                if (ret.value && ret.value < ret.min) ret.value = '';
+            });
+        }
+        card.appendChild(fields);
+        const error = el('div', 'chat-card__hint chat-dates__error d-none', L.datesInvalid);
+        card.appendChild(error);
+        const send = el('button', 'btn btn-sm btn-primary', L.datesSend);
+        send.type = 'submit';
+        const actions = el('div', 'chat-card__actions');
+        actions.appendChild(send);
+        card.appendChild(actions);
+
+        card.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const inputs = [pickup, ret].filter(Boolean);
+            if (inputs.some(function (i) { return !i.value || i.value < i.min; })) { inputs.forEach(function (i) { i.reportValidity(); }); return; }
+            if (pickup && ret && ret.value <= pickup.value) { error.classList.remove('d-none'); return; }
+            const text = pickup && ret ? format(L.datesBoth, [longDate(pickup.value), longDate(ret.value)])
+                : pickup ? format(L.datesPickup, [longDate(pickup.value)])
+                : format(L.datesReturn, [longDate(ret.value)]);
+            sendMessage(text);
+        });
+
+        messages.appendChild(card);
+        openDateForm = card;
+        scrollDown();
+        (pickup || ret).focus({ preventScroll: true });
+    }
+
     // ── Conversation ───────────────────────────────────────────────────────────
     function sendMessage(text) {
         text = (text || '').trim();
         if (!text || busy) return;
 
+        closeDateForm();
         appendMessage(text, 'user');
         input.value = '';
         setBusy(true);
@@ -216,6 +295,7 @@
             appendMessage(data.reply || L.error, 'bot');
             if (Array.isArray(data.cars) && data.cars.length) appendCarCards(data.cars);
             if (data.draft) appendDraftCard(data.draft);
+            if (Array.isArray(data.askedDates) && data.askedDates.length) appendDateForm(data.askedDates);
         })
         .catch(function () {
             thinking.remove();
@@ -246,6 +326,7 @@
 
     function startNewChat() {
         if (busy) return;
+        openDateForm = null;
         clearSessionId();
         sessionId = null;
         messages.replaceChildren();
