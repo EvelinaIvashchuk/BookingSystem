@@ -82,7 +82,13 @@ builder.Services.AddScoped<ICarService,    CarService>();
 builder.Services.AddScoped<IUserService,   UserService>();
 builder.Services.AddScoped<IEmailService,   MockEmailService>();
 builder.Services.AddHttpClient("s3");
-builder.Services.AddSingleton<IStorageService, S3StorageService>();
+// S3 on Railway (AWS_* variables); without them (local development) images are kept in App_Data/uploads.
+if (StorageRules.IsS3Configured(builder.Configuration))
+    builder.Services.AddSingleton<IStorageService, S3StorageService>();
+else
+    builder.Services.AddSingleton<IStorageService>(sp => new LocalStorageService(
+        Path.Combine(builder.Environment.ContentRootPath, "App_Data", "uploads"),
+        sp.GetRequiredService<ILogger<LocalStorageService>>()));
 
 // ── AI agent ──────────────────────────────────────────────────────────────────
 builder.Services.AddAiAgent(builder.Configuration);

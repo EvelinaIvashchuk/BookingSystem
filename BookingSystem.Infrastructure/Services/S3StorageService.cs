@@ -17,11 +17,6 @@ public class S3StorageService : IStorageService
     private readonly string     _serviceUrl;
     private readonly ILogger<S3StorageService> _logger;
 
-    private static readonly HashSet<string> AllowedExtensions =
-        new(StringComparer.OrdinalIgnoreCase) { ".jpg", ".jpeg", ".png", ".webp" };
-
-    private const long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
-
     public S3StorageService(IConfiguration config, ILogger<S3StorageService> logger, IHttpClientFactory httpClientFactory)
     {
         _logger = logger;
@@ -47,15 +42,8 @@ public class S3StorageService : IStorageService
 
     public async Task<string> UploadAsync(IFormFile file, string folder = "cars")
     {
-        if (file.Length == 0)
-            throw new ArgumentException("File is empty.");
-
-        if (file.Length > MaxFileSizeBytes)
-            throw new ArgumentException("File exceeds the 5 MB limit.");
-
+        StorageRules.Validate(file);
         var ext = Path.GetExtension(file.FileName);
-        if (!AllowedExtensions.Contains(ext))
-            throw new ArgumentException("Only JPG, PNG and WebP images are allowed.");
 
         var key = $"{folder}/{Guid.NewGuid()}{ext}";
 

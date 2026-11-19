@@ -98,3 +98,6 @@ output.txt
 # Python environment for tools/plot.py
 tools/.venv/
 BookingSystem.Evaluation/results/smoke/
+
+# Local image storage when S3 is not configured (LocalStorageService)
+BookingSystem/App_Data/
