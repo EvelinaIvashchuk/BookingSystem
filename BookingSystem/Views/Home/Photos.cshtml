@@ -1,0 +1,34 @@
+@model IReadOnlyList<BookingSystem.Data.CarPhoto>
+@{
+    ViewData["Title"] = L["Photos_Title"].Value;
+}
+<div class="container py-4">
+    <h1 class="h3 mb-2">@ViewData["Title"]</h1>
+    <p class="text-muted mb-4">@L["Photos_Intro"]</p>
+
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th style="width: 96px"></th>
+                    <th>@L["Photos_Car"]</th>
+                    <th>@L["Photos_Author"]</th>
+                    <th>@L["Photos_License"]</th>
+                    <th>@L["Photos_Source"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var photo in Model)
+                {
+                    <tr>
+                        <td><img src="@photo.Url.Replace("/960px-", "/330px-")" alt="@photo.Car" loading="lazy" class="rounded" style="width: 88px; height: 56px; object-fit: cover;"></td>
+                        <td>@photo.Car</td>
+                        <td>@photo.Author</td>
+                        <td><a href="@photo.LicenseUrl" target="_blank" rel="noopener license">@photo.License</a></td>
+                        <td><a href="@photo.SourcePage" target="_blank" rel="noopener">Wikimedia Commons</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

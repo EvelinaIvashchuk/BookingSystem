@@ -79,7 +79,8 @@
 
 <footer class="border-top footer text-muted">
     <div class="container footer-inner">
-        <span>&copy; 2026 CarRental &mdash; <a asp-area="" asp-controller="Home" asp-action="Privacy">@L["Nav_Privacy"]</a></span>
+        <span>&copy; 2026 CarRental &mdash; <a asp-area="" asp-controller="Home" asp-action="Privacy">@L["Nav_Privacy"]</a>
+            &middot; <a asp-area="" asp-controller="Home" asp-action="Photos">@L["Nav_PhotoCredits"]</a></span>
 
         <form id="langForm" asp-controller="Language" asp-action="Set" method="post" class="footer-lang">
             @Html.AntiForgeryToken()

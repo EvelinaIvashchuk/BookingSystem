@@ -51,7 +51,10 @@
         return Math.max(0, Math.round(ms / 60000));
     }
     function safeImageUrl(url) {
-        return typeof url === 'string' && /^(https:\/\/|http:\/\/|\/)/i.test(url) ? url : null;
+        if (typeof url !== 'string') return null;
+        if (/^(https:\/\/|http:\/\/|\/)/i.test(url)) return url;
+        // Storage key of an uploaded photo ("cars/<guid>.jpg") is served by the image proxy, as in ImageHelper.
+        return /^[\w-]+\/[\w.-]+$/.test(url) ? '/image/' + url : null;
     }
     function scrollDown() { messages.scrollTop = messages.scrollHeight; }
 

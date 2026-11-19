@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using BookingSystem.Data;
 using BookingSystem.Models;
 using BookingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,10 @@ public class HomeController(ICarService carService) : Controller
     }
 
     public IActionResult Privacy() => View();
+
+    /// <summary>Authors and licences of the demo car photos (required by CC BY / CC BY-SA).</summary>
+    public IActionResult Photos() =>
+        View(DemoFleetPhotos.ByPlate.Values.OrderBy(p => p.Car, StringComparer.Ordinal).ToList());
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error() =>

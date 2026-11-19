@@ -75,7 +75,7 @@ dotnet run --project BookingSystem
 
 Під час старту застосовуються міграції (`InitialCreate`, `AddAiAgent`, `AddKnowledgeBase`), створюються
 ролі й адміністратор (`Seed:AdminEmail` / `Seed:AdminPassword`), додається демо-автопарк із 50 авто
-(`Seed:DemoFleet=false` вимикає) і індексується база знань (`Ai:KnowledgeBase:IndexOnStartup`;
+(`Seed:DemoFleet=false` вимикає) з фото з Wikimedia Commons (CC BY / CC BY-SA; автори — на сторінці `/Home/Photos`, фото, завантажені в адмінці, не перезаписуються) і індексується база знань (`Ai:KnowledgeBase:IndexOnStartup`;
 змінені документи переіндексовуються, незмінені пропускаються). Ембединги рахує Gemini, тож для
 векторного пошуку потрібен ключ Gemini; без нього гібридні режими переходять на повнотекстовий пошук.
 

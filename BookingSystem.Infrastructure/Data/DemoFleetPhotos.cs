@@ -1,0 +1,186 @@
+using BookingSystem.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace BookingSystem.Data;
+
+/// <summary>Photo of a demo car from Wikimedia Commons with the attribution its licence requires.</summary>
+public sealed record CarPhoto(string Car, string Url, string Author, string License, string LicenseUrl, string SourcePage);
+
+/// <summary>
+/// Photos for the 50 demo cars (by licence plate), hot-linked from Wikimedia Commons under CC BY / CC BY-SA licences;
+/// authors and licences are listed on the /Home/Photos page. Selected 2026-11-19, one photo per model and generation.
+/// </summary>
+public static class DemoFleetPhotos
+{
+    public static readonly IReadOnlyDictionary<string, CarPhoto> ByPlate = new Dictionary<string, CarPhoto>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["AA1234BB"] = new("Toyota Camry", "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Toyota_Camry_%28XV70%29_IMG_9081.jpg/960px-Toyota_Camry_%28XV70%29_IMG_9081.jpg",
+            "Alexander-93", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Toyota_Camry_(XV70)_IMG_9081.jpg"),
+        ["AA5678CC"] = new("Honda CR-V", "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/2023_Honda_CR-V_EX-L_AWD%2C_front_right%2C_11-13-2022.jpg/960px-2023_Honda_CR-V_EX-L_AWD%2C_front_right%2C_11-13-2022.jpg",
+            "MercurySable99", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2023_Honda_CR-V_EX-L_AWD,_front_right,_11-13-2022.jpg"),
+        ["AA9012DD"] = new("Volkswagen Golf", "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/2020_Volkswagen_Golf_Style_1.5_Front.jpg/960px-2020_Volkswagen_Golf_Style_1.5_Front.jpg",
+            "Vauxford", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2020_Volkswagen_Golf_Style_1.5_Front.jpg"),
+        ["BB3456EE"] = new("Toyota Sienna", "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/0_Toyota_Sienna_%28XL40%29_1.jpg/960px-0_Toyota_Sienna_%28XL40%29_1.jpg",
+            "Benespit", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:0_Toyota_Sienna_(XL40)_1.jpg"),
+        ["CC7890FF"] = new("BMW 4 Series", "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/BMW_4-Series_Coup%C3%A9_%28G22%29_420d_%282020%29_%2853326632791%29.jpg/960px-BMW_4-Series_Coup%C3%A9_%28G22%29_420d_%282020%29_%2853326632791%29.jpg",
+            "Charles from Port Chester, New York", "CC BY 2.0", "https://creativecommons.org/licenses/by/2.0",
+            "https://commons.wikimedia.org/wiki/File:BMW_4-Series_Coup%C3%A9_(G22)_420d_(2020)_(53326632791).jpg"),
+        ["DD1122GG"] = new("Nissan Leaf", "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/2019_Nissan_Leaf_ZE1_%2820190722%29.jpg/960px-2019_Nissan_Leaf_ZE1_%2820190722%29.jpg",
+            "オーバードライブ83", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2019_Nissan_Leaf_ZE1_(20190722).jpg"),
+        ["AA0007KA"] = new("Skoda Octavia", "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Skoda_Octavia_IV_1X7A6024.jpg/960px-Skoda_Octavia_IV_1X7A6024.jpg",
+            "Alexander Migl", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Skoda_Octavia_IV_1X7A6024.jpg"),
+        ["BC0008KA"] = new("Hyundai Elantra", "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/HYUNDAI_ELANTRA_CN7_China.jpg/960px-HYUNDAI_ELANTRA_CN7_China.jpg",
+            "Dinkun Chen", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:HYUNDAI_ELANTRA_CN7_China.jpg"),
+        ["BH0009KA"] = new("Volkswagen Passat", "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/Volkswagen_Passat_%28B8%29_%E2%80%93_front_view_%282017%29.jpg/960px-Volkswagen_Passat_%28B8%29_%E2%80%93_front_view_%282017%29.jpg",
+            "Acgskup", "CC BY 4.0", "https://creativecommons.org/licenses/by/4.0",
+            "https://commons.wikimedia.org/wiki/File:Volkswagen_Passat_(B8)_%E2%80%93_front_view_(2017).jpg"),
+        ["AE0010KA"] = new("Kia K5", "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a4/2024_Kia_K5_%28DL3%29_2.jpg/960px-2024_Kia_K5_%28DL3%29_2.jpg",
+            "Benespit", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2024_Kia_K5_(DL3)_2.jpg"),
+        ["AX0011KA"] = new("Toyota Corolla", "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/Toyota_Corolla_E210_sedan_Sanming_01_2022-07-27.jpg/960px-Toyota_Corolla_E210_sedan_Sanming_01_2022-07-27.jpg",
+            "JamesYoung8167", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Toyota_Corolla_E210_sedan_Sanming_01_2022-07-27.jpg"),
+        ["CE0012KA"] = new("Renault Duster", "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Renault_Duster_1.6_Zen_2022_%2853699304515%29.jpg/960px-Renault_Duster_1.6_Zen_2022_%2853699304515%29.jpg",
+            "RL GNZLZ from Chile", "CC BY-SA 2.0", "https://creativecommons.org/licenses/by-sa/2.0",
+            "https://commons.wikimedia.org/wiki/File:Renault_Duster_1.6_Zen_2022_(53699304515).jpg"),
+        ["BC0013KA"] = new("Toyota RAV4", "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9f/Toyota_RAV4_Plug-in_Hybrid_GR_Sport_IMG_9891.jpg/960px-Toyota_RAV4_Plug-in_Hybrid_GR_Sport_IMG_9891.jpg",
+            "Alexander-93", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Toyota_RAV4_Plug-in_Hybrid_GR_Sport_IMG_9891.jpg"),
+        ["AA0014KA"] = new("Kia Sportage", "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/2023_Kia_Sportage_%28NQ5%29_in_White%2C_front_left.jpg/960px-2023_Kia_Sportage_%28NQ5%29_in_White%2C_front_left.jpg",
+            "Benespit", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2023_Kia_Sportage_(NQ5)_in_White,_front_left.jpg"),
+        ["BH0015KA"] = new("Mitsubishi Outlander", "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/2022_Mitsubishi_Outlander.jpg/960px-2022_Mitsubishi_Outlander.jpg",
+            "MercurySable99", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2022_Mitsubishi_Outlander.jpg"),
+        ["AA0016KA"] = new("Volvo XC90", "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Volvo_XC90_II_IMG_5738.jpg/960px-Volvo_XC90_II_IMG_5738.jpg",
+            "Alexander Migl", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Volvo_XC90_II_IMG_5738.jpg"),
+        ["AA0017KA"] = new("Kia Ceed", "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/2018_Kia_Ceed_First_Edition_ISG_1.3_Front.jpg/960px-2018_Kia_Ceed_First_Edition_ISG_1.3_Front.jpg",
+            "Vauxford", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2018_Kia_Ceed_First_Edition_ISG_1.3_Front.jpg"),
+        ["BH0018KA"] = new("Renault Clio", "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Renault_Clio_V_%282023%29_1X7A1577.jpg/960px-Renault_Clio_V_%282023%29_1X7A1577.jpg",
+            "Alexander-93", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Renault_Clio_V_(2023)_1X7A1577.jpg"),
+        ["CE0019KA"] = new("Skoda Fabia", "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6d/Skoda_Fabia_IV_Leonberg_2022_1X7A0453.jpg/960px-Skoda_Fabia_IV_Leonberg_2022_1X7A0453.jpg",
+            "Alexander Migl", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Skoda_Fabia_IV_Leonberg_2022_1X7A0453.jpg"),
+        ["BC0020KA"] = new("Volkswagen ID.3", "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/2020_Volkswagen_ID.3_1st_Front.jpg/960px-2020_Volkswagen_ID.3_1st_Front.jpg",
+            "Vauxford", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2020_Volkswagen_ID.3_1st_Front.jpg"),
+        ["AE0021KA"] = new("Peugeot 208", "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/2020_Peugeot_208_GT_Line_PureTech_1.2_Front.jpg/960px-2020_Peugeot_208_GT_Line_PureTech_1.2_Front.jpg",
+            "Vauxford", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2020_Peugeot_208_GT_Line_PureTech_1.2_Front.jpg"),
+        ["BC0022KA"] = new("Volkswagen Touran", "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/2018_Volkswagen_Touran_1.6.jpg/960px-2018_Volkswagen_Touran_1.6.jpg",
+            "Vauxford", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2018_Volkswagen_Touran_1.6.jpg"),
+        ["AX0023KA"] = new("Ford Galaxy", "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Ford_Galaxy_III.jpg/960px-Ford_Galaxy_III.jpg",
+            "Tlustioch", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Ford_Galaxy_III.jpg"),
+        ["AA0024KA"] = new("Mercedes-Benz V-Class", "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/2019_Mercedes-Benz_V-Class_%28W447%29_1X7A1743.jpg/960px-2019_Mercedes-Benz_V-Class_%28W447%29_1X7A1743.jpg",
+            "Alexander-93", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2019_Mercedes-Benz_V-Class_(W447)_1X7A1743.jpg"),
+        ["CE0025KA"] = new("Citroen Berlingo", "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Citroen_Berlingo_III_Classic-Gala_2022_1X7A0002.jpg/960px-Citroen_Berlingo_III_Classic-Gala_2022_1X7A0002.jpg",
+            "Alexander Migl", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Citroen_Berlingo_III_Classic-Gala_2022_1X7A0002.jpg"),
+        ["AA0026KA"] = new("Ford Mustang", "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/2021_Ford_Mustang_Shelby_GT500_%28S550%29_Front_%28Bahrain%29.jpg/960px-2021_Ford_Mustang_Shelby_GT500_%28S550%29_Front_%28Bahrain%29.jpg",
+            "Mohammed Hamad", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2021_Ford_Mustang_Shelby_GT500_(S550)_Front_(Bahrain).jpg"),
+        ["BC0027KA"] = new("Audi A5 Coupe", "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Audi_A5_Coupe_F5_Facelift_1X7A0301.jpg/960px-Audi_A5_Coupe_F5_Facelift_1X7A0301.jpg",
+            "Alexander Migl", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Audi_A5_Coupe_F5_Facelift_1X7A0301.jpg"),
+        ["AA0028KA"] = new("Tesla Model 3", "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/2023_Tesla_Model_3_Highland_Long_Range_AWD.jpg/960px-2023_Tesla_Model_3_Highland_Long_Range_AWD.jpg",
+            "Chanokchon", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2023_Tesla_Model_3_Highland_Long_Range_AWD.jpg"),
+        ["AE0029KA"] = new("Nissan Qashqai", "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Nissan_Qashqai_%28J12%29_Auto_Zuerich_2021_IMG_0446.jpg/960px-Nissan_Qashqai_%28J12%29_Auto_Zuerich_2021_IMG_0446.jpg",
+            "Alexander Migl", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Nissan_Qashqai_(J12)_Auto_Zuerich_2021_IMG_0446.jpg"),
+        ["AX0030KA"] = new("Hyundai Tucson", "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/ba/Hyundai_Tucson_Plug-in_N-Line_Auto_Zuerich_2021_IMG_0366.jpg/960px-Hyundai_Tucson_Plug-in_N-Line_Auto_Zuerich_2021_IMG_0366.jpg",
+            "Alexander Migl", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Hyundai_Tucson_Plug-in_N-Line_Auto_Zuerich_2021_IMG_0366.jpg"),
+        ["BH0031KA"] = new("Mazda 6", "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/MAZDA6_%28GJ%29_China.jpg/960px-MAZDA6_%28GJ%29_China.jpg",
+            "Dinkun Chen", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:MAZDA6_(GJ)_China.jpg"),
+        ["AX0032KA"] = new("Skoda Superb", "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/%C5%A0koda_Superb_IV_Combi_Automesse_Ludwigsburg_2024_IMG_1400.jpg/960px-%C5%A0koda_Superb_IV_Combi_Automesse_Ludwigsburg_2024_IMG_1400.jpg",
+            "Alexander-93", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:%C5%A0koda_Superb_IV_Combi_Automesse_Ludwigsburg_2024_IMG_1400.jpg"),
+        ["CE0033KA"] = new("Honda Civic", "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/2022_Honda_Civic_LX_Sedan%2C_front_right%2C_11-02-2022.jpg/960px-2022_Honda_Civic_LX_Sedan%2C_front_right%2C_11-02-2022.jpg",
+            "MercurySable99", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2022_Honda_Civic_LX_Sedan,_front_right,_11-02-2022.jpg"),
+        ["BH0034KA"] = new("BYD Seal", "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/BYD_Seal_IAA_2023_1X7A0026.jpg/960px-BYD_Seal_IAA_2023_1X7A0026.jpg",
+            "Alexander-93", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:BYD_Seal_IAA_2023_1X7A0026.jpg"),
+        ["AA0035KA"] = new("Toyota Land Cruiser Prado", "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/TOYOTA_LAND_CRUISER_PRADO_%28J150%29_China.jpg/960px-TOYOTA_LAND_CRUISER_PRADO_%28J150%29_China.jpg",
+            "Dinkun Chen", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:TOYOTA_LAND_CRUISER_PRADO_(J150)_China.jpg"),
+        ["AA0036KA"] = new("Hyundai Kona Electric", "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/05/Hyundai_Kona_Electric_%28SX2%29_Auto_Zuerich_2023_1X7A1021.jpg/960px-Hyundai_Kona_Electric_%28SX2%29_Auto_Zuerich_2023_1X7A1021.jpg",
+            "Alexander-93", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Hyundai_Kona_Electric_(SX2)_Auto_Zuerich_2023_1X7A1021.jpg"),
+        ["BC0037KA"] = new("Suzuki Vitara", "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e6/2021_Suzuki_LY_Vitara_1.4_front_side.jpg/960px-2021_Suzuki_LY_Vitara_1.4_front_side.jpg",
+            "Q 334e", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2021_Suzuki_LY_Vitara_1.4_front_side.jpg"),
+        ["AE0038KA"] = new("Ford Kuga", "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/2024_Ford_Kuga_%28third_generation%29_IMG_9853.jpg/960px-2024_Ford_Kuga_%28third_generation%29_IMG_9853.jpg",
+            "Alexander-93", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2024_Ford_Kuga_(third_generation)_IMG_9853.jpg"),
+        ["AA0039KA"] = new("Toyota Yaris", "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/2024_Toyota_Yaris_Hybrid_130_%28XP210%29_IMG_9425.jpg/960px-2024_Toyota_Yaris_Hybrid_130_%28XP210%29_IMG_9425.jpg",
+            "Alexander-93", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2024_Toyota_Yaris_Hybrid_130_(XP210)_IMG_9425.jpg"),
+        ["AX0040KA"] = new("Opel Corsa", "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/2023_Opel_Corsa_F_Auto_Zuerich_2023_1X7A1113.jpg/960px-2023_Opel_Corsa_F_Auto_Zuerich_2023_1X7A1113.jpg",
+            "Alexander-93", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2023_Opel_Corsa_F_Auto_Zuerich_2023_1X7A1113.jpg"),
+        ["BH0041KA"] = new("Volkswagen Polo", "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/2018_Volkswagen_Polo_SE_1.0_Front.jpg/960px-2018_Volkswagen_Polo_SE_1.0_Front.jpg",
+            "Vauxford", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2018_Volkswagen_Polo_SE_1.0_Front.jpg"),
+        ["AE0042KA"] = new("Renault Zoe", "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/2018_Renault_ZOE.jpg/960px-2018_Renault_ZOE.jpg",
+            "Vauxford", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2018_Renault_ZOE.jpg"),
+        ["BC0043KA"] = new("Mini Cooper", "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/2021_Mini_Hatch_%28F56%29_John_Cooper_Works_1X7A0150.jpg/960px-2021_Mini_Hatch_%28F56%29_John_Cooper_Works_1X7A0150.jpg",
+            "Alexander Migl", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2021_Mini_Hatch_(F56)_John_Cooper_Works_1X7A0150.jpg"),
+        ["BH0044KA"] = new("Kia Carnival", "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/2024_Kia_Carnival_%28KA4%29_1.jpg/960px-2024_Kia_Carnival_%28KA4%29_1.jpg",
+            "Benespit", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2024_Kia_Carnival_(KA4)_1.jpg"),
+        ["AE0045KA"] = new("Renault Grand Scenic", "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bd/2017_Renault_Grand_Scenic_SIG_NAV_DCi_1.5_Front.jpg/960px-2017_Renault_Grand_Scenic_SIG_NAV_DCi_1.5_Front.jpg",
+            "Vauxford", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2017_Renault_Grand_Scenic_SIG_NAV_DCi_1.5_Front.jpg"),
+        ["AX0046KA"] = new("Toyota Proace Verso", "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Toyota_Proace_Verso_Monrepos_2019_IMG_1922.jpg/960px-Toyota_Proace_Verso_Monrepos_2019_IMG_1922.jpg",
+            "Alexander Migl", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Toyota_Proace_Verso_Monrepos_2019_IMG_1922.jpg"),
+        ["BH0047KA"] = new("Chevrolet Camaro", "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/CHEVROLET_CAMARO_SIXTH_GENERATION_China.jpg/960px-CHEVROLET_CAMARO_SIXTH_GENERATION_China.jpg",
+            "Dinkun Chen", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:CHEVROLET_CAMARO_SIXTH_GENERATION_China.jpg"),
+        ["AA0048KA"] = new("Mercedes-Benz C-Class Coupe", "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/2016_Mercedes-Benz_C-Class_Coupe_C250_AMG_Dynamic.jpg/960px-2016_Mercedes-Benz_C-Class_Coupe_C250_AMG_Dynamic.jpg",
+            "Chanokchon", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:2016_Mercedes-Benz_C-Class_Coupe_C250_AMG_Dynamic.jpg"),
+        ["AX0049KA"] = new("BMW 2 Series Coupe", "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/BMW_2-Series_Coup%C3%A9_%28G42%29_M240i_xDrive_%282022%29_%2852226831652%29.jpg/960px-BMW_2-Series_Coup%C3%A9_%28G42%29_M240i_xDrive_%282022%29_%2852226831652%29.jpg",
+            "Charles from Port Chester, New York", "CC BY 2.0", "https://creativecommons.org/licenses/by/2.0",
+            "https://commons.wikimedia.org/wiki/File:BMW_2-Series_Coup%C3%A9_(G42)_M240i_xDrive_(2022)_(52226831652).jpg"),
+        ["AA0050KA"] = new("Porsche 718 Cayman", "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Porsche_718_Cayman_GT4_Solitude_Revival_2022_1X7A0107.jpg/960px-Porsche_718_Cayman_GT4_Solitude_Revival_2022_1X7A0107.jpg",
+            "Alexander Migl", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0",
+            "https://commons.wikimedia.org/wiki/File:Porsche_718_Cayman_GT4_Solitude_Revival_2022_1X7A0107.jpg"),
+    };
+
+    /// <summary>
+    /// Sets the photo of demo cars that have no image yet (matched by licence plate). Images uploaded in the
+    /// admin panel are never replaced. Returns the number of cars updated.
+    /// </summary>
+    public static async Task<int> FillMissingAsync(ApplicationDbContext db, CancellationToken ct = default)
+    {
+        var cars = await db.Cars.Where(c => c.ImageUrl == null || c.ImageUrl == "").ToListAsync(ct);
+        var updated = 0;
+        foreach (var car in cars)
+        {
+            if (!ByPlate.TryGetValue(car.LicensePlate, out var photo)) continue;
+            car.ImageUrl = photo.Url;
+            updated++;
+        }
+        if (updated > 0) await db.SaveChangesAsync(ct);
+        return updated;
+    }
+}

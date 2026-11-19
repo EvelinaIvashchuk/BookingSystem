@@ -110,7 +110,8 @@ public static class DemoFleet
         PricePerDay = price,
         Location = location,
         Description = description,
-        Status = status
+        Status = status,
+        ImageUrl = DemoFleetPhotos.ByPlate.GetValueOrDefault(Plate(id, location))?.Url
     };
 
     /// <summary>Region prefix by city + fleet number, e.g. "BC0020KA" for car 20 in Lviv.</summary>

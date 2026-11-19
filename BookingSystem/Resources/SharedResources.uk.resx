@@ -302,4 +302,11 @@
   <data name="Val_MinDays" xml:space="preserve"><value>Оренда повинна тривати щонайменше {0} день(-ів).</value></data>
   <data name="Val_MaxDays" xml:space="preserve"><value>Оренда не може перевищувати {0} днів.</value></data>
   <data name="Val_NotesMax" xml:space="preserve"><value>Нотатки не можуть перевищувати 500 символів.</value></data>
+  <data name="Nav_PhotoCredits" xml:space="preserve"><value>Автори фото</value></data>
+  <data name="Photos_Title" xml:space="preserve"><value>Автори фотографій автомобілів</value></data>
+  <data name="Photos_Intro" xml:space="preserve"><value>Фотографії демонстраційних автомобілів узято з Wikimedia Commons і використано за ліцензіями Creative Commons. На сайті зображення масштабовано й обрізано; оригінали — на сторінках джерел.</value></data>
+  <data name="Photos_Car" xml:space="preserve"><value>Автомобіль</value></data>
+  <data name="Photos_Author" xml:space="preserve"><value>Автор</value></data>
+  <data name="Photos_License" xml:space="preserve"><value>Ліцензія</value></data>
+  <data name="Photos_Source" xml:space="preserve"><value>Джерело</value></data>
 </root>

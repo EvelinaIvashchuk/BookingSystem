@@ -302,4 +302,11 @@
   <data name="Val_MinDays" xml:space="preserve"><value>Rental must be at least {0} day(s).</value></data>
   <data name="Val_MaxDays" xml:space="preserve"><value>Rental cannot exceed {0} days.</value></data>
   <data name="Val_NotesMax" xml:space="preserve"><value>Notes cannot exceed 500 characters.</value></data>
+  <data name="Nav_PhotoCredits" xml:space="preserve"><value>Photo credits</value></data>
+  <data name="Photos_Title" xml:space="preserve"><value>Car photo credits</value></data>
+  <data name="Photos_Intro" xml:space="preserve"><value>Photos of the demo cars are taken from Wikimedia Commons and used under Creative Commons licences. The images are shown scaled and cropped; the originals are on the source pages.</value></data>
+  <data name="Photos_Car" xml:space="preserve"><value>Car</value></data>
+  <data name="Photos_Author" xml:space="preserve"><value>Author</value></data>
+  <data name="Photos_License" xml:space="preserve"><value>Licence</value></data>
+  <data name="Photos_Source" xml:space="preserve"><value>Source</value></data>
 </root>
