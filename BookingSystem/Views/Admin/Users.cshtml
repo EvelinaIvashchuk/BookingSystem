@@ -5,124 +5,108 @@
     var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="cr-page">
+    <partial name="_AdminNav" />
+    <div class="cr-page-head">
         <div>
-            <h1 class="h2 mb-0">@L["Admin_ManageUsers_Title"]</h1>
-            <p class="text-muted small">@L["Admin_ManageUsersDesc"]</p>
+            <h1>@L["Admin_ManageUsers_Title"]</h1>
+            <p>@L["Admin_ManageUsersDesc"]</p>
         </div>
-        <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> @L["Admin_BackToDashboard"]
-        </a>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-3">@L["Admin_User"]</th>
-                            <th>@L["Account_Email"]</th>
-                            <th>@L["Admin_Role"]</th>
-                            <th>@L["Admin_Registered"]</th>
-                            <th>@L["Admin_Status"]</th>
-                            <th class="text-end pe-3">@L["Admin_Actions"]</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!Model.Any())
-                        {
-                            <tr>
-                                <td colspan="6" class="text-center py-5 text-muted">
-                                    <i class="bi bi-people fs-3 d-block mb-2"></i>@L["Admin_NoUsers"]
-                                </td>
-                            </tr>
-                        }
-                        @foreach (var (user, roles) in Model)
-                        {
-                            var isSelf    = user.Id == currentUserId;
-                            var isAdmin   = roles.Contains("Admin");
-
-                            <tr class="@(!user.IsActive ? "table-secondary text-muted" : "")">
-                                <td class="ps-3">
-                                    <div class="fw-semibold">
-                                        @user.FullName
-                                        @if (isSelf)
-                                        {
-                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle ms-1">@L["Admin_You"]</span>
-                                        }
+    @if (!Model.Any())
+    {
+        <div class="cr-panel cr-empty">
+            <div class="cr-empty__icon"><i class="bi bi-people"></i></div>
+            <p class="mb-0">@L["Admin_NoUsers"]</p>
+        </div>
+    }
+    else
+    {
+        <div class="cr-panel cr-panel--flush">
+            <table class="cr-table">
+                <thead>
+                    <tr>
+                        <th>@L["Admin_User"]</th>
+                        <th>@L["Account_Email"]</th>
+                        <th>@L["Admin_Role"]</th>
+                        <th>@L["Admin_Registered"]</th>
+                        <th>@L["Admin_Status"]</th>
+                        <th class="text-end">@L["Admin_Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var (user, roles) in Model)
+                    {
+                        var isSelf = user.Id == currentUserId;
+                        var isAdmin = roles.Contains("Admin");
+                        var initials = string.Concat((user.FullName ?? user.Email ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpperInvariant(p[0])));
+                        <tr class="@(!user.IsActive ? "opacity-75" : "")">
+                            <td class="cr-td-main">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="cr-avatar">@initials</span>
+                                    <div>
+                                        <div class="cr-td-title">@user.FullName @if (isSelf) { <span class="cr-status cr-status--info ms-1">@L["Admin_You"]</span> }</div>
+                                        <div class="cr-td-sub">ID: @user.Id[..8]…</div>
                                     </div>
-                                    <div class="text-muted small">ID: @user.Id[..8]…</div>
-                                </td>
-                                <td class="small">@user.Email</td>
-                                <td>
-                                    @foreach (var role in roles)
+                                </div>
+                            </td>
+                            <td data-label="@L["Account_Email"]">@user.Email</td>
+                            <td data-label="@L["Admin_Role"]">
+                                @foreach (var role in roles)
+                                {
+                                    <span class="cr-status @(role == "Admin" ? "cr-status--info" : "cr-status--neutral") me-1">@L["Role_" + role]</span>
+                                }
+                            </td>
+                            <td data-label="@L["Admin_Registered"]" class="cr-muted">@user.CreatedAt.ToString("dd MMM yyyy")</td>
+                            <td data-label="@L["Admin_Status"]">
+                                @if (user.IsActive)
+                                {
+                                    <span class="cr-status cr-status--active"><i class="bi bi-check-circle"></i>@L["Admin_Active"]</span>
+                                }
+                                else
+                                {
+                                    <span class="cr-status cr-status--inactive"><i class="bi bi-dash-circle"></i>@L["Admin_Inactive"]</span>
+                                }
+                            </td>
+                            <td class="cr-td-actions">
+                                @if (isSelf)
+                                {
+                                    <span class="cr-muted">—</span>
+                                }
+                                else
+                                {
+                                    <form asp-action="ToggleUserActive" method="post" class="d-inline">
+                                        <input type="hidden" name="userId" value="@user.Id" />
+                                        <input type="hidden" name="isActive" value="@(!user.IsActive)" />
+                                        @if (user.IsActive)
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary" onclick="return confirm(this.dataset.confirm)"
+                                                    data-confirm="@string.Format(L["Admin_ConfirmDeactivate"].Value, user.FullName)">
+                                                <i class="bi bi-person-slash me-1"></i>@L["Admin_Deactivate"]
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-person-check me-1"></i>@L["Admin_Activate"]</button>
+                                        }
+                                    </form>
+                                    @if (!isAdmin)
                                     {
-                                        <span class="badge @(role == "Admin" ? "bg-danger" : "bg-secondary") me-1">@role</span>
+                                        <form asp-action="PromoteToAdmin" method="post" class="d-inline">
+                                            <input type="hidden" name="userId" value="@user.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-primary" onclick="return confirm(this.dataset.confirm)"
+                                                    data-confirm="@string.Format(L["Admin_ConfirmPromote"].Value, user.FullName)">
+                                                <i class="bi bi-shield-plus me-1"></i>@L["Admin_MakeAdmin"]
+                                            </button>
+                                        </form>
                                     }
-                                </td>
-                                <td class="small text-muted">@user.CreatedAt.ToString("dd MMM yyyy")</td>
-                                <td>
-                                    @if (user.IsActive)
-                                    {
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                            <i class="bi bi-check-circle me-1"></i>@L["Admin_Active"]
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
-                                            <i class="bi bi-dash-circle me-1"></i>@L["Admin_Inactive"]
-                                        </span>
-                                    }
-                                </td>
-                                <td class="text-end pe-3">
-                                    @if (!isSelf)
-                                    {
-                                        <div class="d-flex justify-content-end gap-2 flex-wrap">
-                                            <form asp-action="ToggleUserActive" method="post" class="d-inline">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="userId" value="@user.Id" />
-                                                <input type="hidden" name="isActive" value="@(!user.IsActive)" />
-                                                @if (user.IsActive)
-                                                {
-                                                    <button type="submit" class="btn btn-sm btn-outline-warning"
-                                                            onclick="return confirm('Deactivate @user.FullName?')">
-                                                        <i class="bi bi-person-slash me-1"></i>@L["Admin_Deactivate"]
-                                                    </button>
-                                                }
-                                                else
-                                                {
-                                                    <button type="submit" class="btn btn-sm btn-outline-success">
-                                                        <i class="bi bi-person-check me-1"></i>@L["Admin_Activate"]
-                                                    </button>
-                                                }
-                                            </form>
-
-                                            @if (!isAdmin)
-                                            {
-                                                <form asp-action="PromoteToAdmin" method="post" class="d-inline">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="userId" value="@user.Id" />
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                            onclick="return confirm('Promote @user.FullName to Admin?')">
-                                                        <i class="bi bi-shield-plus me-1"></i>@L["Admin_MakeAdmin"]
-                                                    </button>
-                                                </form>
-                                            }
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted small">—</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    </div>
+    }
 </div>

@@ -3,66 +3,41 @@
     ViewData["Title"] = L["Account_SignIn_Title"].Value;
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4 p-md-5">
-                    <div class="text-center mb-4">
-                        <i class="bi bi-person-circle text-primary" style="font-size: 3rem;"></i>
-                        <h2 class="h3 fw-bold mt-2">@L["Account_WelcomeBack"]</h2>
-                        <p class="text-muted small">@L["Account_SignInDesc"]</p>
-                    </div>
+<div class="cr-auth">
+    <div class="cr-panel p-4 p-sm-5">
+        <div class="cr-auth__logo"><i class="bi bi-stars"></i></div>
+        <h1>@L["Account_WelcomeBack"]</h1>
+        <p class="cr-auth__sub">@L["Account_SignInDesc"]</p>
 
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-                    <form asp-action="Login" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" asp-for="ReturnUrl" />
+        <form asp-action="Login" method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
 
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-semibold"></label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="bi bi-envelope text-muted"></i>
-                                </span>
-                                <input asp-for="Email" class="form-control border-start-0 ps-0"
-                                       placeholder="you@example.com" autocomplete="email" />
-                            </div>
-                            <span asp-validation-for="Email" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Password" class="form-label fw-semibold"></label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="bi bi-lock text-muted"></i>
-                                </span>
-                                <input asp-for="Password" class="form-control border-start-0 ps-0"
-                                       placeholder="••••••••" autocomplete="current-password" />
-                            </div>
-                            <span asp-validation-for="Password" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-4 form-check">
-                            <input asp-for="RememberMe" class="form-check-input" />
-                            <label asp-for="RememberMe" class="form-check-label text-muted small">@L["Account_RememberMe"]</label>
-                        </div>
-
-                        <div class="d-grid mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg">@L["Account_SignInBtn"]</button>
-                        </div>
-                    </form>
-
-                    <hr class="my-4">
-
-                    <p class="text-center text-muted small mb-0">
-                        @L["Account_NoAccount"]
-                        <a asp-action="Register" class="fw-semibold text-decoration-none">@L["Account_CreateOne"]</a>
-                    </p>
-                </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control form-control-lg" placeholder="you@example.com" autocomplete="email" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
             </div>
-        </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control form-control-lg" placeholder="••••••••" autocomplete="current-password" />
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4 form-check">
+                <input asp-for="RememberMe" class="form-check-input" />
+                <label asp-for="RememberMe" class="form-check-label cr-muted">@L["Account_RememberMe"]</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100">@L["Account_SignInBtn"]</button>
+        </form>
+
+        <p class="text-center cr-muted mt-4 mb-0">
+            @L["Account_NoAccount"]
+            <a asp-action="Register" class="fw-bold text-decoration-none">@L["Account_CreateOne"]</a>
+        </p>
     </div>
 </div>
 

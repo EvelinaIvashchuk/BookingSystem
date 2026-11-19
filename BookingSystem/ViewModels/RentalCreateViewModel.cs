@@ -10,6 +10,7 @@ public class RentalCreateViewModel
     public string Location { get; set; } = string.Empty;
     public decimal PricePerDay { get; set; }
     public string CategoryName { get; set; } = string.Empty;
+    public string? ImageUrl { get; set; }
 
     [Required(ErrorMessage = "Pickup date is required.")]
     [Display(Name = "Pickup Date")]

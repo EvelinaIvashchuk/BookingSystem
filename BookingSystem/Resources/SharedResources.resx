@@ -18,7 +18,7 @@
   <data name="Lang_Other_Culture" xml:space="preserve"><value>uk</value></data>
 
   <!-- ── Home ───────────────────────────────────────────────────── -->
-  <data name="Home_Title" xml:space="preserve"><value>Home Page</value></data>
+  <data name="Home_Title" xml:space="preserve"><value>Car rental with an AI assistant</value></data>
   <data name="Home_Welcome" xml:space="preserve"><value>Welcome to CarRental</value></data>
   <data name="Home_Subtitle" xml:space="preserve"><value>Find and rent the perfect car for your trip. Fast, easy, reliable.</value></data>
   <data name="Home_SearchCars" xml:space="preserve"><value>Search Cars</value></data>
@@ -336,4 +336,72 @@
   <data name="Home_Step3Desc" xml:space="preserve"><value>The assistant prepares a booking draft; it is placed only after you confirm it.</value></data>
   <data name="Home_PopularCars" xml:space="preserve"><value>Popular cars</value></data>
   <data name="Home_PopularCarsSub" xml:space="preserve"><value>50 cars in six cities of Ukraine</value></data>
+  <data name="Brand" xml:space="preserve"><value>Brand</value></data>
+  <data name="Model" xml:space="preserve"><value>Model</value></data>
+  <data name="Year" xml:space="preserve"><value>Year</value></data>
+  <data name="License Plate" xml:space="preserve"><value>License plate</value></data>
+  <data name="Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Price Per Day (₴)" xml:space="preserve"><value>Price per day (₴)</value></data>
+  <data name="Fuel Type" xml:space="preserve"><value>Fuel type</value></data>
+  <data name="Transmission" xml:space="preserve"><value>Transmission</value></data>
+  <data name="Seats" xml:space="preserve"><value>Seats</value></data>
+  <data name="Location" xml:space="preserve"><value>Location</value></data>
+  <data name="Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Image URL" xml:space="preserve"><value>Image URL</value></data>
+  <data name="Photo" xml:space="preserve"><value>Photo</value></data>
+  <data name="Notes" xml:space="preserve"><value>Notes</value></data>
+  <data name="Pickup Date" xml:space="preserve"><value>Pick-up date</value></data>
+  <data name="Return Date" xml:space="preserve"><value>Return date</value></data>
+  <data name="Rejection Reason" xml:space="preserve"><value>Rejection reason</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Privacy_Intro" xml:space="preserve"><value>A short summary of the data CarRental keeps and how the AI assistant works.</value></data>
+  <data name="Privacy_DataTitle" xml:space="preserve"><value>Account and rentals</value></data>
+  <data name="Privacy_DataText" xml:space="preserve"><value>When you register we store your first name, last name and e-mail. For every rental we store the car, dates, total, status and your notes. This data is needed to process bookings; it is visible to you and to the service administrator.</value></data>
+  <data name="Privacy_ChatTitle" xml:space="preserve"><value>Chat history</value></data>
+  <data name="Privacy_ChatText" xml:space="preserve"><value>Chat messages and the assistant's replies are stored in the database together with the chat session. If you are signed in, the session belongs to your account and is never shown to other users. The session id is kept in your browser; the New chat button starts a new conversation.</value></data>
+  <data name="Privacy_AiTitle" xml:space="preserve"><value>Processing by language models</value></data>
+  <data name="Privacy_AiText" xml:space="preserve"><value>To reply, the assistant sends your messages and the context it needs (for example, cars it found and fragments of the rental rules) to an external language model provider, Google Gemini or Groq. Do not write passwords, card numbers, passport data or other sensitive information in the chat.</value></data>
+  <data name="Privacy_BookingTitle" xml:space="preserve"><value>Bookings only with your confirmation</value></data>
+  <data name="Privacy_BookingText" xml:space="preserve"><value>The assistant can only prepare a booking draft. A rental is created only after you press Confirm; the assistant cannot confirm bookings, take payments or change prices.</value></data>
+  <data name="Privacy_CookiesTitle" xml:space="preserve"><value>Cookies</value></data>
+  <data name="Privacy_CookiesText" xml:space="preserve"><value>The site uses only necessary cookies: for signing in, remembering your language and protecting forms against request forgery (antiforgery). There are no advertising or third-party analytics cookies.</value></data>
+  <data name="Rental_Duration" xml:space="preserve"><value>Duration</value></data>
+  <data name="Account_FirstNamePlaceholder" xml:space="preserve"><value>Olena</value></data>
+  <data name="Account_LastNamePlaceholder" xml:space="preserve"><value>Kovalenko</value></data>
+  <data name="Error_RequestId" xml:space="preserve"><value>Request ID</value></data>
+  <data name="Common_GoBack" xml:space="preserve"><value>Go back</value></data>
+  <data name="Car_AskAssistant" xml:space="preserve"><value>Ask the assistant</value></data>
+  <data name="Car_ResetFilters" xml:space="preserve"><value>Reset</value></data>
+  <data name="Car_NoResultsHint" xml:space="preserve"><value>Try another category or query, or describe the car you need to the assistant.</value></data>
+  <data name="Enum_Petrol" xml:space="preserve"><value>Petrol</value></data>
+  <data name="Enum_Diesel" xml:space="preserve"><value>Diesel</value></data>
+  <data name="Enum_Electric" xml:space="preserve"><value>Electric</value></data>
+  <data name="Enum_Hybrid" xml:space="preserve"><value>Hybrid</value></data>
+  <data name="Enum_Manual" xml:space="preserve"><value>Manual</value></data>
+  <data name="Enum_Automatic" xml:space="preserve"><value>Automatic</value></data>
+  <data name="Car_Specs" xml:space="preserve"><value>Specifications</value></data>
+  <data name="Car_AskAboutThis" xml:space="preserve"><value>Ask the assistant about this car</value></data>
+  <data name="Car_AskAboutMessage" xml:space="preserve"><value>I want to rent the {0}</value></data>
+  <data name="Admin_SectionMain" xml:space="preserve"><value>Main</value></data>
+  <data name="Admin_SectionSpecs" xml:space="preserve"><value>Specifications</value></data>
+  <data name="Admin_SectionPhoto" xml:space="preserve"><value>Photo</value></data>
+  <data name="Admin_ChoosePhoto" xml:space="preserve"><value>Choose a photo</value></data>
+  <data name="Admin_ImageHint" xml:space="preserve"><value>JPG, PNG or WebP · up to 5 MB</value></data>
+  <data name="Admin_ImageKeepHint" xml:space="preserve"><value>leave empty to keep the current photo</value></data>
+  <data name="Admin_PhLocation" xml:space="preserve"><value>Kyiv, Khreshchatyk St, 10</value></data>
+  <data name="Admin_PhDescription" xml:space="preserve"><value>Briefly about the car: trim, features…</value></data>
+  <data name="Admin_RentalsNav" xml:space="preserve"><value>Rentals</value></data>
+  <data name="Admin_UsersNav" xml:space="preserve"><value>Users</value></data>
+  <data name="Admin_Approve" xml:space="preserve"><value>Approve</value></data>
+  <data name="Admin_Reject" xml:space="preserve"><value>Reject</value></data>
+  <data name="Admin_AiTitle" xml:space="preserve"><value>AI assistant</value></data>
+  <data name="Admin_AiModel" xml:space="preserve"><value>Model</value></data>
+  <data name="Admin_AiSearch" xml:space="preserve"><value>Knowledge base search</value></data>
+  <data name="Admin_AiSlotFilling" xml:space="preserve"><value>Slot filling</value></data>
+  <data name="Common_On" xml:space="preserve"><value>on</value></data>
+  <data name="Common_Off" xml:space="preserve"><value>off</value></data>
+  <data name="Role_Admin" xml:space="preserve"><value>Administrator</value></data>
+  <data name="Role_User" xml:space="preserve"><value>Customer</value></data>
+  <data name="Admin_ConfirmDeactivate" xml:space="preserve"><value>Deactivate {0}?</value></data>
+  <data name="Admin_ConfirmPromote" xml:space="preserve"><value>Make {0} an administrator?</value></data>
 </root>

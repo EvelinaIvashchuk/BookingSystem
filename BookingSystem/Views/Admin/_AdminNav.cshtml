@@ -1,0 +1,10 @@
+@{
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    string Is(params string[] actions) => actions.Contains(action, StringComparer.OrdinalIgnoreCase) ? "is-active" : "";
+}
+<nav class="cr-admin-nav" aria-label="@L["Nav_AdminPanel"]">
+    <a asp-controller="Admin" asp-action="Index" class="@Is("Index")"><i class="bi bi-grid"></i>@L["Admin_DashboardOverview"]</a>
+    <a asp-controller="Admin" asp-action="Cars" class="@Is("Cars", "CreateCar", "EditCar")"><i class="bi bi-car-front"></i>@L["Admin_Cars"]</a>
+    <a asp-controller="Admin" asp-action="Rentals" class="@Is("Rentals", "RejectRental")"><i class="bi bi-calendar-event"></i>@L["Admin_RentalsNav"]</a>
+    <a asp-controller="Admin" asp-action="Users" class="@Is("Users")"><i class="bi bi-people"></i>@L["Admin_UsersNav"]</a>
+</nav>

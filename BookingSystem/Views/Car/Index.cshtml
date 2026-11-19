@@ -3,97 +3,86 @@
 @model PaginatedList<BookingSystem.Models.Car>
 @{
     ViewData["Title"] = L["Car_Title"].Value;
-    var categories = ViewBag.Categories as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>();
+    var categories = (ViewBag.Categories as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>()).ToList();
+    var search = (string?)ViewBag.Search;
+    var categoryId = ViewBag.CategoryId?.ToString() as string;
+    var filtered = !string.IsNullOrEmpty(search) || !string.IsNullOrEmpty(categoryId);
 }
 
-<div class="container py-4">
-    <div class="row mb-4 align-items-end">
-        <div class="col-lg-4 mb-3 mb-lg-0">
-            <h1 class="h2 mb-0">@L["Car_BrowseCars"]</h1>
-            <p class="text-muted small mb-0">@string.Format(L["Car_CarsFound"].Value, Model.TotalCount)</p>
+<div class="cr-page">
+    <div class="cr-page-head">
+        <div>
+            <h1>@L["Car_BrowseCars"]</h1>
+            <p>@string.Format(L["Car_CarsFound"].Value, Model.TotalCount)</p>
         </div>
-        <div class="col-lg-8">
-            <form asp-action="Index" method="get">
-                <div class="row g-2">
-                    <div class="col-md-4">
-                        <select name="categoryId" class="form-select" onchange="this.form.submit()" asp-items="categories">
-                            <option value="">@L["Car_AllCategories"]</option>
-                        </select>
-                    </div>
-                    <div class="col-md-5">
-                        <input type="text" name="search" value="@ViewBag.Search"
-                               class="form-control" placeholder="@L["Car_SearchPlaceholder"]" />
-                    </div>
-                    <div class="col-md-3 d-flex gap-1">
-                        <button type="submit" class="btn btn-primary flex-fill">
-                            <i class="bi bi-search me-1"></i> @L["Car_Search"]
-                        </button>
-                        @if (!string.IsNullOrEmpty((string?)ViewBag.Search) || ViewBag.CategoryId != null)
-                        {
-                            <a asp-action="Index" class="btn btn-outline-secondary">
-                                <i class="bi bi-x-lg"></i>
-                            </a>
-                        }
-                    </div>
-                </div>
-            </form>
+        <button type="button" class="btn btn-outline-primary" onclick="window.CarRentalChat && window.CarRentalChat.open()">
+            <i class="bi bi-stars me-1"></i>@L["Car_AskAssistant"]
+        </button>
+    </div>
+
+    <div class="cr-panel cr-filters mb-4">
+        <form asp-action="Index" method="get" class="cr-filters__search">
+            @if (!string.IsNullOrEmpty(categoryId))
+            {
+                <input type="hidden" name="categoryId" value="@categoryId" />
+            }
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input type="text" name="search" value="@search" class="form-control" placeholder="@L["Car_SearchPlaceholder"]" aria-label="@L["Car_SearchPlaceholder"]" />
+            <button type="submit" class="btn btn-primary">@L["Car_Search"]</button>
+        </form>
+        <div class="cr-filters__chips">
+            <a asp-action="Index" asp-route-search="@search" class="cr-filter-chip @(string.IsNullOrEmpty(categoryId) ? "is-active" : "")">@L["Car_AllCategories"]</a>
+            @foreach (var c in categories)
+            {
+                <a asp-action="Index" asp-route-categoryId="@c.Value" asp-route-search="@search" class="cr-filter-chip @(c.Value == categoryId ? "is-active" : "")">@c.Text</a>
+            }
+            @if (filtered)
+            {
+                <a asp-action="Index" class="cr-filter-reset"><i class="bi bi-x-lg me-1"></i>@L["Car_ResetFilters"]</a>
+            }
         </div>
     </div>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info shadow-sm" role="alert">
-            <i class="bi bi-info-circle me-2"></i>
-            @L["Car_NoResults"]
-            <a asp-action="Index" class="alert-link ms-2">@L["Car_ViewAllCars"]</a>
+        <div class="cr-panel cr-empty">
+            <div class="cr-empty__icon"><i class="bi bi-search"></i></div>
+            <h2>@L["Car_NoResults"]</h2>
+            <p>@L["Car_NoResultsHint"]</p>
+            <a asp-action="Index" class="btn btn-primary">@L["Car_ViewAllCars"]</a>
         </div>
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
             @foreach (var c in Model)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0 transition-hover">
-                        @if (!string.IsNullOrEmpty(c.ImageUrl))
-                        {
-                            <img src="@ImageHelper.Src(c.ImageUrl)" class="card-img-top" alt="@c.FullName" style="height: 180px; object-fit: cover;">
-                        }
-                        else
-                        {
-                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
-                                <i class="bi bi-car-front text-muted opacity-50" style="font-size: 3rem;"></i>
+                    <div class="cr-car">
+                        <a asp-action="Details" asp-route-id="@c.Id" tabindex="-1" aria-hidden="true">
+                            @if (!string.IsNullOrEmpty(c.ImageUrl))
+                            {
+                                <img src="@ImageHelper.Src(c.ImageUrl)" class="cr-car__img" alt="" loading="lazy">
+                            }
+                            else
+                            {
+                                <div class="cr-car__img d-flex align-items-center justify-content-center fs-1 cr-muted"><i class="bi bi-car-front"></i></div>
+                            }
+                        </a>
+                        <div class="cr-car__body">
+                            <div class="d-flex justify-content-between align-items-center gap-2">
+                                <span class="cr-car__cat">@c.Category?.Name</span>
+                                <span class="cr-muted small text-truncate"><i class="bi bi-geo-alt me-1"></i>@c.Location.Split(',')[0]</span>
                             </div>
-                        }
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title mb-0">@c.FullName</h5>
+                            <h2 class="cr-car__name"><a asp-action="Details" asp-route-id="@c.Id" class="text-reset text-decoration-none">@c.FullName</a></h2>
+                            <div class="cr-car__specs">
+                                <span><i class="bi bi-fuel-pump me-1"></i>@L["Enum_" + c.FuelType]</span>
+                                <span><i class="bi bi-gear me-1"></i>@L["Enum_" + c.Transmission]</span>
+                                <span><i class="bi bi-people me-1"></i>@c.Seats</span>
                             </div>
-                            <p class="card-text text-muted small text-truncate-2 mb-3">
-                                @c.Description
-                            </p>
-                            <div class="d-flex align-items-center text-secondary small mb-1">
-                                <i class="bi bi-geo-alt me-1"></i> @c.Location
-                            </div>
-                            <div class="d-flex align-items-center text-secondary small mb-2">
-                                <i class="bi bi-fuel-pump me-1"></i> @c.FuelType
-                                <span class="mx-2 text-muted">|</span>
-                                <i class="bi bi-gear me-1"></i> @c.Transmission
-                                <span class="mx-2 text-muted">|</span>
-                                <i class="bi bi-people me-1"></i> @c.Seats @L["Car_Seats"]
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                @if (c.Category != null)
-                                {
-                                    <span class="badge bg-light text-dark border">@c.Category.Name</span>
-                                }
-                                <span class="fw-bold text-primary">@c.PricePerDay.ToString("N0") @L["Car_PerDay"]</span>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-0 pb-3">
-                            <div class="d-grid gap-2">
-                                <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-outline-primary">@L["Car_ViewDetails"]</a>
-                                <a asp-controller="Rental" asp-action="Create" asp-route-carId="@c.Id" class="btn btn-primary">@L["Car_RentNow"]</a>
+                            <div class="cr-car__foot">
+                                <div class="cr-car__price">@c.PricePerDay.ToString("N0") ₴ <span>@L["Car_PerDayShort"]</span></div>
+                                <a asp-controller="Rental" asp-action="Create" asp-route-carId="@c.Id" class="btn btn-sm btn-primary">@L["Car_RentNow"]</a>
                             </div>
                         </div>
                     </div>
@@ -112,16 +101,3 @@
         <partial name="_Pagination" />
     }
 </div>
-
-<style>
-    .text-truncate-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    .transition-hover:hover {
-        transform: translateY(-5px);
-        transition: transform 0.2s ease-in-out;
-    }
-</style>

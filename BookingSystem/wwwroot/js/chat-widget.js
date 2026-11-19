@@ -347,6 +347,7 @@
 
     // Entry point for the home page: the hero input and suggestion chips start a new conversation with their text.
     window.CarRentalChat = {
+        open: function () { setOpen(true); },
         ask: function (text) {
             if (busy) return;
             initialized = true;

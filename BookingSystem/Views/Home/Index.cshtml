@@ -80,8 +80,8 @@
                             <span class="cr-car__cat">@c.Category?.Name</span>
                             <h3 class="cr-car__name">@c.FullName</h3>
                             <div class="cr-car__specs">
-                                <span><i class="bi bi-fuel-pump me-1"></i>@c.FuelType</span>
-                                <span><i class="bi bi-gear me-1"></i>@c.Transmission</span>
+                                <span><i class="bi bi-fuel-pump me-1"></i>@L["Enum_" + c.FuelType]</span>
+                                <span><i class="bi bi-gear me-1"></i>@L["Enum_" + c.Transmission]</span>
                                 <span><i class="bi bi-people me-1"></i>@c.Seats</span>
                             </div>
                             <div class="cr-car__foot">

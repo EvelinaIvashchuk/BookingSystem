@@ -2,20 +2,12 @@
     ViewData["Title"] = L["Error_NotFound_Title"].Value;
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 text-center">
-            <div class="display-1 fw-bold text-primary mb-3">404</div>
-            <h2 class="h3 fw-bold mb-2">@L["Error_NotFound_Title"]</h2>
-            <p class="text-muted mb-4">@L["Error_NotFound_Desc"]</p>
-            <div class="d-flex justify-content-center gap-2">
-                <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4">
-                    <i class="bi bi-house me-1"></i> @L["Common_GoHome"]
-                </a>
-                <a asp-controller="Car" asp-action="Index" class="btn btn-outline-secondary px-4">
-                    <i class="bi bi-search me-1"></i> @L["Common_BrowseCars"]
-                </a>
-            </div>
-        </div>
+<div class="cr-panel cr-empty mt-4">
+    <div class="cr-error-code">404</div>
+    <h2>@L["Error_NotFound_Title"]</h2>
+    <p>@L["Error_NotFound_Desc"]</p>
+    <div class="d-flex justify-content-center flex-wrap gap-2">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4"><i class="bi bi-house me-1"></i>@L["Common_GoHome"]</a>
+        <a asp-controller="Car" asp-action="Index" class="btn btn-outline-secondary px-4"><i class="bi bi-search me-1"></i>@L["Common_BrowseCars"]</a>
     </div>
 </div>

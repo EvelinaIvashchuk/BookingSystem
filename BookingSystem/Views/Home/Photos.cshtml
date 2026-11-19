@@ -2,30 +2,38 @@
 @{
     ViewData["Title"] = L["Photos_Title"].Value;
 }
-<div class="container py-4">
-    <h1 class="h3 mb-2">@ViewData["Title"]</h1>
-    <p class="text-muted mb-4">@L["Photos_Intro"]</p>
 
-    <div class="table-responsive">
-        <table class="table align-middle">
+<div class="cr-page">
+    <div class="cr-page-head">
+        <div>
+            <h1>@L["Photos_Title"]</h1>
+            <p style="max-width: 760px;">@L["Photos_Intro"]</p>
+        </div>
+    </div>
+
+    <div class="cr-panel cr-panel--flush">
+        <table class="cr-table">
             <thead>
                 <tr>
-                    <th style="width: 96px"></th>
                     <th>@L["Photos_Car"]</th>
                     <th>@L["Photos_Author"]</th>
                     <th>@L["Photos_License"]</th>
-                    <th>@L["Photos_Source"]</th>
+                    <th class="text-end">@L["Photos_Source"]</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var photo in Model)
                 {
                     <tr>
-                        <td><img src="@photo.Url.Replace("/960px-", "/330px-")" alt="@photo.Car" loading="lazy" class="rounded" style="width: 88px; height: 56px; object-fit: cover;"></td>
-                        <td>@photo.Car</td>
-                        <td>@photo.Author</td>
-                        <td><a href="@photo.LicenseUrl" target="_blank" rel="noopener license">@photo.License</a></td>
-                        <td><a href="@photo.SourcePage" target="_blank" rel="noopener">Wikimedia Commons</a></td>
+                        <td class="cr-td-main">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="@photo.Url.Replace("/960px-", "/330px-")" alt="" loading="lazy" class="rounded-3 flex-shrink-0" style="width: 72px; height: 48px; object-fit: cover;" />
+                                <span class="cr-td-title">@photo.Car</span>
+                            </div>
+                        </td>
+                        <td data-label="@L["Photos_Author"]">@photo.Author</td>
+                        <td data-label="@L["Photos_License"]"><a href="@photo.LicenseUrl" target="_blank" rel="noopener license">@photo.License</a></td>
+                        <td class="cr-td-actions"><a href="@photo.SourcePage" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">Wikimedia Commons <i class="bi bi-box-arrow-up-right ms-1"></i></a></td>
                     </tr>
                 }
             </tbody>
