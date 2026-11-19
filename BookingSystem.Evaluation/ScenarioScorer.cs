@@ -188,7 +188,7 @@ public static partial class ScenarioScorer
         ],
         [SlotNames.ReturnDate] =
         [
-            "поверн", "поверта", "по яке", "до якого", "до якої", "кінц", "заверш", "закінч", "скільки днів", "на скільки", "тривал",
+            "поверн", "поверта", "по яке", "по який", "по яку", "до якого", "до якої", "кінц", "заверш", "закінч", "скільки днів", "на скільки", "тривал",
             "return", "until", "how many days", "how long", "end date", "drop-off", "drop off"
         ],
         [SlotNames.SelectedCarId] = ["яке авто", "який автомобіль", "яку машину", "which car", "оберіть", "which vehicle"]
@@ -200,7 +200,7 @@ public static partial class ScenarioScorer
     /// </summary>
     private static readonly string[] RequestMarkers =
     [
-        "вкажіть", "укажіть", "уточніть", "напишіть", "повідомте", "підкажіть", "скажіть", "назвіть",
+        "вкажіть", "укажіть", "зазначте", "уточніть", "напишіть", "повідомте", "підкажіть", "скажіть", "назвіть",
         "please specify", "please provide", "please tell", "please let me know", "please share", "let me know"
     ];
 

@@ -95,6 +95,7 @@ public class ScenarioScorerTests
     [InlineData("Please specify the rental dates.", true)]
     [InlineData("Будь ласка, вкажіть дату видачі та дату повернення авто.", true)]
     [InlineData("Яка дата початку та закінчення оренди?", true)]
+    [InlineData("Будь ласка, зазначте дати: з якого дня по який?", true)]
     [InlineData("Підкажіть, будь ласка, коли забираєте і коли повертаєте авто?", true)]
     [InlineData("Вкажіть, будь ласка, місто.", false)]
     [InlineData("Яке місто вас цікавить?", false)]
