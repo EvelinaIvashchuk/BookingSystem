@@ -96,20 +96,22 @@ def plot_e1(summary, out_dir):
     values = [[num(r, m + "_mean") for m, _ in metrics] for r in rows]
     errors = [[num(r, m + "_std") for m, _ in metrics] for r in rows]
 
-    fig, ax = plt.subplots(figsize=(8, 4))
-    grouped_bars(ax, [label for _, label in metrics], models, values, errors)
-    ax.set_ylim(0, 1.1)
+    fig, ax = plt.subplots(figsize=(11, 4.5))
+    # Many bars per group: values are in summary_agent.csv / README, so bars carry no labels here.
+    grouped_bars(ax, [label for _, label in metrics], models, values, errors, label_values=len(models) <= 4)
+    ax.set_ylim(0, 1.05)
     ax.set_ylabel("Share (mean ± std over repeats)")
     ax.set_title("E1. Agent quality by model (slot filling on)", loc="left", fontsize=11)
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.1), ncol=len(models))
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.08), ncol=min(len(models), 4))
     save(fig, out_dir, "e1_agent_metrics.png")
 
-    # Latency vs accuracy: one point per model, every point direct-labelled.
-    fig, ax = plt.subplots(figsize=(6, 4))
+    # Latency vs accuracy: one point per model; several models cluster at 1-2 s, so a legend instead of labels.
+    fig, ax = plt.subplots(figsize=(7, 4.2))
     for i, r in enumerate(rows):
-        x, y = num(r, "latency_ms_avg") / 1000, num(r, "task_success_mean")
-        ax.scatter([x], [y], s=60, color=SERIES[i % len(SERIES)], edgecolor=SURFACE, linewidth=2, zorder=3)
-        ax.annotate(short_model(r["model"]), (x, y), xytext=(6, 4), textcoords="offset points", fontsize=8)
+        x, y = num(r, "latency_ms_avg_mean") / 1000, num(r, "task_success_mean")
+        ax.scatter([x], [y], s=70, color=SERIES[i % len(SERIES)], edgecolor=SURFACE, linewidth=2, zorder=3,
+                   label=short_model(r["model"]))
+    ax.legend(loc="center left", bbox_to_anchor=(1.0, 0.5), fontsize=8)
     ax.set_xlabel("Average latency per turn, s")
     ax.set_ylabel("Task success")
     ax.set_ylim(0, 1.05)
@@ -142,6 +144,8 @@ def plot_by_type(by_type, out_dir):
             if v == v:
                 ax.text(j, i, f"{v:.2f}", ha="center", va="center", fontsize=8,
                         color="white" if v > 0.6 else TEXT)
+            else:
+                ax.text(j, i, "—", ha="center", va="center", fontsize=8, color=TEXT_SECONDARY)
     ax.set_title("E1. Task success by scenario type", loc="left", fontsize=11)
     save(fig, out_dir, "e1_success_by_type.png")
 
@@ -151,8 +155,8 @@ def plot_e2(summary, out_dir):
     if not rows:
         return
     models = sorted({r["model"] for r in rows})
-    metrics = [("task_success", "Task success"), ("arg_acc", "Argument acc."),
-               ("invalid_call_rate_executed", "Invalid calls executed"), ("clarification_acc", "Clarification")]
+    metrics = [("task_success", "Task success"), ("tool_selection_acc", "Tool selection"),
+               ("arg_acc", "Argument acc."), ("clarification_acc", "Clarification")]
     fig, axes = plt.subplots(1, len(models), figsize=(5 * len(models), 4), sharey=True, squeeze=False)
     for ax, model in zip(axes[0], models):
         values, errors, names = [], [], []
@@ -168,7 +172,8 @@ def plot_e2(summary, out_dir):
         ax.tick_params(axis="x", labelrotation=15)
         ax.set_ylim(0, 1.1)
     axes[0][0].set_ylabel("Share (mean ± std over repeats)")
-    axes[0][0].legend(loc="upper left")
+    handles, labels = axes[0][0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(0.5, -0.06), ncol=2)
     fig.suptitle("E2. Slot filling ablation", x=0.01, ha="left", fontsize=11)
     save(fig, out_dir, "e2_slot_filling_ablation.png")
 
