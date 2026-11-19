@@ -317,4 +317,23 @@
   <data name="Chat_DatesPickup" xml:space="preserve"><value>Pick-up date: {0}</value></data>
   <data name="Chat_DatesReturn" xml:space="preserve"><value>Return date: {0}</value></data>
   <data name="Chat_DatesInvalid" xml:space="preserve"><value>The return date must be after the pick-up date.</value></data>
+  <data name="Home_AiEyebrow" xml:space="preserve"><value>AI rental assistant</value></data>
+  <data name="Home_AiTitle" xml:space="preserve"><value>Tell us what car you need</value></data>
+  <data name="Home_AiSubtitle" xml:space="preserve"><value>The assistant finds a car that is free on your dates, calculates the price and prepares the booking. Only you confirm it.</value></data>
+  <data name="Home_AiPlaceholder" xml:space="preserve"><value>For example: an automatic 5-seater in Lviv for the weekend</value></data>
+  <data name="Home_AiAsk" xml:space="preserve"><value>Ask</value></data>
+  <data name="Home_AiChip1" xml:space="preserve"><value>An SUV in Kyiv for a week</value></data>
+  <data name="Home_AiChip2" xml:space="preserve"><value>The cheapest car for the weekend</value></data>
+  <data name="Home_AiChip3" xml:space="preserve"><value>An electric car from 20 to 22 December</value></data>
+  <data name="Home_AiChip4" xml:space="preserve"><value>What deposit is required?</value></data>
+  <data name="Home_AiOr" xml:space="preserve"><value>Or</value></data>
+  <data name="Home_HowItWorksSub" xml:space="preserve"><value>From a request to a booking, in an ordinary chat.</value></data>
+  <data name="Home_Step1Title" xml:space="preserve"><value>Describe your trip</value></data>
+  <data name="Home_Step1Desc" xml:space="preserve"><value>Dates, city, type of car, in your own words. If something is missing, the assistant asks.</value></data>
+  <data name="Home_Step2Title" xml:space="preserve"><value>Choose a car</value></data>
+  <data name="Home_Step2Desc" xml:space="preserve"><value>The assistant shows cars that are free on your dates, with photos and the total price.</value></data>
+  <data name="Home_Step3Title" xml:space="preserve"><value>Confirm the booking</value></data>
+  <data name="Home_Step3Desc" xml:space="preserve"><value>The assistant prepares a booking draft; it is placed only after you confirm it.</value></data>
+  <data name="Home_PopularCars" xml:space="preserve"><value>Popular cars</value></data>
+  <data name="Home_PopularCarsSub" xml:space="preserve"><value>50 cars in six cities of Ukraine</value></data>
 </root>

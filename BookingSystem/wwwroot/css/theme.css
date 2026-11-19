@@ -1,0 +1,164 @@
+/* CarRental theme "AI-first": violet accent, soft lavender surfaces, Manrope.
+   Loaded after Bootstrap and site.css, so it re-colours Bootstrap components across the site (admin included). */
+
+:root {
+    --cr-violet-50: #EEEDFE;
+    --cr-violet-100: #CECBF6;
+    --cr-violet-200: #AFA9EC;
+    --cr-violet-400: #7F77DD;
+    --cr-violet-600: #534AB7;
+    --cr-violet-800: #3C3489;
+    --cr-violet-900: #26215C;
+    --cr-ink: #1f1d2b;
+    --cr-muted: #625f72;
+    --cr-line: #e9e7f5;
+    --cr-page: #fbfaff;
+    --cr-radius: 14px;
+
+    --bs-font-sans-serif: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --bs-body-color: var(--cr-ink);
+    --bs-body-bg: var(--cr-page);
+    --bs-secondary-color: var(--cr-muted);
+    --bs-border-color: var(--cr-line);
+    --bs-border-radius: 10px;
+    --bs-border-radius-lg: var(--cr-radius);
+    --bs-primary: var(--cr-violet-600);
+    --bs-primary-rgb: 83, 74, 183;
+    --bs-primary-text-emphasis: var(--cr-violet-800);
+    --bs-primary-bg-subtle: var(--cr-violet-50);
+    --bs-primary-border-subtle: var(--cr-violet-200);
+    --bs-link-color: var(--cr-violet-600);
+    --bs-link-color-rgb: 83, 74, 183;
+    --bs-link-hover-color: var(--cr-violet-800);
+    --bs-link-hover-color-rgb: 60, 52, 137;
+    --bs-focus-ring-color: rgba(83, 74, 183, .25);
+}
+
+body { font-family: var(--bs-font-sans-serif); background: var(--cr-page); letter-spacing: -.005em; }
+h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 { letter-spacing: -.02em; color: var(--cr-ink); }
+
+/* ── Bootstrap components ──────────────────────────────────────────────── */
+.btn { border-radius: 10px; font-weight: 600; }
+.btn-primary {
+    --bs-btn-bg: var(--cr-violet-600); --bs-btn-border-color: var(--cr-violet-600);
+    --bs-btn-hover-bg: var(--cr-violet-800); --bs-btn-hover-border-color: var(--cr-violet-800);
+    --bs-btn-active-bg: var(--cr-violet-900); --bs-btn-active-border-color: var(--cr-violet-900);
+    --bs-btn-disabled-bg: var(--cr-violet-200); --bs-btn-disabled-border-color: var(--cr-violet-200);
+    --bs-btn-focus-shadow-rgb: 83, 74, 183;
+}
+.btn-outline-primary {
+    --bs-btn-color: var(--cr-violet-600); --bs-btn-border-color: var(--cr-violet-200);
+    --bs-btn-hover-bg: var(--cr-violet-50); --bs-btn-hover-color: var(--cr-violet-800); --bs-btn-hover-border-color: var(--cr-violet-400);
+    --bs-btn-active-bg: var(--cr-violet-100); --bs-btn-active-color: var(--cr-violet-900); --bs-btn-active-border-color: var(--cr-violet-400);
+    --bs-btn-focus-shadow-rgb: 83, 74, 183;
+}
+.btn-outline-secondary { --bs-btn-color: var(--cr-muted); --bs-btn-border-color: var(--cr-line); --bs-btn-hover-bg: #f3f2fa; --bs-btn-hover-color: var(--cr-ink); --bs-btn-hover-border-color: var(--cr-violet-100); }
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-select:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 .2rem rgba(83, 74, 183, .2);
+}
+.form-control, .form-select { border-radius: 10px; border-color: var(--cr-line); }
+.form-control:focus, .form-select:focus { border-color: var(--cr-violet-400); }
+.form-check-input:checked { background-color: var(--cr-violet-600); border-color: var(--cr-violet-600); }
+.card { border-radius: var(--cr-radius); border-color: var(--cr-line); }
+.card.shadow-sm, .shadow-sm { box-shadow: 0 1px 2px rgba(38, 33, 92, .05), 0 4px 16px rgba(38, 33, 92, .05) !important; }
+.badge.bg-primary:not(.bg-opacity-10) { background-color: var(--cr-violet-600) !important; }
+.page-link { color: var(--cr-violet-600); }
+.active > .page-link, .page-link.active { background-color: var(--cr-violet-600); border-color: var(--cr-violet-600); }
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link { background-color: var(--cr-violet-600); }
+.table { --bs-table-hover-bg: #f6f5fd; }
+.alert-primary, .alert-info { --bs-alert-bg: var(--cr-violet-50); --bs-alert-color: var(--cr-violet-900); --bs-alert-border-color: var(--cr-violet-100); }
+
+/* ── Header and footer ─────────────────────────────────────────────────── */
+.cr-navbar { background: rgba(255, 255, 255, .92) !important; backdrop-filter: saturate(1.4) blur(10px); border-bottom: 1px solid var(--cr-line) !important; box-shadow: none !important; }
+.cr-navbar .navbar-brand { font-weight: 800; color: var(--cr-violet-900); letter-spacing: -.02em; }
+.cr-navbar .navbar-brand .cr-logo {
+    display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin-right: .45rem;
+    border-radius: 9px; background: var(--cr-violet-600); color: #fff; font-size: .95rem; vertical-align: -6px;
+}
+.cr-navbar .nav-link { color: var(--cr-muted) !important; font-weight: 600; border-radius: 8px; padding-inline: .7rem !important; }
+.cr-navbar .nav-link:hover { color: var(--cr-violet-800) !important; background: var(--cr-violet-50); }
+.cr-navbar .nav-link.cr-admin { color: var(--cr-violet-600) !important; }
+.footer { background: #fff; border-top: 1px solid var(--cr-line) !important; color: var(--cr-muted) !important; }
+.footer a { color: var(--cr-violet-600); }
+
+/* ── Home: AI hero ─────────────────────────────────────────────────────── */
+.cr-hero {
+    width: 100vw; margin-left: calc(50% - 50vw); margin-top: -1rem; margin-bottom: 3rem;
+    background: radial-gradient(1200px 380px at 50% 0%, #e4e1fd 0%, var(--cr-violet-50) 45%, var(--cr-page) 100%);
+    padding: 4.5rem 1rem 3.5rem; text-align: center;
+}
+.cr-eyebrow {
+    display: inline-flex; align-items: center; gap: .4rem; padding: .3rem .8rem; border-radius: 999px;
+    background: #fff; color: var(--cr-violet-800); font-size: .8rem; font-weight: 700; border: 1px solid var(--cr-violet-100);
+}
+.cr-hero h1 { font-size: clamp(2rem, 4.6vw, 3.25rem); font-weight: 800; line-height: 1.08; margin: 1rem auto .75rem; max-width: 940px; color: var(--cr-violet-900); }
+.cr-hero .cr-lead { color: var(--cr-violet-800); opacity: .85; font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.75rem; }
+.cr-ask {
+    display: flex; align-items: center; gap: .5rem; max-width: 680px; margin: 0 auto; padding: .45rem .45rem .45rem 1.1rem;
+    background: #fff; border: 1px solid var(--cr-violet-200); border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(83, 74, 183, .12);
+}
+.cr-ask:focus-within { border-color: var(--cr-violet-400); box-shadow: 0 10px 30px rgba(83, 74, 183, .18), 0 0 0 4px rgba(83, 74, 183, .12); }
+.cr-ask i.bi-stars { color: var(--cr-violet-400); font-size: 1.15rem; }
+.cr-ask input { flex: 1; min-width: 0; border: 0; outline: 0; font-size: 1.05rem; padding: .55rem 0; background: transparent; color: var(--cr-ink); }
+.cr-ask input::placeholder { color: #9a96b8; }
+.cr-ask button { border: 0; border-radius: 12px; background: var(--cr-violet-600); color: #fff; font-weight: 700; padding: .65rem 1.1rem; white-space: nowrap; }
+.cr-ask button:hover { background: var(--cr-violet-800); }
+.cr-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin: 1rem auto 0; max-width: 720px; }
+.cr-chip {
+    border: 1px solid var(--cr-violet-100); background: rgba(255, 255, 255, .8); color: var(--cr-violet-800);
+    border-radius: 999px; padding: .4rem .9rem; font-size: .88rem; font-weight: 600; transition: background .15s, border-color .15s;
+}
+.cr-chip:hover { background: #fff; border-color: var(--cr-violet-400); }
+.cr-alt { margin-top: 1.25rem; font-size: .92rem; color: var(--cr-muted); }
+.cr-alt a { font-weight: 700; text-decoration: none; }
+
+.cr-section-title { font-weight: 800; font-size: 1.6rem; margin-bottom: .25rem; }
+.cr-section-sub { color: var(--cr-muted); margin-bottom: 1.5rem; }
+.cr-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-bottom: 3.5rem; }
+@media (max-width: 767px) { .cr-steps { grid-template-columns: 1fr; } .cr-hero { padding-top: 3rem; } .cr-ask button span { display: none; } }
+.cr-step { background: #fff; border: 1px solid var(--cr-line); border-radius: var(--cr-radius); padding: 1.25rem 1.25rem 1.1rem; }
+.cr-step__num {
+    width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center;
+    background: var(--cr-violet-50); color: var(--cr-violet-600); font-weight: 800; margin-bottom: .75rem;
+}
+.cr-step h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: .3rem; }
+.cr-step p { color: var(--cr-muted); font-size: .92rem; margin: 0; }
+
+.cr-car { background: #fff; border: 1px solid var(--cr-line); border-radius: var(--cr-radius); overflow: hidden; height: 100%; display: flex; flex-direction: column; transition: transform .15s, box-shadow .15s; }
+.cr-car:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(38, 33, 92, .1); }
+.cr-car__img { height: 190px; width: 100%; object-fit: cover; background: #f3f2fa; }
+.cr-car__body { padding: 1rem 1.1rem 1.1rem; display: flex; flex-direction: column; gap: .4rem; flex: 1; }
+.cr-car__cat { align-self: flex-start; font-size: .72rem; font-weight: 700; color: var(--cr-violet-800); background: var(--cr-violet-50); border-radius: 999px; padding: .15rem .6rem; }
+.cr-car__name { font-weight: 800; font-size: 1.05rem; margin: 0; }
+.cr-car__specs { display: flex; flex-wrap: wrap; gap: .75rem; color: var(--cr-muted); font-size: .82rem; }
+.cr-car__foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: .5rem; }
+.cr-car__price { font-weight: 800; font-size: 1.15rem; color: var(--cr-violet-900); }
+.cr-car__price span { font-weight: 600; font-size: .8rem; color: var(--cr-muted); }
+
+/* ── Chat widget ───────────────────────────────────────────────────────── */
+#chat-toggle { background: var(--cr-violet-600); box-shadow: 0 10px 24px rgba(83, 74, 183, .35); }
+#chat-toggle:hover { background: var(--cr-violet-800); }
+#chat-window { border-radius: 18px; border: 1px solid var(--cr-line); box-shadow: 0 24px 60px rgba(38, 33, 92, .22); }
+#chat-header { background: var(--cr-violet-600); font-weight: 700; }
+#chat-messages { background: #fcfbff; }
+.chat-msg--user { background: var(--cr-violet-600); }
+.chat-msg--bot { background: #fff; border: 1px solid var(--cr-line); color: var(--cr-ink); }
+.chat-card { border-color: var(--cr-violet-100); background: #fff; }
+.chat-card__title { color: var(--cr-violet-600); }
+.chat-car { border-color: var(--cr-line); }
+.chat-car--chosen { border-color: var(--cr-violet-600); box-shadow: 0 0 0 1px var(--cr-violet-600) inset; }
+.chat-car__price { color: var(--cr-violet-600); }
+#chat-input { border-radius: 12px; }
+#chat-input:focus { border-color: var(--cr-violet-400); }
+#chat-send { background: var(--cr-violet-600); border-radius: 12px; }
+#chat-send:hover { background: var(--cr-violet-800); }
+
+/* ── Availability calendar (car details) ───────────────────────────────── */
+.avail-day:hover:not(.avail-day--disabled):not(.avail-day--past):not(.avail-day--empty) { background: var(--cr-violet-50); color: var(--cr-violet-600); }
+.avail-day--today { color: var(--cr-violet-600); }
+.avail-day--today::after { background: var(--cr-violet-600); }
+.avail-day--sel-start, .avail-day--sel-end { background: var(--cr-violet-600) !important; }
+.avail-day--sel-range { background: var(--cr-violet-50); color: var(--cr-violet-800); }
+.avail-cta { background: var(--cr-violet-600); }
+.avail-cta:hover { background: var(--cr-violet-800); }

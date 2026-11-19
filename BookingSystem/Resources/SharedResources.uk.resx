@@ -317,4 +317,23 @@
   <data name="Chat_DatesPickup" xml:space="preserve"><value>Дата отримання — {0}</value></data>
   <data name="Chat_DatesReturn" xml:space="preserve"><value>Дата повернення — {0}</value></data>
   <data name="Chat_DatesInvalid" xml:space="preserve"><value>Дата повернення має бути пізніше за дату отримання.</value></data>
+  <data name="Home_AiEyebrow" xml:space="preserve"><value>AI-асистент оренди</value></data>
+  <data name="Home_AiTitle" xml:space="preserve"><value>Скажіть, яке авто вам потрібно</value></data>
+  <data name="Home_AiSubtitle" xml:space="preserve"><value>Асистент знайде вільне авто на ваші дати, порахує ціну й підготує бронювання. Підтверджуєте лише ви.</value></data>
+  <data name="Home_AiPlaceholder" xml:space="preserve"><value>Наприклад: автомат на 5 місць у Львові на вихідні</value></data>
+  <data name="Home_AiAsk" xml:space="preserve"><value>Запитати</value></data>
+  <data name="Home_AiChip1" xml:space="preserve"><value>Кросовер у Києві на тиждень</value></data>
+  <data name="Home_AiChip2" xml:space="preserve"><value>Найдешевше авто на вихідні</value></data>
+  <data name="Home_AiChip3" xml:space="preserve"><value>Електромобіль з 20 по 22 грудня</value></data>
+  <data name="Home_AiChip4" xml:space="preserve"><value>Який депозит потрібен?</value></data>
+  <data name="Home_AiOr" xml:space="preserve"><value>Або</value></data>
+  <data name="Home_HowItWorksSub" xml:space="preserve"><value>Від запиту до бронювання — у звичайному чаті.</value></data>
+  <data name="Home_Step1Title" xml:space="preserve"><value>Опишіть поїздку</value></data>
+  <data name="Home_Step1Desc" xml:space="preserve"><value>Дати, місто, тип авто — звичайними словами. Якщо чогось бракує, асистент перепитає.</value></data>
+  <data name="Home_Step2Title" xml:space="preserve"><value>Оберіть авто</value></data>
+  <data name="Home_Step2Desc" xml:space="preserve"><value>Асистент покаже вільні на ваші дати авто з фото й підсумковою ціною.</value></data>
+  <data name="Home_Step3Title" xml:space="preserve"><value>Підтвердіть бронювання</value></data>
+  <data name="Home_Step3Desc" xml:space="preserve"><value>Чернетку бронювання створює асистент, а оформлюється вона лише після вашого підтвердження.</value></data>
+  <data name="Home_PopularCars" xml:space="preserve"><value>Популярні авто</value></data>
+  <data name="Home_PopularCarsSub" xml:space="preserve"><value>50 авто в шести містах України</value></data>
 </root>

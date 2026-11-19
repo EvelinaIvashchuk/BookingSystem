@@ -345,6 +345,21 @@
         }
     }
 
+    // Entry point for the home page: the hero input and suggestion chips start a new conversation with their text.
+    window.CarRentalChat = {
+        ask: function (text) {
+            if (busy) return;
+            initialized = true;
+            clearSessionId();
+            sessionId = null;
+            openDateForm = null;
+            messages.replaceChildren();
+            appendMessage(L.greeting, 'bot');
+            setOpen(true);
+            sendMessage(text);
+        }
+    };
+
     toggle.addEventListener('click', function () { setOpen(panel.classList.contains('d-none')); });
     newChatBtn.addEventListener('click', startNewChat);
     sendBtn.addEventListener('click', function () { sendMessage(input.value); });

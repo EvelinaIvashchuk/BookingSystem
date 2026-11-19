@@ -9,33 +9,37 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/BookingSystem.styles.css" asp-append-version="true"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap&subset=cyrillic">
+    <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true"/>
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3 cr-navbar sticky-top">
         <div class="container-fluid">
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                <i class="bi bi-car-front me-1"></i>CarRental
+                <span class="cr-logo"><i class="bi bi-stars"></i></span>CarRental
             </a>
 
             @* Collapse FIRST — so on desktop nav links appear before auth block *@
             <div class="navbar-collapse collapse">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">@L["Nav_Home"]</a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">@L["Nav_Home"]</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Car" asp-action="Index">@L["Nav_Cars"]</a>
+                        <a class="nav-link" asp-area="" asp-controller="Car" asp-action="Index">@L["Nav_Cars"]</a>
                     </li>
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Rental" asp-action="MyRentals">@L["Nav_MyRentals"]</a>
+                            <a class="nav-link" asp-area="" asp-controller="Rental" asp-action="MyRentals">@L["Nav_MyRentals"]</a>
                         </li>
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-primary fw-bold" asp-area="" asp-controller="Admin" asp-action="Index">
+                                <a class="nav-link cr-admin" asp-area="" asp-controller="Admin" asp-action="Index">
                                     <i class="bi bi-shield-lock me-1"></i>@L["Nav_AdminPanel"]
                                 </a>
                             </li>
