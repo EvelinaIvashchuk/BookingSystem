@@ -206,4 +206,51 @@ public class SlotValidatorTests : IAsyncLifetime
 
         result.IsValid.Should().BeTrue();
     }
+
+    // ── Grounding (Ai:SlotFilling:RequireGroundedDates) ─────────────────────
+
+    private Task<SlotValidationResult> ValidateGrounded(
+        Dictionary<string, object?> args, string message, IEnumerable<string>? provided = null, BookingSlots? known = null) =>
+        new SlotValidator(CreateUnitOfWork(_db)).ValidateAsync(
+            BookingTools.SearchAvailableCarsName, args,
+            new SlotValidationContext(Today, message, (provided ?? args.Keys).ToHashSet())
+            {
+                RequireGroundedDates = true,
+                KnownSlots = known
+            });
+
+    [Fact]
+    public async Task Grounding_InventedReturnDate_IsReportedMissing()
+    {
+        var result = await ValidateGrounded(Dates("2026-12-20", "2026-12-21"), "Потрібен автомат з 20 грудня");
+
+        result.Missing.Should().Equal(SlotNames.ReturnDate);
+        result.Invalid.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task Grounding_StatedDates_AreValid()
+    {
+        var result = await ValidateGrounded(Dates("2026-12-20", "2026-12-25"), "з 20 по 25 грудня");
+
+        result.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Grounding_SkipsDatesMergedFromSlots_AndAcceptsKnownValues()
+    {
+        var known = new BookingSlots { PickupDate = new DateOnly(2026, 12, 20), ReturnDate = new DateOnly(2026, 12, 25) };
+
+        (await ValidateGrounded(Dates(), "А дизельний є?", provided: [])).IsValid.Should().BeTrue();
+        (await ValidateGrounded(Dates(), "А дизельний є?", known: known)).IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Grounding_IsOffByDefault()
+    {
+        var result = await Validate(BookingTools.SearchAvailableCarsName, Dates("2026-12-20", "2026-12-21"),
+            message: "Потрібен автомат з 20 грудня");
+
+        result.IsValid.Should().BeTrue();
+    }
 }

@@ -426,6 +426,65 @@ public class AgentServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task SlotFilling_InventedReturnDate_IsBlockedAndOffersDatePicker()
+    {
+        // E1 conclusion 5: on "I need a car from December 20" the model sets the return date itself.
+        var client = UseModelCallingTool(BookingTools.SearchAvailableCarsName, new()
+        {
+            ["pickupDate"] = "2026-12-20", ["returnDate"] = "2026-12-21"
+        });
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "I need a car from December 20");
+
+        var call = reply.ToolCalls.Should().ContainSingle().Subject;
+        call.Intercepted.Should().BeTrue();
+        call.ProposedMissing.Should().Equal(SlotNames.ReturnDate);
+        reply.Cars.Should().BeEmpty("the tool must not run with a guessed date");
+        reply.AskedDates.Should().Equal(SlotNames.ReturnDate);
+        ToolResultText(client.Calls[1].Messages).Should().Contain("return date");
+    }
+
+    [Fact]
+    public async Task SlotFilling_DatesFromAnEarlierUserMessage_AreGrounded()
+    {
+        // Turn 1: the model asks for the city without a tool call, so the dates are not in the slots yet.
+        var turn = 0;
+        var client = new FakeChatClient((messages, _) =>
+        {
+            if (HasToolResult(messages)) return Say("ok");
+            return turn == 0
+                ? Say("У якому місті?")
+                : CallTool(BookingTools.SearchAvailableCarsName, new()
+                {
+                    ["pickupDate"] = AiTestData.Pickup, ["returnDate"] = AiTestData.Return, ["location"] = "Львів"
+                });
+        });
+        _factory.Setup(f => f.Create(It.IsAny<string>())).Returns(client);
+        var sut = CreateSut();
+
+        var first = await sut.ChatAsync(Guid.Empty, null, "Потрібне авто з 20 по 25 грудня");
+        turn = 1;
+        var second = await sut.ChatAsync(first.SessionId, null, "У Львові");
+
+        second.ToolCalls.Should().ContainSingle().Which.Success.Should().BeTrue();
+        second.Cars.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async Task SlotFilling_GroundingCanBeSwitchedOff()
+    {
+        _options.SlotFilling.RequireGroundedDates = false;
+        UseModelCallingTool(BookingTools.SearchAvailableCarsName, new()
+        {
+            ["pickupDate"] = "2026-12-20", ["returnDate"] = "2026-12-21"
+        });
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "I need a car from December 20");
+
+        reply.ToolCalls.Should().ContainSingle().Which.Success.Should().BeTrue();
+    }
+
+    [Fact]
     public async Task SlotFilling_MergesSlotsFromEarlierTurns()
     {
         var turn = 0;

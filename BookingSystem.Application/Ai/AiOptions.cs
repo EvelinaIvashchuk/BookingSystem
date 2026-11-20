@@ -65,6 +65,12 @@ public sealed class SlotFillingOptions
     /// Arguments are still validated in shadow mode for logging.
     /// </summary>
     public bool Enabled { get; set; } = true;
+
+    /// <summary>
+    /// Block a call whose date the user never stated (the model invented it) and ask for it instead.
+    /// Applies only while slot filling is enabled (and in shadow validation for metrics).
+    /// </summary>
+    public bool RequireGroundedDates { get; set; } = true;
 }
 
 /// <summary>Limits for <c>POST /Ai/Chat</c> (<c>Ai:RateLimit</c>).</summary>

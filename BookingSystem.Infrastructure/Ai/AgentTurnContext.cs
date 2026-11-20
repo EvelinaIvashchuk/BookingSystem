@@ -31,6 +31,25 @@ public sealed class AgentTurnContext(
 
     public bool SlotFillingEnabled { get; } = slotFillingEnabled;
 
+    /// <summary>Block dates the user never stated (<see cref="DateGrounding"/>).</summary>
+    public bool RequireGroundedDates { get; init; }
+
+    /// <summary>Earlier user messages still in the history (oldest first), for the grounding check.</summary>
+    public IReadOnlyList<string> EarlierUserMessages { get; init; } = [];
+
+    /// <summary>The assistant's reply right before the current user message.</summary>
+    public string? PreviousAssistantMessage { get; init; }
+
+    /// <summary>Context for validating a tool call; <paramref name="provided"/> are the arguments the model produced itself.</summary>
+    public SlotValidationContext ValidationContext(IReadOnlySet<string> provided) =>
+        new(Today, LatestUserMessage, provided)
+        {
+            RequireGroundedDates = RequireGroundedDates,
+            EarlierUserMessages = EarlierUserMessages,
+            PreviousAssistantMessage = PreviousAssistantMessage,
+            KnownSlots = Slots
+        };
+
     /// <summary>Slots the last blocked call was missing (what the agent should be asking about).</summary>
     public IReadOnlyList<string> MissingSlots { get; set; } = [];
 

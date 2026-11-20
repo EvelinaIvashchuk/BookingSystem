@@ -97,7 +97,8 @@ public sealed class BookingTools(
     [Description(
         "Finds rental cars that are free for the WHOLE period from pickupDate to returnDate and match optional filters. " +
         "Returns up to 5 cheapest cars with price per day and total price. " +
-        "Requires both dates; if the user has not given them, ask the user instead of guessing.")]
+        "Requires both dates; if the user has not given them, ask the user instead of guessing. " +
+        "When the user names a specific car, pass carName: without it the car may simply not be among the 5 cheapest.")]
     public async Task<object> SearchAvailableCarsAsync(
         [Description("Pickup date in YYYY-MM-DD format.")] string pickupDate,
         [Description("Return date in YYYY-MM-DD format, after pickupDate.")] string returnDate,
@@ -107,6 +108,7 @@ public sealed class BookingTools(
         [Description("Fuel type: Petrol, Diesel, Electric or Hybrid; \"any\" drops it.")] string? fuelType = null,
         [Description("Minimum number of seats.")] int? minSeats = null,
         [Description("Maximum price per day in UAH.")] decimal? maxPricePerDay = null,
+        [Description("Make and/or model the user asked for, e.g. \"Toyota Camry\", \"BMW 4 Series\", \"Camry\". Omit if no specific car was named.")] string? carName = null,
         CancellationToken cancellationToken = default)
     {
         if (ParseDates(pickupDate, returnDate) is not { } dates)
@@ -155,6 +157,14 @@ public sealed class BookingTools(
             cars = [.. cars.Where(c => c.Location.Contains(city, StringComparison.OrdinalIgnoreCase))];
         }
 
+        string? note = null;
+        if (!string.IsNullOrWhiteSpace(carName) && !SlotValues.IsAny(carName))
+        {
+            cars = [.. cars.Where(c => CarNameMatcher.Matches(c, carName))];
+            if (cars.Count == 0)
+                note = await NoCarByNameNoteAsync(carName);
+        }
+
         var days = RentalRules.CountDays(pickup, ret);
         var offers = cars.Take(MaxSearchResults)
             .Select(c => new CarOffer(
@@ -171,9 +181,41 @@ public sealed class BookingTools(
 
         return new CarSearchResult(
             FormatDate(pickup), FormatDate(ret), days, cars.Count, offers,
-            cars.Count == 0
+            note ?? (cars.Count == 0
                 ? "No cars match. Suggest other dates or relaxing filters; do not invent cars."
-                : null);
+                : null));
+    }
+
+    /// <summary>Tells "the named car is busy on these dates" apart from "there is no such car in the fleet".</summary>
+    private async Task<string> NoCarByNameNoteAsync(string carName)
+    {
+        var fleet = (await uow.Cars.GetAllWithCategoryAsync()).Where(c => CarNameMatcher.Matches(c, carName)).ToList();
+        if (fleet.Count == 0)
+            return $"There is no car matching '{carName}' in the fleet. Say so and offer a search without the name; do not invent cars.";
+
+        var names = string.Join(", ", fleet.Select(c => $"{c.FullName} (id {c.Id}, {c.Location})"));
+        return $"{names}: in the fleet but not free for these dates with these filters (booked or unavailable). " +
+               "Say so and offer other dates or similar cars.";
+    }
+
+    // ── car name consistency ─────────────────────────────────────────────────
+
+    private const string CarNameCheckDescription =
+        "Make and model of this car as you name it to the user, e.g. \"Toyota Camry\". Always pass it: " +
+        "the call is rejected if it does not match carId (protects against booking a different car).";
+
+    /// <summary>
+    /// E1 failure case 3: the model told the user "you chose Citroen Berlingo" but passed the id of a Toyota Camry.
+    /// When the model names the car, the name must match the car with this id.
+    /// </summary>
+    private static ToolError? CarMismatch(Car car, string? carName)
+    {
+        if (string.IsNullOrWhiteSpace(carName) || CarNameMatcher.Matches(car, carName))
+            return null;
+
+        return new ToolError(ToolErrorCodes.CarMismatch,
+            $"Car {car.Id} is {car.FullName}, not '{carName}'. Nothing was done. Take the id of the car the user chose " +
+            "from the search results (search with carName if needed) and call again; do not tell the user about this check.");
     }
 
     // ── get_car_details ──────────────────────────────────────────────────────
@@ -198,7 +240,8 @@ public sealed class BookingTools(
     public async Task<object> CalculatePriceAsync(
         [Description("Car id.")] int carId,
         [Description("Pickup date in YYYY-MM-DD format.")] string pickupDate,
-        [Description("Return date in YYYY-MM-DD format, after pickupDate.")] string returnDate)
+        [Description("Return date in YYYY-MM-DD format, after pickupDate.")] string returnDate,
+        [Description(CarNameCheckDescription)] string? carName = null)
     {
         if (ParseDates(pickupDate, returnDate) is not { } dates)
             return InvalidDates(pickupDate, returnDate);
@@ -210,6 +253,9 @@ public sealed class BookingTools(
         var car = await uow.Cars.GetWithCategoryAsync(carId);
         if (car is null)
             return new ToolError(ToolErrorCodes.NotFound, $"Car {carId} does not exist.");
+
+        if (CarMismatch(car, carName) is { } mismatch)
+            return mismatch;
 
         string? unavailableReason = null;
         if (car.Status != CarStatus.Available)
@@ -255,6 +301,7 @@ public sealed class BookingTools(
         [Description("Pickup date in YYYY-MM-DD format.")] string pickupDate,
         [Description("Return date in YYYY-MM-DD format, after pickupDate.")] string returnDate,
         [Description("Optional notes from the user for the rental.")] string? notes = null,
+        [Description(CarNameCheckDescription)] string? carName = null,
         CancellationToken cancellationToken = default)
     {
         if (turn.UserId is null)
@@ -271,6 +318,9 @@ public sealed class BookingTools(
         var car = await uow.Cars.GetWithCategoryAsync(carId);
         if (car is null)
             return new ToolError(ToolErrorCodes.NotFound, $"Car {carId} does not exist.");
+
+        if (CarMismatch(car, carName) is { } mismatch)
+            return mismatch;
 
         if (car.Status != CarStatus.Available)
             return new ToolError(ToolErrorCodes.BusinessRule, $"{car.FullName} is {car.Status} and cannot be booked.");

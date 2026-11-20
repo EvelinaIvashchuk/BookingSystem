@@ -55,7 +55,7 @@ public sealed class SlotFillingEngine(ISlotValidator validator)
         var result = await validator.ValidateAsync(
             toolName,
             new Dictionary<string, object?>(arguments),
-            new SlotValidationContext(turn.Today, turn.LatestUserMessage, provided),
+            turn.ValidationContext(provided),
             ct);
 
         if (result.IsValid)

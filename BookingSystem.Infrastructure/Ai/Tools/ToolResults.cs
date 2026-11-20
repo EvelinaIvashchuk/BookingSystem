@@ -13,6 +13,9 @@ public static class ToolErrorCodes
     public const string BusinessRule = "business_rule";
 
     public const string NotFound = "not_found";
+
+    /// <summary>The car name the model gave does not match <c>carId</c> (the model mixed up ids).</summary>
+    public const string CarMismatch = "car_mismatch";
     public const string AuthenticationRequired = "authentication_required";
     public const string InternalError = "internal_error";
 }

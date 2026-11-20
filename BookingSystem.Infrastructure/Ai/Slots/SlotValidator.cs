@@ -15,6 +15,8 @@ namespace BookingSystem.Ai.Slots;
 /// <item>dates parse, pickup is not in the past and at most <see cref="RentalRules.MaxAdvanceBookingDays"/> ahead,
 ///       return is after pickup, duration within <see cref="RentalRules.MaxRentalDays"/> days;</item>
 /// <item>dates agree with weekdays / duration the user stated in the current message;</item>
+/// <item>optionally, every date the model provided is grounded in the conversation (<see cref="DateGrounding"/>),
+///       otherwise it is reported as missing;</item>
 /// <item>MinSeats 1–9, MaxPricePerDay &gt; 0, enum synonyms map to known values;</item>
 /// <item>the car exists (and is Available when booking).</item>
 /// </list>
@@ -47,7 +49,7 @@ public sealed class SlotValidator(IUnitOfWork uow) : ISlotValidator
             if (arguments.TryGetValue(argument, out var value) && (SlotValues.IsEmpty(value) || SlotValues.IsAny(value)))
                 normalized.Remove(argument);
 
-        ValidateDates(spec, arguments, normalized, context, invalid);
+        ValidateDates(spec, arguments, normalized, context, missing, invalid);
         ValidateFilters(spec, arguments, normalized, invalid);
         await ValidateCarAsync(spec, arguments, normalized, invalid);
 
@@ -61,6 +63,7 @@ public sealed class SlotValidator(IUnitOfWork uow) : ISlotValidator
         IReadOnlyDictionary<string, object?> arguments,
         Dictionary<string, object?> normalized,
         SlotValidationContext context,
+        List<string> missing,
         List<string> invalid)
     {
         if (!spec.Arguments.ContainsKey(PickupDateArg)) return;
@@ -90,6 +93,29 @@ public sealed class SlotValidator(IUnitOfWork uow) : ISlotValidator
         // Consistency with the user's own words, only when the dates themselves are fine.
         if (invalid.Count == errorsBefore)
             CheckAgainstUserText(pickup, ret, context, invalid);
+
+        // A date the user never stated is treated as missing: the model must ask instead of guessing.
+        if (invalid.Count == errorsBefore && context.RequireGroundedDates)
+        {
+            if (pickup is { } pickupValue && !IsGrounded(PickupDateArg, pickupValue, isReturn: false, context))
+                missing.Add(SlotNames.PickupDate);
+            if (ret is { } returnValue && !IsGrounded(ReturnDateArg, returnValue, isReturn: true, context))
+                missing.Add(SlotNames.ReturnDate);
+        }
+    }
+
+    private static bool IsGrounded(string argument, DateOnly date, bool isReturn, SlotValidationContext context)
+    {
+        // Values merged from the session state were grounded when they were stored.
+        if (!context.ModelProvidedArguments.Contains(argument)) return true;
+
+        var userMessages = context.LatestUserMessage is { } latest
+            ? [.. context.EarlierUserMessages, latest]
+            : context.EarlierUserMessages;
+        var known = isReturn ? context.KnownSlots?.ReturnDate : context.KnownSlots?.PickupDate;
+
+        return DateGrounding.IsGrounded(date, isReturn,
+            new DateGroundingContext(context.Today, userMessages, context.PreviousAssistantMessage, known));
     }
 
     private static void CheckAgainstUserText(DateOnly? pickup, DateOnly? ret, SlotValidationContext context, List<string> invalid)

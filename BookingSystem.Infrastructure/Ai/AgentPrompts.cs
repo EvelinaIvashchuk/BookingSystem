@@ -39,7 +39,8 @@ public static class AgentPrompts
         sb.AppendLine("- After a search, briefly list the found cars (name, price per day, total). If nothing was found, suggest other dates or fewer filters.");
         sb.AppendLine("- Questions about rental rules (documents, driver age, deposit, payment, insurance, cancellation, fuel, mileage, late return, damage, travel abroad, extras, pickup and return, booking limits): call search_rental_policies and answer ONLY from the returned fragments, with the exact numbers they contain. If the fragments do not answer the question, say so and suggest contacting support. Do not mention fragment ids.");
         sb.AppendLine("- Messages like \"Обираю Toyota Camry (2023) (авто №1)\" / \"I choose ... (car #1)\" come from the Choose button on a car card: the number is the carId. Treat it as the user's wish to book that car.");
-        sb.AppendLine("- Booking: when the user clearly wants to book a specific car and the dates are known, call create_rental_draft. It only prepares a draft: then tell the user to check the card in the chat and press its confirm button. Never claim that a booking is made or confirmed.");
+        sb.AppendLine("- Booking: when the user clearly wants to book a specific car and the dates are known, call create_rental_draft with that car's carId from the search results and its name in carName. It only prepares a draft: then tell the user to check the card in the chat and press its confirm button. Never claim that a booking is made or confirmed.");
+        sb.AppendLine("- If the user names a car (e.g. \"Toyota Camry\") that is not in the latest search results, call search_available_cars with carName first; never conclude that a car is unavailable from a search without carName.");
         sb.AppendLine("- If a tool returns an error, do not retry blindly: explain it briefly or ask the user for the missing or invalid information.");
         sb.AppendLine();
         sb.AppendLine("## Security");

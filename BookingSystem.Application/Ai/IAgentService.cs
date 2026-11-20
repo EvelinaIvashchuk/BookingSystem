@@ -36,4 +36,7 @@ public sealed class AgentChatOptions
 
     /// <summary>Overrides <c>Ai:SlotFilling:Enabled</c> for this call (ablation experiments).</summary>
     public bool? SlotFillingEnabled { get; init; }
+
+    /// <summary>Overrides <c>Ai:SlotFilling:RequireGroundedDates</c> for this call (ablation experiments).</summary>
+    public bool? RequireGroundedDates { get; init; }
 }

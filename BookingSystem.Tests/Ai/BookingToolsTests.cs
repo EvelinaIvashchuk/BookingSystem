@@ -149,6 +149,96 @@ public class BookingToolsTests : IAsyncLifetime
         result.Should().BeOfType<CarSearchResult>().Which.Days.Should().Be(5);
     }
 
+    // ── search by car name (E1 failure case 2) ───────────────────────────────
+
+    [Theory]
+    [InlineData("BMW 4 Series", BmwId)]          // the most expensive car: never among the 5 cheapest without the filter
+    [InlineData("bmw", BmwId)]
+    [InlineData("Toyota Sienna", SiennaId)]
+    [InlineData("Тойота Сієнна", SiennaId)]
+    [InlineData("Honda CR-V (2023)", CrvId)]         // text of the Choose button on a car card
+    public async Task Search_ByCarName_FindsCarOutsideTheCheapestFive(string carName, int expectedId)
+    {
+        var (tools, _) = CreateSut();
+
+        var result = (CarSearchResult)await tools.SearchAvailableCarsAsync(Pickup, Return, carName: carName);
+
+        result.Cars.Select(c => c.Id).Should().Equal(expectedId);
+    }
+
+    [Fact]
+    public async Task Search_ByBrand_ReturnsAllModelsOfTheBrand()
+    {
+        var (tools, _) = CreateSut();
+
+        var result = (CarSearchResult)await tools.SearchAvailableCarsAsync(Pickup, Return, carName: "Toyota");
+
+        result.Cars.Select(c => c.Id).Should().Equal(CamryId, SiennaId);
+    }
+
+    [Fact]
+    public async Task Search_ByNameOfBookedCar_SaysItIsInTheFleetButBusy()
+    {
+        var (tools, _) = CreateSut();
+
+        var result = (CarSearchResult)await tools.SearchAvailableCarsAsync(Pickup, Return, carName: "Skoda Octavia");
+
+        result.Cars.Should().BeEmpty();
+        result.Note.Should().Contain("Skoda Octavia").And.Contain("not free");
+    }
+
+    [Fact]
+    public async Task Search_ByUnknownName_SaysThereIsNoSuchCar()
+    {
+        var (tools, _) = CreateSut();
+
+        var result = (CarSearchResult)await tools.SearchAvailableCarsAsync(Pickup, Return, carName: "Lada Niva");
+
+        result.Cars.Should().BeEmpty();
+        result.Note.Should().Contain("no car matching");
+    }
+
+    // ── car name consistency (E1 failure case 3) ─────────────────────────────
+
+    [Fact]
+    public async Task CreateDraft_NameDoesNotMatchCarId_IsRejectedWithoutDraft()
+    {
+        // gemini-3.1-flash-lite, B-04: "Ви обрали Citroen Berlingo", but carId = 1 (Toyota Camry).
+        var (tools, turn) = CreateSut(userId: "user-1");
+
+        var result = await tools.CreateRentalDraftAsync(CamryId, Pickup, Return, carName: "Toyota Sienna");
+
+        result.Should().BeOfType<ToolError>().Which.Error.Should().Be(ToolErrorCodes.CarMismatch);
+        ((ToolError)result).Message.Should().Contain("Toyota Camry");
+        turn.Draft.Should().BeNull();
+        (await _db.PendingActions.CountAsync()).Should().Be(0);
+    }
+
+    [Theory]
+    [InlineData("Toyota Camry")]
+    [InlineData("Toyota Camry (2023)")]
+    [InlineData("Toyota Camry (2024)")]                // a wrong year is ignored
+    [InlineData("Камрі")]
+    [InlineData(null)]
+    public async Task CreateDraft_MatchingOrMissingName_IsAccepted(string? carName)
+    {
+        var (tools, _) = CreateSut(userId: "user-1");
+
+        var result = await tools.CreateRentalDraftAsync(CamryId, "2026-12-21", Return, carName: carName);
+
+        result.Should().BeOfType<RentalDraftCreated>();
+    }
+
+    [Fact]
+    public async Task CalculatePrice_NameDoesNotMatchCarId_IsRejected()
+    {
+        var (tools, _) = CreateSut();
+
+        var result = await tools.CalculatePriceAsync(SiennaId, Pickup, Return, carName: "BMW 4 Series");
+
+        result.Should().BeOfType<ToolError>().Which.Error.Should().Be(ToolErrorCodes.CarMismatch);
+    }
+
     // ── calculate_price / get_car_details ────────────────────────────────────
 
     [Fact]

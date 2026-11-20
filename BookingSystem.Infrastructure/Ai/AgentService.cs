@@ -57,9 +57,15 @@ public sealed class AgentService(
         try
         {
             var slotFillingEnabled = chatOptions?.SlotFillingEnabled ?? _options.SlotFilling.Enabled;
+            var visible = history.Where(m => !m.IsInternalNote).ToList();
             var turn = new AgentTurnContext(
                 session.Id, userId, clock.Today, message,
-                BookingSlots.FromJson(session.SlotsJson), slotFillingEnabled);
+                BookingSlots.FromJson(session.SlotsJson), slotFillingEnabled)
+            {
+                RequireGroundedDates = chatOptions?.RequireGroundedDates ?? _options.SlotFilling.RequireGroundedDates,
+                EarlierUserMessages = visible.Where(m => m.Role == ChatSessionMessage.UserRole).Select(m => m.Content).ToList(),
+                PreviousAssistantMessage = visible.LastOrDefault() is { Role: ChatSessionMessage.AssistantRole } last ? last.Content : null
+            };
             var agent = CreateAgent(model, turn);
 
             List<AiChatMessage> messages = [.. history.Select(ToAiMessage), new(ChatRole.User, message)];
@@ -387,7 +393,7 @@ public sealed class AgentService(
         var provided = snapshot.Where(a => !SlotValues.IsEmpty(a.Value)).Select(a => a.Key).ToHashSet();
 
         return await slotValidator.ValidateAsync(
-            toolName, snapshot, new SlotValidationContext(turn.Today, turn.LatestUserMessage, provided), ct);
+            toolName, snapshot, turn.ValidationContext(provided), ct);
     }
 
     private static string SerializeArguments(AIFunctionArguments arguments) =>
