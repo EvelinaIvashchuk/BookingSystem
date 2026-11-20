@@ -11,13 +11,16 @@ using Microsoft.Extensions.Logging;
 //   dotnet run --project BookingSystem.Evaluation -- retrieval --tune-on dev --eval-on test
 //   dotnet run --project BookingSystem.Evaluation -- summary
 //   dotnet run --project BookingSystem.Evaluation -- rescore      (re-apply the clarification criterion to stored rows)
+//   dotnet run --project BookingSystem.Evaluation -- grounding-replay  (offline estimate of the date grounding check)
+//   dotnet run --project BookingSystem.Evaluation -- security --models gemini:gemini-3.6-flash@3 --max-cost 1.50   (E4)
 // Options: --types simple,faq  --ids S-01,F-02  --delay-ms 2000  --out results/x.csv  --max-cost 4.80
+//          --experiment E1-v2 (label of agent runs; a new label re-runs scenarios already done under E1)
 //          model@N sets repeats per model, e.g. gemini:gemini-3.8-flash@3   (+ any --Ai:... config override)
 
 var command = args.FirstOrDefault()?.ToLowerInvariant();
 if (command is null or "help" or "--help")
 {
-    Console.WriteLine("Commands: index | agent | ablation | retrieval | summary | rescore  (see Program.cs for options)");
+    Console.WriteLine("Commands: index | agent | ablation | security | retrieval | summary | rescore | grounding-replay | security-summary  (see Program.cs)");
     return 0;
 }
 
@@ -32,10 +35,11 @@ Console.CancelKeyPress += (_, e) => { e.Cancel = true; cts.Cancel(); };
 try
 {
     // summary / rescore only read the CSV: preparing the database would wipe chat sessions of a run in progress.
-    if (command is not ("summary" or "rescore"))
+    if (command is not ("summary" or "rescore" or "grounding-replay" or "security-summary"))
     {
         await using var scope = services.CreateAsyncScope();
-        await ActivatorUtilities.CreateInstance<EvalDatabase>(scope.ServiceProvider).PrepareAsync(cts.Token);
+        await ActivatorUtilities.CreateInstance<EvalDatabase>(scope.ServiceProvider)
+            .PrepareAsync(cts.Token, securityPayload: command == "security");
     }
 
     switch (command)
@@ -57,7 +61,7 @@ try
             var slotModes = Value("--slot-filling") switch { "off" => new[] { false }, "both" => [true, false], _ => [true] };
             var output = OutputPath("agent_runs.csv");
             await ActivatorUtilities.CreateInstance<AgentExperiment>(services).RunAsync(
-                new AgentRunPlan("E1", models, slotModes, output, Set("--types"), Set("--ids"), NullableInt("--delay-ms"), MaxCost()), cts.Token);
+                new AgentRunPlan(Value("--experiment") ?? "E1", models, slotModes, output, Set("--types"), Set("--ids"), NullableInt("--delay-ms"), MaxCost()), cts.Token);
             AgentSummary.Write(output, Path.GetDirectoryName(output)!);
             break;
         }
@@ -89,6 +93,37 @@ try
             logger.LogInformation("Rescored {Rows} rows: clarification changed in {Clarification}, task success in {Success}",
                 result.Rows, result.ClarificationChanged, result.SuccessChanged);
             AgentSummary.Write(runs, Path.GetDirectoryName(runs)!);
+            break;
+        }
+
+        case "security":
+        {
+            // E4: prompt injection and authorization attacks (datasets/security_scenarios.json), own CSV and cost cap.
+            var models = Models("--models");
+            if (models.Count == 0) throw new ArgumentException("--models is required");
+            var output = OutputPath("security_runs.csv");
+            await ActivatorUtilities.CreateInstance<AgentExperiment>(services).RunAsync(
+                new AgentRunPlan("E4", models, [true], output, Set("--types"), Set("--ids"), NullableInt("--delay-ms"), MaxCost(),
+                    ScenariosFile: "security_scenarios.json"), cts.Token);
+            SecuritySummary.Write(output, Path.GetDirectoryName(output)!);
+            break;
+        }
+
+        case "security-summary":
+        {
+            var runs = OutputPath("security_runs.csv");
+            SecuritySummary.Write(runs, Path.GetDirectoryName(runs)!);
+            break;
+        }
+
+        case "grounding-replay":
+        {
+            // Offline estimate of Ai:SlotFilling:RequireGroundedDates on stored calls (see GroundingReplay); no model calls.
+            var runs = OutputPath("agent_runs.csv");
+            var result = GroundingReplay.Run(runs, Path.Combine(paths.Datasets, "agent_scenarios.json"), Path.GetDirectoryName(runs)!);
+            logger.LogInformation(
+                "Grounding replay: {Runs} runs, {Calls} executed calls with dates, {Flagged} ungrounded dates; runs: prevented {Prevented}, wrong dates caught {WrongDates}, false blocks {FalseBlocks}",
+                result.Runs, result.DateCalls, result.Flagged, result.Prevented, result.WrongDates, result.FalseBlocks);
             break;
         }
 

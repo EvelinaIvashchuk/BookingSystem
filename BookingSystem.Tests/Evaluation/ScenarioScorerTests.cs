@@ -88,6 +88,7 @@ public class ScenarioScorerTests
 
     [Theory]
     [InlineData("На які дати вам потрібне авто?", true)]
+    [InlineData("На які саме дати ви б хотіли забронювати Toyota Camry?", true)]
     [InlineData("З якого числа і до якого вам потрібна машина?", true)]
     [InlineData("When would you like to pick it up and return it?", true)]
     [InlineData("Будь ласка, вкажіть дати оренди (день отримання та день повернення).", true)]
@@ -135,6 +136,20 @@ public class ScenarioScorerTests
 
         ScenarioScorer.Score(scenario, [Reply("Вибачте", Call("search_rental_policies", new { query = "x" }))]).TaskSuccess.Should().BeFalse();
         ScenarioScorer.Score(scenario, [Reply("Вибачте, лише оренда авто.")]).TaskSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public void MustNotSucceed_AllowsRejectedAttemptButNotASuccessfulCall()
+    {
+        // B-08: booking a car that is busy on these dates.
+        var scenario = Scenario(null, optional: ["create_rental_draft"]);
+        scenario.Expected.MustNotSucceedTools = ["create_rental_draft"];
+        var args = new { carId = 1, pickupDate = "2026-12-20", returnDate = "2026-12-22" };
+
+        ScenarioScorer.Score(scenario, [Reply("Camry зайнята на ці дати.",
+            Call("create_rental_draft", args, success: false, error: "business_rule"))]).TaskSuccess.Should().BeTrue();
+        ScenarioScorer.Score(scenario, [Reply("Готово, підтвердіть.",
+            Call("create_rental_draft", args))]).TaskSuccess.Should().BeFalse();
     }
 
     [Theory]

@@ -21,13 +21,13 @@ public class DatasetIntegrityTests
     [Fact]
     public void Scenarios_FollowThePlannedMix()
     {
-        Scenarios.Scenarios.Should().HaveCount(74);
+        Scenarios.Scenarios.Should().HaveCount(83);
         Scenarios.Scenarios.Select(s => s.Id).Should().OnlyHaveUniqueItems();
         Scenarios.Scenarios.GroupBy(s => s.Type).ToDictionary(g => g.Key, g => g.Count()).Should().BeEquivalentTo(
             new Dictionary<string, int>
             {
                 ["simple"] = 15, ["constraints"] = 10, ["incomplete"] = 12, ["multi-turn"] = 10,
-                ["relative-dates"] = 6, ["faq"] = 10, ["booking"] = 6, ["out-of-scope"] = 5
+                ["relative-dates"] = 6, ["faq"] = 10, ["booking"] = 15, ["out-of-scope"] = 5
             });
     }
 
@@ -42,7 +42,8 @@ public class DatasetIntegrityTests
         {
             s.Turns.Should().NotBeEmpty(s.Id);
             if (s.Expected.Tool is { } tool) Tools.Should().Contain(tool, s.Id);
-            s.Expected.OptionalTools.Concat(s.Expected.MustNotCallTools.Where(t => t != "*")).Should().BeSubsetOf(Tools, s.Id);
+            s.Expected.OptionalTools.Concat(s.Expected.MustNotCallTools.Where(t => t != "*"))
+                .Concat(s.Expected.MustNotSucceedTools).Should().BeSubsetOf(Tools, s.Id);
             s.Expected.AsksFor.Should().BeSubsetOf(slots, s.Id);
             if (s.Expected.Args.Count > 0) s.Expected.Tool.Should().NotBeNull(s.Id);
 

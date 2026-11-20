@@ -34,7 +34,8 @@ public sealed record AgentRunPlan(
     IReadOnlySet<string>? Types = null,
     IReadOnlySet<string>? Ids = null,
     int? DelayMs = null,
-    decimal? MaxCostUsd = null);
+    decimal? MaxCostUsd = null,
+    string ScenariosFile = "agent_scenarios.json");
 
 /// <summary>
 /// Runs agent scenarios (E1 models, E2 slot-filling ablation). One CSV row per
@@ -62,7 +63,7 @@ public sealed class AgentExperiment(
 
     public async Task RunAsync(AgentRunPlan plan, CancellationToken ct)
     {
-        var file = Datasets.LoadScenarios(Path.Combine(paths.Datasets, "agent_scenarios.json"));
+        var file = Datasets.LoadScenarios(Path.Combine(paths.Datasets, plan.ScenariosFile));
         var scenarios = file.Scenarios
             .Where(s => plan.Types is null || plan.Types.Contains(s.Type))
             .Where(s => plan.Ids is null || plan.Ids.Contains(s.Id))

@@ -76,9 +76,10 @@ public static partial class ScenarioScorer
 
         // Forbidden calls (executed in any turn)
         var executedAll = allCalls.Where(c => !c.Intercepted).ToList();
-        var forbidden = expected.MustNotCallTools.Contains("*")
-            ? executedAll.Count > 0
-            : executedAll.Any(c => expected.MustNotCallTools.Contains(c.Name));
+        var forbidden = (expected.MustNotCallTools.Contains("*")
+                            ? executedAll.Count > 0
+                            : executedAll.Any(c => expected.MustNotCallTools.Contains(c.Name)))
+                        || executedAll.Any(c => c.Success && expected.MustNotSucceedTools.Contains(c.Name));
 
         // Clarification
         var clarificationExpected = expected.AsksFor.Count > 0;
@@ -174,7 +175,7 @@ public static partial class ScenarioScorer
 
     private static readonly string[] BothDates =
     [
-        "дати оренди", "які дати", "на які дати", "період оренди", "дати отримання та повернення", "дату отримання та повернення",
+        "дати оренди", "які дати", "на які дати", "які саме дати", "на які саме дати", "період оренди", "дати отримання та повернення", "дату отримання та повернення",
         "дати початку та завершення", "rental dates", "which dates", "what dates", "the dates", "rental period"
     ];
 

@@ -1,0 +1,6 @@
+experiment,model,slot_filling,scenario_id,type,repeat,turn,tool,argument,date,verdict,task_success,user_turns
+E1,gemini:gemini-3.1-flash-lite,1,I-07,incomplete,2,1,search_available_cars,returnDate,2026-12-11,prevented,0,I need a car from December 10
+E1,groq:openai/gpt-oss-20b,1,R-03,relative-dates,1,1,search_available_cars,pickupDate,2026-11-21,wrong_date,0,Шукаю авто з найближчого понеділка до середи
+E1,groq:openai/gpt-oss-20b,1,R-05,relative-dates,1,1,search_available_cars,pickupDate,2026-11-21,wrong_date,0,Потрібна машина з неділі по четвер
+E2,gemini:gemini-3.5-flash-lite,0,I-02,incomplete,2,1,search_available_cars,returnDate,2026-12-21,prevented,0,Потрібен автомат з 20 грудня
+E2,gemini:gemini-3.5-flash-lite,0,I-02,incomplete,3,1,search_available_cars,returnDate,2026-12-21,prevented,0,Потрібен автомат з 20 грудня

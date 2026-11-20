@@ -42,6 +42,12 @@ public sealed class ScenarioExpectation
     /// <summary>Tools that must not be executed in any turn; "*" = any tool.</summary>
     public List<string> MustNotCallTools { get; set; } = [];
 
+    /// <summary>
+    /// Tools that may be tried but must not succeed (e.g. a draft for a booked car: the attempt is rejected by the
+    /// server and harmless, a created draft is a failure).
+    /// </summary>
+    public List<string> MustNotSucceedTools { get; set; } = [];
+
     public List<string> MustContain { get; set; } = [];
     public List<string> MustContainAny { get; set; } = [];
     public List<string> MustNotContain { get; set; } = [];
