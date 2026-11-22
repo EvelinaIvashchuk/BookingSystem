@@ -41,7 +41,7 @@
   <data name="Car_BrowseCars" xml:space="preserve"><value>Каталог автомобілів</value></data>
   <data name="Car_CarsFound" xml:space="preserve"><value>Знайдено {0} доступних авт.</value></data>
   <data name="Car_AllCategories" xml:space="preserve"><value>Всі категорії</value></data>
-  <data name="Car_SearchPlaceholder" xml:space="preserve"><value>Пошук за маркою, моделлю або описом...</value></data>
+  <data name="Car_SearchPlaceholder" xml:space="preserve"><value>Марка, модель або опис</value></data>
   <data name="Car_Search" xml:space="preserve"><value>Пошук</value></data>
   <data name="Car_NoResults" xml:space="preserve"><value>Жодного автомобіля не відповідає пошуку або фільтру.</value></data>
   <data name="Car_ViewAllCars" xml:space="preserve"><value>Переглянути всі автомобілі</value></data>
@@ -372,7 +372,7 @@
   <data name="Common_GoBack" xml:space="preserve"><value>Назад</value></data>
   <data name="Car_AskAssistant" xml:space="preserve"><value>Запитати асистента</value></data>
   <data name="Car_ResetFilters" xml:space="preserve"><value>Скинути</value></data>
-  <data name="Car_NoResultsHint" xml:space="preserve"><value>Спробуйте іншу категорію чи запит — або опишіть потрібне авто асистентові.</value></data>
+  <data name="Car_NoResultsHint" xml:space="preserve"><value>Спробуйте інші фільтри чи дати — або опишіть потрібне авто асистентові.</value></data>
   <data name="Enum_Petrol" xml:space="preserve"><value>Бензин</value></data>
   <data name="Enum_Diesel" xml:space="preserve"><value>Дизель</value></data>
   <data name="Enum_Electric" xml:space="preserve"><value>Електро</value></data>
@@ -404,4 +404,27 @@
   <data name="Role_User" xml:space="preserve"><value>Клієнт</value></data>
   <data name="Admin_ConfirmDeactivate" xml:space="preserve"><value>Деактивувати {0}?</value></data>
   <data name="Admin_ConfirmPromote" xml:space="preserve"><value>Зробити {0} адміністратором?</value></data>
+  <data name="Car_FilterCity" xml:space="preserve"><value>Місто</value></data>
+  <data name="Car_AnyCity" xml:space="preserve"><value>Усі міста</value></data>
+  <data name="Car_FilterPickup" xml:space="preserve"><value>Отримання</value></data>
+  <data name="Car_FilterReturn" xml:space="preserve"><value>Повернення</value></data>
+  <data name="Car_FilterAny" xml:space="preserve"><value>Не важливо</value></data>
+  <data name="Car_SeatsFrom" xml:space="preserve"><value>від {0} місць</value></data>
+  <data name="Car_PriceUpTo" xml:space="preserve"><value>до {0} ₴</value></data>
+  <data name="Car_SortLabel" xml:space="preserve"><value>Сортування</value></data>
+  <data name="Car_SortDefault" xml:space="preserve"><value>За категорією</value></data>
+  <data name="Car_SortPriceAsc" xml:space="preserve"><value>Спочатку дешевші</value></data>
+  <data name="Car_SortPriceDesc" xml:space="preserve"><value>Спочатку дорожчі</value></data>
+  <data name="Car_SortNewest" xml:space="preserve"><value>Спочатку новіші</value></data>
+  <data name="Car_DatesBoth" xml:space="preserve"><value>Вкажіть обидві дати — тоді залишаться лише авто, вільні на весь період.</value></data>
+  <data name="Car_DatesInvalid" xml:space="preserve"><value>Дати не враховано: оренда триває від {0} до {1} днів і починається не раніше сьогодні та не пізніше ніж через {2} днів.</value></data>
+  <data name="Car_TotalForDays" xml:space="preserve"><value>{1} ₴ за {0} дн.</value></data>
+  <data name="Car_CatalogLead" xml:space="preserve"><value>Оберіть місто й дати — покажемо лише вільні авто.</value></data>
+  <data name="Car_FilterDates" xml:space="preserve"><value>Дати</value></data>
+  <data name="Car_Find" xml:space="preserve"><value>Знайти</value></data>
+  <data name="Car_ClearFilter" xml:space="preserve"><value>Прибрати фільтр</value></data>
+  <data name="Car_ChipTransmission" xml:space="preserve"><value>Коробка</value></data>
+  <data name="Car_ChipFuel" xml:space="preserve"><value>Пальне</value></data>
+  <data name="Car_ChipPrice" xml:space="preserve"><value>Ціна</value></data>
+  <data name="Car_FreeFor" xml:space="preserve"><value>вільні {0} – {1}, {2} дн.</value></data>
 </root>

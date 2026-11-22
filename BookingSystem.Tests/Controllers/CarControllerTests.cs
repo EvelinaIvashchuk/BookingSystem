@@ -1,9 +1,10 @@
 using BookingSystem.Controllers;
 using BookingSystem.Data;
+using BookingSystem.Data.Repositories;
 using BookingSystem.Enums;
-using BookingSystem.Helpers;
 using BookingSystem.Models;
 using BookingSystem.Services.Interfaces;
+using BookingSystem.ViewModels;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -15,7 +16,8 @@ namespace BookingSystem.Tests.Controllers;
 ///
 /// Підхід: контролер інстанціюється напряму без HTTP-пайплайну.
 /// Всі залежності замінені Moq-стабами.
-/// Перевіряється маршрутизація дій (тип результату, модель, ViewBag).
+/// Перевіряється, які фільтри контролер передає в сервіс, як обробляє дати і що кладе в модель подання.
+/// Саму фільтрацію перевіряють <see cref="Repositories.CarCatalogSearchTests"/>.
 /// </summary>
 public class CarControllerTests
 {
@@ -23,21 +25,30 @@ public class CarControllerTests
     //  Допоміжні методи
     // =========================================================================
 
+    private static readonly DateTime Today = DateTime.UtcNow.Date;
+
     private readonly Mock<ICarService> _carService = new();
     private readonly Mock<IUnitOfWork> _uow        = new();
+    private CarCatalogQuery? _lastQuery;
+    private int _lastPage;
+
+    public CarControllerTests()
+    {
+        _carService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(Array.Empty<Category>());
+        _carService.Setup(s => s.GetCitiesAsync()).ReturnsAsync(new[] { "Київ", "Львів" });
+        ReturnCars();
+    }
 
     private CarController CreateSut() => new(_carService.Object, _uow.Object);
 
-    private static Category MakeCategory(int id = 1, string name = "Sedan") =>
-        new() { Id = id, Name = name };
+    /// <summary>Сервіс повертає ці авто (одна сторінка) і запам'ятовує отриманий запит.</summary>
+    private void ReturnCars(int totalCount = -1, int page = 1, params Car[] cars) =>
+        _carService
+            .Setup(s => s.SearchCatalogAsync(It.IsAny<CarCatalogQuery>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Callback<CarCatalogQuery, int, int>((q, p, _) => { _lastQuery = q; _lastPage = p; })
+            .ReturnsAsync(new PagedResult<Car>(cars, totalCount < 0 ? cars.Length : totalCount, page));
 
-    private static Car MakeCar(
-        int      id,
-        string   brand,
-        string   model,
-        int      categoryId = 1,
-        CarStatus status    = CarStatus.Available,
-        string?  description = null) =>
+    private static Car MakeCar(int id, string brand, string model) =>
         new()
         {
             Id           = id,
@@ -45,148 +56,184 @@ public class CarControllerTests
             Model        = model,
             Year         = 2023,
             LicensePlate = $"AA{id:D4}BB",
-            CategoryId   = categoryId,
-            Category     = MakeCategory(categoryId),
-            Status       = status,
+            CategoryId   = 1,
+            Category     = new Category { Id = 1, Name = "Sedan" },
+            Status       = CarStatus.Available,
             PricePerDay  = 1000m,
             Location     = "Kyiv",
             Seats        = 5,
             FuelType     = FuelType.Petrol,
+            Transmission = Transmission.Automatic
+        };
+
+    private static CarCatalogViewModel ModelOf(IActionResult result) =>
+        result.Should().BeOfType<ViewResult>().Subject
+              .Model.Should().BeOfType<CarCatalogViewModel>().Subject;
+
+    // =========================================================================
+    //  Index — фільтри
+    // =========================================================================
+
+    [Fact]
+    public async Task Index_WhenNoFilters_ReturnsViewWithCarsCitiesAndEmptyQuery()
+    {
+        ReturnCars(cars: [MakeCar(1, "Toyota", "Camry"), MakeCar(2, "Honda", "Civic")]);
+
+        var vm = ModelOf(await CreateSut().Index(null));
+
+        vm.Cars.TotalCount.Should().Be(2);
+        vm.Cars.PageIndex.Should().Be(1);
+        vm.Cities.Should().Equal("Київ", "Львів");
+        vm.RentalDays.Should().BeNull();
+        vm.DateErrorKey.Should().BeNull();
+        vm.Filter.IsFiltered.Should().BeFalse();
+        _lastQuery.Should().BeEquivalentTo(new CarCatalogQuery());
+        _lastPage.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task Index_PassesEveryFilterToService()
+    {
+        var filter = new CarCatalogFilter
+        {
+            Search       = "toyota",
+            CategoryId   = 2,
+            City         = "Львів",
             Transmission = Transmission.Automatic,
-            Description  = description
+            FuelType     = FuelType.Hybrid,
+            MinSeats     = 7,
+            MaxPrice     = 2000m,
+            Sort         = CarSort.PriceDesc,
+            Page         = 3
         };
+
+        var vm = ModelOf(await CreateSut().Index(filter));
+
+        _lastQuery.Should().BeEquivalentTo(new CarCatalogQuery
+        {
+            Search         = "toyota",
+            CategoryId     = 2,
+            City           = "Львів",
+            Transmission   = Transmission.Automatic,
+            FuelType       = FuelType.Hybrid,
+            MinSeats       = 7,
+            MaxPricePerDay = 2000m,
+            Sort           = CarSort.PriceDesc
+        });
+        _lastPage.Should().Be(3);
+        vm.Filter.Should().BeSameAs(filter);
+    }
+
+    [Fact]
+    public async Task Index_UsesPageReturnedByService()
+    {
+        ReturnCars(totalCount: 13, page: 3, cars: [MakeCar(13, "Kia", "Ceed")]);
+
+        var vm = ModelOf(await CreateSut().Index(new CarCatalogFilter { Page = 99 }));
+
+        vm.Cars.PageIndex.Should().Be(3);
+        vm.Cars.TotalPages.Should().Be(3); // 13 авто по 6 на сторінку
+        vm.Cars.Should().ContainSingle(c => c.Id == 13);
+    }
 
     // =========================================================================
-    //  Index — пошук і фільтрація
+    //  Index — дати
     // =========================================================================
 
     [Fact]
-    public async Task Index_WhenNoFilters_ReturnsViewWithAllAvailableCars()
+    public async Task Index_WhenDatesValid_FiltersByPeriodAndShowsRentalDays()
     {
-        var cars = new[]
-        {
-            MakeCar(1, "Toyota", "Camry"),
-            MakeCar(2, "Honda",  "Civic"),
-            MakeCar(3, "BMW",    "X5", categoryId: 2)
-        };
-        _carService.Setup(s => s.GetAvailableCarsAsync()).ReturnsAsync(cars);
-        _carService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(Array.Empty<Category>());
+        var filter = new CarCatalogFilter { PickupDate = Today.AddDays(5), ReturnDate = Today.AddDays(8) };
 
-        var result = await CreateSut().Index(search: null, categoryId: null, page: 1);
+        var vm = ModelOf(await CreateSut().Index(filter));
 
-        var view = result.Should().BeOfType<ViewResult>().Subject;
-        var model = view.Model.Should().BeOfType<PaginatedList<Car>>().Subject;
-        model.TotalCount.Should().Be(3);
+        _lastQuery!.PickupDate.Should().Be(Today.AddDays(5));
+        _lastQuery.ReturnDate.Should().Be(Today.AddDays(8));
+        vm.RentalDays.Should().Be(3);
+        vm.DateErrorKey.Should().BeNull();
     }
 
     [Fact]
-    public async Task Index_WhenSearchByBrand_ReturnsOnlyMatchingCars()
+    public async Task Index_WhenOnlyPickupDate_IgnoresDatesAndAsksForBoth()
     {
-        var cars = new[]
-        {
-            MakeCar(1, "Toyota", "Camry"),
-            MakeCar(2, "Honda",  "Civic"),
-            MakeCar(3, "Toyota", "Corolla")
-        };
-        _carService.Setup(s => s.GetAvailableCarsAsync()).ReturnsAsync(cars);
-        _carService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(Array.Empty<Category>());
+        var vm = ModelOf(await CreateSut().Index(new CarCatalogFilter { PickupDate = Today.AddDays(5) }));
 
-        var result = await CreateSut().Index(search: "toyota", categoryId: null, page: 1);
-
-        var model = ((ViewResult)result).Model.Should().BeOfType<PaginatedList<Car>>().Subject;
-        model.TotalCount.Should().Be(2);
-        model.Should().OnlyContain(c => c.Brand == "Toyota");
+        _lastQuery!.PickupDate.Should().BeNull();
+        _lastQuery.ReturnDate.Should().BeNull();
+        vm.RentalDays.Should().BeNull();
+        vm.DateErrorKey.Should().Be("Car_DatesBoth");
     }
 
     [Fact]
-    public async Task Index_WhenSearchByModel_ReturnsOnlyMatchingCars()
+    public async Task Index_WhenDatesBreakBookingRules_IgnoresDates()
     {
-        var cars = new[]
-        {
-            MakeCar(1, "Toyota", "Camry"),
-            MakeCar(2, "Honda",  "CR-V"),
-            MakeCar(3, "BMW",    "X5")
-        };
-        _carService.Setup(s => s.GetAvailableCarsAsync()).ReturnsAsync(cars);
-        _carService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(Array.Empty<Category>());
+        var filter = new CarCatalogFilter { PickupDate = Today.AddDays(8), ReturnDate = Today.AddDays(5) };
 
-        var result = await CreateSut().Index(search: "cr-v", categoryId: null, page: 1);
+        var vm = ModelOf(await CreateSut().Index(filter));
 
-        var model = ((ViewResult)result).Model.Should().BeOfType<PaginatedList<Car>>().Subject;
-        model.TotalCount.Should().Be(1);
-        model.Single().Model.Should().Be("CR-V");
+        _lastQuery!.PickupDate.Should().BeNull();
+        vm.RentalDays.Should().BeNull();
+        vm.DateErrorKey.Should().Be("Car_DatesInvalid");
+    }
+
+    [Theory]
+    [InlineData(-1, 2)]   // отримання в минулому
+    [InlineData(3, 3)]    // повернення в той самий день
+    [InlineData(1, 32)]   // довше 30 днів
+    [InlineData(61, 63)]  // більш ніж за 60 днів наперед
+    public void ResolvePeriod_WhenRulesBroken_ReturnsInvalid(int pickupOffset, int returnOffset)
+    {
+        var (pickup, ret, error) = CarController.ResolvePeriod(Today.AddDays(pickupOffset), Today.AddDays(returnOffset), Today);
+
+        pickup.Should().BeNull();
+        ret.Should().BeNull();
+        error.Should().Be("Car_DatesInvalid");
+    }
+
+    [Theory]
+    [InlineData(0, 1)]
+    [InlineData(0, 30)]
+    [InlineData(60, 61)]
+    public void ResolvePeriod_WithinRules_ReturnsDates(int pickupOffset, int returnOffset)
+    {
+        var (pickup, ret, error) = CarController.ResolvePeriod(Today.AddDays(pickupOffset), Today.AddDays(returnOffset), Today);
+
+        pickup.Should().Be(Today.AddDays(pickupOffset));
+        ret.Should().Be(Today.AddDays(returnOffset));
+        error.Should().BeNull();
     }
 
     [Fact]
-    public async Task Index_WhenSearchByDescription_ReturnsMatchingCars()
+    public void ResolvePeriod_WithoutDates_ReturnsNoPeriodAndNoError()
     {
-        var cars = new[]
-        {
-            MakeCar(1, "Toyota", "Camry",  description: "Comfortable family sedan"),
-            MakeCar(2, "Honda",  "Civic",  description: "Sporty city car"),
-            MakeCar(3, "BMW",    "X5",     description: "Luxury SUV")
-        };
-        _carService.Setup(s => s.GetAvailableCarsAsync()).ReturnsAsync(cars);
-        _carService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(Array.Empty<Category>());
-
-        var result = await CreateSut().Index(search: "luxury", categoryId: null, page: 1);
-
-        var model = ((ViewResult)result).Model.Should().BeOfType<PaginatedList<Car>>().Subject;
-        model.TotalCount.Should().Be(1);
-        model.Single().Brand.Should().Be("BMW");
+        CarController.ResolvePeriod(null, null, Today).Should().Be(((DateTime?)null, (DateTime?)null, (string?)null));
     }
 
+    // =========================================================================
+    //  CarCatalogFilter — посилання зі збереженими фільтрами
+    // =========================================================================
+
     [Fact]
-    public async Task Index_WhenFilteredByCategoryId_ReturnsOnlyCarsInThatCategory()
+    public void Filter_ToRouteValues_KeepsOnlySetFiltersWithoutPage()
     {
-        var cars = new[]
+        var filter = new CarCatalogFilter
         {
-            MakeCar(1, "Toyota", "Camry",   categoryId: 1), // Sedan
-            MakeCar(2, "Honda",  "CR-V",    categoryId: 2), // SUV
-            MakeCar(3, "BMW",    "X5",      categoryId: 2), // SUV
-            MakeCar(4, "Kia",    "Sorento", categoryId: 2)  // SUV
+            Search     = "  rav4 ",
+            City       = "",
+            PickupDate = new DateTime(2026, 12, 1),
+            MaxPrice   = 1500m,
+            Sort       = CarSort.Newest,
+            Page       = 4
         };
-        _carService.Setup(s => s.GetAvailableCarsAsync()).ReturnsAsync(cars);
-        _carService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(Array.Empty<Category>());
 
-        var result = await CreateSut().Index(search: null, categoryId: 2, page: 1);
-
-        var model = ((ViewResult)result).Model.Should().BeOfType<PaginatedList<Car>>().Subject;
-        model.TotalCount.Should().Be(3);
-        model.Should().OnlyContain(c => c.CategoryId == 2);
-    }
-
-    [Fact]
-    public async Task Index_WhenBothSearchAndCategoryApplied_ReturnsIntersection()
-    {
-        var cars = new[]
+        filter.ToRouteValues().Should().BeEquivalentTo(new Dictionary<string, string>
         {
-            MakeCar(1, "Toyota", "Camry",  categoryId: 1),  // Sedan / Toyota
-            MakeCar(2, "Toyota", "RAV4",   categoryId: 2),  // SUV   / Toyota — match
-            MakeCar(3, "Honda",  "CR-V",   categoryId: 2),  // SUV   / Honda
-            MakeCar(4, "Toyota", "Corolla",categoryId: 1)   // Sedan / Toyota
-        };
-        _carService.Setup(s => s.GetAvailableCarsAsync()).ReturnsAsync(cars);
-        _carService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(Array.Empty<Category>());
-
-        var result = await CreateSut().Index(search: "toyota", categoryId: 2, page: 1);
-
-        var model = ((ViewResult)result).Model.Should().BeOfType<PaginatedList<Car>>().Subject;
-        model.TotalCount.Should().Be(1);
-        model.Single().Model.Should().Be("RAV4");
-    }
-
-    [Fact]
-    public async Task Index_PopulatesViewBagWithSearchAndCategoryId()
-    {
-        _carService.Setup(s => s.GetAvailableCarsAsync()).ReturnsAsync(Array.Empty<Car>());
-        _carService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(Array.Empty<Category>());
-
-        var sut = CreateSut();
-        await sut.Index(search: "bmw", categoryId: 3, page: 1);
-
-        ((string?)sut.ViewBag.Search).Should().Be("bmw");
-        ((int?)sut.ViewBag.CategoryId).Should().Be(3);
+            ["search"]     = "rav4",
+            ["pickupDate"] = "2026-12-01",
+            ["maxPrice"]   = "1500",
+            ["sort"]       = "Newest"
+        });
+        filter.IsFiltered.Should().BeTrue();
     }
 
     // =========================================================================
