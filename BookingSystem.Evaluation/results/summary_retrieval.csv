@@ -1,0 +1,55 @@
+split,kind,method,queries,recall3,recall5,mrr10
+test,all,Vector,39,0.935897,0.987179,0.950855
+test,all,FullText,39,0.730769,0.730769,0.717949
+test,all,HybridRrf,39,0.871795,0.897436,0.876526
+test,all,HybridAdaptive(initial),39,0.833333,0.897436,0.827564
+test,all,HybridAdaptive(tuned v1),39,0.833333,0.897436,0.861783
+test,all,HybridAdaptive(tuned v2),39,0.910256,0.948718,0.895085
+test,keyword,Vector,19,0.973684,0.973684,0.973684
+test,keyword,FullText,19,0.894737,0.894737,0.894737
+test,keyword,HybridRrf,19,0.973684,0.973684,0.973684
+test,keyword,HybridAdaptive(initial),19,0.973684,1,1
+test,keyword,HybridAdaptive(tuned v1),19,0.973684,1,1
+test,keyword,HybridAdaptive(tuned v2),19,0.973684,1,1
+test,descriptive,Vector,20,0.9,1,0.929167
+test,descriptive,FullText,20,0.575,0.575,0.55
+test,descriptive,HybridRrf,20,0.775,0.825,0.784226
+test,descriptive,HybridAdaptive(initial),20,0.7,0.8,0.66375
+test,descriptive,HybridAdaptive(tuned v1),20,0.7,0.8,0.730476
+test,descriptive,HybridAdaptive(tuned v2),20,0.85,0.9,0.795417
+dev,all,Vector,17,1,1,0.892157
+dev,all,FullText,17,0.588235,0.647059,0.580882
+dev,all,HybridRrf,17,0.882353,0.970588,0.80098
+dev,all,HybridAdaptive(initial),17,0.823529,0.911765,0.823529
+dev,all,HybridAdaptive(tuned v1),17,0.941176,0.970588,0.838235
+dev,all,HybridAdaptive(tuned v2),17,1,1,0.921569
+dev,keyword,Vector,9,1,1,0.87037
+dev,keyword,FullText,9,0.888889,0.888889,0.833333
+dev,keyword,HybridRrf,9,1,1,0.87037
+dev,keyword,HybridAdaptive(initial),9,1,1,0.925926
+dev,keyword,HybridAdaptive(tuned v1),9,1,1,0.925926
+dev,keyword,HybridAdaptive(tuned v2),9,1,1,0.925926
+dev,descriptive,Vector,8,1,1,0.916667
+dev,descriptive,FullText,8,0.25,0.375,0.296875
+dev,descriptive,HybridRrf,8,0.75,0.9375,0.722917
+dev,descriptive,HybridAdaptive(initial),8,0.625,0.8125,0.708333
+dev,descriptive,HybridAdaptive(tuned v1),8,0.875,0.9375,0.739583
+dev,descriptive,HybridAdaptive(tuned v2),8,1,1,0.916667
+all,all,Vector,56,0.955357,0.991071,0.933036
+all,all,FullText,56,0.6875,0.705357,0.676339
+all,all,HybridRrf,56,0.875,0.919643,0.853593
+all,all,HybridAdaptive(initial),56,0.830357,0.901786,0.826339
+all,all,HybridAdaptive(tuned v1),56,0.866071,0.919643,0.854634
+all,all,HybridAdaptive(tuned v2),56,0.9375,0.964286,0.903125
+all,keyword,Vector,28,0.982143,0.982143,0.940476
+all,keyword,FullText,28,0.892857,0.892857,0.875
+all,keyword,HybridRrf,28,0.982143,0.982143,0.940476
+all,keyword,HybridAdaptive(initial),28,0.982143,1,0.97619
+all,keyword,HybridAdaptive(tuned v1),28,0.982143,1,0.97619
+all,keyword,HybridAdaptive(tuned v2),28,0.982143,1,0.97619
+all,descriptive,Vector,28,0.928571,1,0.925595
+all,descriptive,FullText,28,0.482143,0.517857,0.477679
+all,descriptive,HybridRrf,28,0.767857,0.857143,0.766709
+all,descriptive,HybridAdaptive(initial),28,0.678571,0.803571,0.676488
+all,descriptive,HybridAdaptive(tuned v1),28,0.75,0.839286,0.733078
+all,descriptive,HybridAdaptive(tuned v2),28,0.892857,0.928571,0.83006

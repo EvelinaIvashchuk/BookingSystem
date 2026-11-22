@@ -1,0 +1,132 @@
+@startuml CarRentalSystem_AiAgent_ComponentDiagram
+skinparam componentFontSize 12
+skinparam componentBackgroundColor #FAFAFA
+skinparam componentBorderColor #555
+skinparam interfaceBackgroundColor #E8F4FD
+skinparam interfaceBorderColor #2980B9
+skinparam arrowColor #333
+skinparam packageBackgroundColor #FDFEFE
+skinparam packageBorderColor #AAA
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #888
+skinparam shadowing false
+skinparam defaultTextAlignment center
+
+title Car Rental System — Діаграма компонентів LLM-агента\n«Чат-асистент для пошуку та бронювання авто»
+
+actor "Користувач\n(Browser)" as User
+
+package "BookingSystem (ASP.NET Core 9 MVC)" #EBF5FB {
+    component [Чат-віджет\n_ChatWidget.cshtml +\nchat-widget.js] as Widget #D6EAF8
+    component [AiController\n/Ai/Chat · /Ai/History\n/Ai/Confirm · /Ai/Cancel] as AiCtrl #ABEBC6
+    component [AiRateLimiting\n(ліміти на IP і на сесію)] as RateLimit #FEF5E7
+    component [Antiforgery\n(ValidateAntiForgeryToken)] as Csrf #FEF5E7
+}
+
+package "BookingSystem.Infrastructure — Ai" #F4F6F7 {
+
+    package "Агент" #E8F8F5 {
+        component [AgentService\n(IAgentService)] as Agent #ABEBC6
+        component [ChatClientAgent\n(Microsoft Agent Framework)] as MAF
+        component [FunctionInvokingChatClient\n(ліміт ітерацій, без паралельних викликів)] as FIC
+        component [AgentPrompts\n(системні інструкції,\nдата, відомі параметри)] as Prompts
+        component [ReplyFormatter] as Fmt
+        component [ChatClientFactory\n(IChatClientFactory)\nмодель «provider:model» з конфігу] as Factory
+        component [GeminiThoughtSignatureHandler\n(thought_signature для Gemini 3)] as SigHandler
+    }
+
+    package "Внесок 1: slot filling" #FEF9E7 {
+        component [SlotFillingEngine\n(злиття з відомими слотами,\nперевірка перед викликом)] as SlotEngine #F9E79F
+        component [SlotValidator\n(дати, межі, синоніми enum)] as SlotVal #F9E79F
+        component [DateExpressionHints\n(дати з тексту запиту)] as DateHints #F9E79F
+        component [SlotSchema] as SlotSchema
+    }
+
+    package "Інструменти (Function Calling)" #FDEDEC {
+        component [BookingTools] as Tools #F5B7B1
+        note right of Tools
+          search_available_cars
+          get_car_details
+          calculate_price
+          get_my_rentals
+          create_rental_draft
+          search_rental_policies
+        end note
+    }
+
+    package "Внесок 2: адаптивний гібридний пошук" #F4ECF7 {
+        component [KnowledgeSearch\nVector · FullText ·\nHybridRrf · HybridAdaptive] as Search #D7BDE2
+        component [QueryFeatures\n(довжина, терміни, цифри)] as Features #D7BDE2
+        component [HybridFusion\n(RRF з адаптивними вагами)] as Fusion #D7BDE2
+        component [KnowledgeStore\n(ембединги в пам'яті)] as Store
+        component [MySqlFullTextIndex\n(FULLTEXT по стемованому тексту)] as FullText
+        component [KnowledgeIndexer\n(MarkdownChunker, TextNormalizer)] as Indexer
+        component [EmbeddingGeneratorFactory\n+ QueryEmbeddingCache] as Embed
+    }
+
+    component [PendingActionService\n(Confirm / Cancel)] as Pending #ABEBC6
+}
+
+package "Наявна бізнес-логіка" #F4F6F7 {
+    component [IRentalService\n(правила оренди, ціна, e-mail)] as RentalSvc #ABEBC6
+    component [IUnitOfWork\nCars · Rentals ·\nChatSessions · PendingActions] as Uow
+}
+
+database "MySQL 8\nCars, Rentals,\nChatSessions, ChatMessages,\nPendingActions,\nKnowledgeChunks" as Db
+cloud "LLM-провайдери\n(OpenAI-сумісний API)\nGroq · Gemini" as Llm
+cloud "Gemini Embeddings\n(gemini-embedding-001)" as EmbApi
+folder "KnowledgeBase/*.md\n(правила оренди)" as Docs
+
+User --> Widget
+Widget --> AiCtrl : fetch JSON
+AiCtrl ..> RateLimit
+AiCtrl ..> Csrf
+AiCtrl --> Agent : ChatAsync
+AiCtrl --> Pending : ConfirmAsync / CancelAsync
+
+Agent --> MAF
+MAF --> FIC
+FIC --> Factory
+Factory --> SigHandler
+SigHandler --> Llm : HTTPS
+Agent ..> Prompts
+Agent ..> Fmt
+Agent --> SlotEngine : кожен виклик інструмента
+SlotEngine --> SlotVal
+SlotVal --> DateHints
+SlotEngine ..> SlotSchema
+Agent --> Tools : якщо параметри валідні
+Agent --> Uow : історія сесії, слоти
+
+Tools --> Uow
+Tools --> Search : search_rental_policies
+Tools ..> Pending : create_rental_draft\nстворює PendingAction
+
+Search --> Features
+Search --> Fusion
+Search --> Store
+Search --> FullText
+Search --> Embed
+Embed --> EmbApi
+Indexer --> Docs
+Indexer --> Embed
+Indexer --> Db
+
+Pending --> RentalSvc : лише після «Підтвердити»
+Pending --> Uow
+RentalSvc --> Uow
+Uow --> Db
+FullText --> Db
+
+note bottom of Pending
+  Модель не має інструмента, що створює оренду.
+  Оренда з'являється тільки коли власник чернетки
+  натискає «Підтвердити» (human-in-the-loop).
+end note
+
+note top of Factory
+  Ai:DefaultModel, Ai:Providers:*:Endpoint/ApiKey —
+  модель змінюється в конфігурації без зміни коду.
+end note
+
+@enduml

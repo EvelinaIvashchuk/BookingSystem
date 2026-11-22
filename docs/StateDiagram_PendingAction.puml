@@ -1,0 +1,49 @@
+@startuml CarRentalSystem_PendingAction_StateDiagram
+skinparam stateFontSize 13
+skinparam stateBorderColor #555
+skinparam stateArrowColor #333
+skinparam stateBackgroundColor #FAFAFA
+skinparam shadowing false
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #888
+
+title Car Rental System — Діаграма станів\n«Чернетка бронювання від агента (PendingAction)»
+
+[*] --> Pending : create_rental_draft\n[користувач увійшов, авто вільне,\nдати валідні]\n/ ExpiresAt = зараз + PendingActionTtlMinutes (15)
+
+state Pending #FEF9E7 : картка з кнопками\n«Підтвердити» / «Скасувати»
+state Confirmed #ABEBC6 : RentalId = id створеної оренди\nCompletedAt = час підтвердження
+state Cancelled #F5B7B1 : CompletedAt = час скасування
+state Expired #D5D8DC : CompletedAt = час спроби
+
+Pending --> Confirmed : Confirm [власник, зараз ≤ ExpiresAt]\n/ IRentalService.CreateRentalAsync → Rental (Pending)
+Confirmed --> Pending : правила оренди порушено\n(авто зайняте, ліміт оренд)\n/ ReleaseAsync, відповідь 422
+Pending --> Cancelled : Cancel [власник, зараз ≤ ExpiresAt]
+Pending --> Cancelled : нова чернетка в тій самій сесії\n(create_rental_draft замінює стару)
+Pending --> Expired : Confirm або Cancel\n[зараз > ExpiresAt] / відповідь 410
+Pending --> Pending : Confirm / Cancel чужої чернетки\n/ 403, стан не змінюється
+
+Confirmed --> [*]
+Cancelled --> [*]
+Expired --> [*]
+
+note right of Confirmed
+  Перехід Pending → Confirmed захищено маркером
+  конкурентності (Status): з двох одночасних
+  підтверджень проходить одне, друге отримує 409.
+end note
+
+note left of Expired
+  Строк перевіряється «ліниво» — під час дії
+  користувача; фонового завдання немає.
+  Протермінована чернетка лишається Pending у БД,
+  доки її не спробують підтвердити чи скасувати.
+end note
+
+note bottom of Pending
+  Модель не може змінити стан чернетки:
+  інструмента підтвердження немає, переходи
+  виконує лише PendingActionService за запитом власника.
+end note
+
+@enduml

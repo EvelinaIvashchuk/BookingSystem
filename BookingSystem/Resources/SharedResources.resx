@@ -18,7 +18,7 @@
   <data name="Lang_Other_Culture" xml:space="preserve"><value>uk</value></data>
 
   <!-- ── Home ───────────────────────────────────────────────────── -->
-  <data name="Home_Title" xml:space="preserve"><value>Home Page</value></data>
+  <data name="Home_Title" xml:space="preserve"><value>Car rental with an AI assistant</value></data>
   <data name="Home_Welcome" xml:space="preserve"><value>Welcome to CarRental</value></data>
   <data name="Home_Subtitle" xml:space="preserve"><value>Find and rent the perfect car for your trip. Fast, easy, reliable.</value></data>
   <data name="Home_SearchCars" xml:space="preserve"><value>Search Cars</value></data>
@@ -252,6 +252,29 @@
   <data name="Chat_Placeholder" xml:space="preserve"><value>Ask a question...</value></data>
   <data name="Chat_AriaOpen" xml:space="preserve"><value>Open chat</value></data>
   <data name="Chat_Error" xml:space="preserve"><value>Something went wrong. Please try again.</value></data>
+  <data name="Chat_RateLimited" xml:space="preserve"><value>Too many messages. Please wait a moment and try again.</value></data>
+  <data name="Chat_Thinking" xml:space="preserve"><value>Assistant is thinking…</value></data>
+  <data name="Chat_PerDay" xml:space="preserve"><value>per day</value></data>
+  <data name="Chat_Details" xml:space="preserve"><value>Details</value></data>
+  <data name="Chat_Select" xml:space="preserve"><value>Choose</value></data>
+  <data name="Chat_SelectMessage" xml:space="preserve"><value>I choose {0} (car #{1})</value></data>
+  <data name="Chat_NewChat" xml:space="preserve"><value>New chat</value></data>
+  <data name="Chat_Send" xml:space="preserve"><value>Send</value></data>
+  <data name="Chat_DraftTitle" xml:space="preserve"><value>Confirm your booking</value></data>
+  <data name="Chat_DraftDates" xml:space="preserve"><value>{0} — {1} ({2} days)</value></data>
+  <data name="Chat_DraftTotal" xml:space="preserve"><value>Total: {0} ₴</value></data>
+  <data name="Chat_DraftExpiresHint" xml:space="preserve"><value>The booking is not created yet. Press Confirm within {0} min.</value></data>
+  <data name="Chat_Confirm" xml:space="preserve"><value>Confirm</value></data>
+  <data name="Chat_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Chat_BookingConfirmed" xml:space="preserve"><value>Booking #{0} has been created and is awaiting administrator approval.</value></data>
+  <data name="Chat_BookingCancelled" xml:space="preserve"><value>The booking draft has been cancelled.</value></data>
+  <data name="Chat_BookingFailed" xml:space="preserve"><value>The booking could not be created: {0}</value></data>
+  <data name="Chat_DraftNotFound" xml:space="preserve"><value>Booking draft not found.</value></data>
+  <data name="Chat_DraftForbidden" xml:space="preserve"><value>This draft belongs to another user.</value></data>
+  <data name="Chat_DraftExpired" xml:space="preserve"><value>The confirmation time has expired. Ask the assistant to prepare the booking again.</value></data>
+  <data name="Chat_DraftProcessed" xml:space="preserve"><value>This draft has already been processed.</value></data>
+  <data name="Chat_SignInRequired" xml:space="preserve"><value>Please sign in to confirm the booking.</value></data>
+  <data name="Chat_MyRentals" xml:space="preserve"><value>My rentals</value></data>
 
   <!-- ── Controller messages (TempData) ────────────────────────── -->
   <data name="Msg_RentalSubmitted" xml:space="preserve"><value>Your rental request has been submitted and is pending confirmation.</value></data>
@@ -279,4 +302,106 @@
   <data name="Val_MinDays" xml:space="preserve"><value>Rental must be at least {0} day(s).</value></data>
   <data name="Val_MaxDays" xml:space="preserve"><value>Rental cannot exceed {0} days.</value></data>
   <data name="Val_NotesMax" xml:space="preserve"><value>Notes cannot exceed 500 characters.</value></data>
+  <data name="Nav_PhotoCredits" xml:space="preserve"><value>Photo credits</value></data>
+  <data name="Photos_Title" xml:space="preserve"><value>Car photo credits</value></data>
+  <data name="Photos_Intro" xml:space="preserve"><value>Photos of the demo cars are taken from Wikimedia Commons and used under Creative Commons licences. The images are shown scaled and cropped; the originals are on the source pages.</value></data>
+  <data name="Photos_Car" xml:space="preserve"><value>Car</value></data>
+  <data name="Photos_Author" xml:space="preserve"><value>Author</value></data>
+  <data name="Photos_License" xml:space="preserve"><value>Licence</value></data>
+  <data name="Photos_Source" xml:space="preserve"><value>Source</value></data>
+  <data name="Chat_DatesTitle" xml:space="preserve"><value>Choose the rental dates</value></data>
+  <data name="Chat_PickupDate" xml:space="preserve"><value>Pick-up date</value></data>
+  <data name="Chat_ReturnDate" xml:space="preserve"><value>Return date</value></data>
+  <data name="Chat_DatesSend" xml:space="preserve"><value>Send dates</value></data>
+  <data name="Chat_DatesBoth" xml:space="preserve"><value>From {0} to {1}</value></data>
+  <data name="Chat_DatesPickup" xml:space="preserve"><value>Pick-up date: {0}</value></data>
+  <data name="Chat_DatesReturn" xml:space="preserve"><value>Return date: {0}</value></data>
+  <data name="Chat_DatesInvalid" xml:space="preserve"><value>The return date must be after the pick-up date.</value></data>
+  <data name="Home_AiEyebrow" xml:space="preserve"><value>AI rental assistant</value></data>
+  <data name="Home_AiTitle" xml:space="preserve"><value>Tell us what car you need</value></data>
+  <data name="Home_AiSubtitle" xml:space="preserve"><value>The assistant finds a car that is free on your dates, calculates the price and prepares the booking. Only you confirm it.</value></data>
+  <data name="Home_AiPlaceholder" xml:space="preserve"><value>For example: an automatic 5-seater in Lviv for the weekend</value></data>
+  <data name="Home_AiAsk" xml:space="preserve"><value>Ask</value></data>
+  <data name="Home_AiChip1" xml:space="preserve"><value>An SUV in Kyiv for a week</value></data>
+  <data name="Home_AiChip2" xml:space="preserve"><value>The cheapest car for the weekend</value></data>
+  <data name="Home_AiChip3" xml:space="preserve"><value>An electric car from 20 to 22 December</value></data>
+  <data name="Home_AiChip4" xml:space="preserve"><value>What deposit is required?</value></data>
+  <data name="Home_AiOr" xml:space="preserve"><value>Or</value></data>
+  <data name="Home_HowItWorksSub" xml:space="preserve"><value>From a request to a booking, in an ordinary chat.</value></data>
+  <data name="Home_Step1Title" xml:space="preserve"><value>Describe your trip</value></data>
+  <data name="Home_Step1Desc" xml:space="preserve"><value>Dates, city, type of car, in your own words. If something is missing, the assistant asks.</value></data>
+  <data name="Home_Step2Title" xml:space="preserve"><value>Choose a car</value></data>
+  <data name="Home_Step2Desc" xml:space="preserve"><value>The assistant shows cars that are free on your dates, with photos and the total price.</value></data>
+  <data name="Home_Step3Title" xml:space="preserve"><value>Confirm the booking</value></data>
+  <data name="Home_Step3Desc" xml:space="preserve"><value>The assistant prepares a booking draft; it is placed only after you confirm it.</value></data>
+  <data name="Home_PopularCars" xml:space="preserve"><value>Popular cars</value></data>
+  <data name="Home_PopularCarsSub" xml:space="preserve"><value>50 cars in six cities of Ukraine</value></data>
+  <data name="Brand" xml:space="preserve"><value>Brand</value></data>
+  <data name="Model" xml:space="preserve"><value>Model</value></data>
+  <data name="Year" xml:space="preserve"><value>Year</value></data>
+  <data name="License Plate" xml:space="preserve"><value>License plate</value></data>
+  <data name="Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Price Per Day (₴)" xml:space="preserve"><value>Price per day (₴)</value></data>
+  <data name="Fuel Type" xml:space="preserve"><value>Fuel type</value></data>
+  <data name="Transmission" xml:space="preserve"><value>Transmission</value></data>
+  <data name="Seats" xml:space="preserve"><value>Seats</value></data>
+  <data name="Location" xml:space="preserve"><value>Location</value></data>
+  <data name="Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Image URL" xml:space="preserve"><value>Image URL</value></data>
+  <data name="Photo" xml:space="preserve"><value>Photo</value></data>
+  <data name="Notes" xml:space="preserve"><value>Notes</value></data>
+  <data name="Pickup Date" xml:space="preserve"><value>Pick-up date</value></data>
+  <data name="Return Date" xml:space="preserve"><value>Return date</value></data>
+  <data name="Rejection Reason" xml:space="preserve"><value>Rejection reason</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Privacy_Intro" xml:space="preserve"><value>A short summary of the data CarRental keeps and how the AI assistant works.</value></data>
+  <data name="Privacy_DataTitle" xml:space="preserve"><value>Account and rentals</value></data>
+  <data name="Privacy_DataText" xml:space="preserve"><value>When you register we store your first name, last name and e-mail. For every rental we store the car, dates, total, status and your notes. This data is needed to process bookings; it is visible to you and to the service administrator.</value></data>
+  <data name="Privacy_ChatTitle" xml:space="preserve"><value>Chat history</value></data>
+  <data name="Privacy_ChatText" xml:space="preserve"><value>Chat messages and the assistant's replies are stored in the database together with the chat session. If you are signed in, the session belongs to your account and is never shown to other users. The session id is kept in your browser; the New chat button starts a new conversation.</value></data>
+  <data name="Privacy_AiTitle" xml:space="preserve"><value>Processing by language models</value></data>
+  <data name="Privacy_AiText" xml:space="preserve"><value>To reply, the assistant sends your messages and the context it needs (for example, cars it found and fragments of the rental rules) to an external language model provider, Google Gemini or Groq. Do not write passwords, card numbers, passport data or other sensitive information in the chat.</value></data>
+  <data name="Privacy_BookingTitle" xml:space="preserve"><value>Bookings only with your confirmation</value></data>
+  <data name="Privacy_BookingText" xml:space="preserve"><value>The assistant can only prepare a booking draft. A rental is created only after you press Confirm; the assistant cannot confirm bookings, take payments or change prices.</value></data>
+  <data name="Privacy_CookiesTitle" xml:space="preserve"><value>Cookies</value></data>
+  <data name="Privacy_CookiesText" xml:space="preserve"><value>The site uses only necessary cookies: for signing in, remembering your language and protecting forms against request forgery (antiforgery). There are no advertising or third-party analytics cookies.</value></data>
+  <data name="Rental_Duration" xml:space="preserve"><value>Duration</value></data>
+  <data name="Account_FirstNamePlaceholder" xml:space="preserve"><value>Olena</value></data>
+  <data name="Account_LastNamePlaceholder" xml:space="preserve"><value>Kovalenko</value></data>
+  <data name="Error_RequestId" xml:space="preserve"><value>Request ID</value></data>
+  <data name="Common_GoBack" xml:space="preserve"><value>Go back</value></data>
+  <data name="Car_AskAssistant" xml:space="preserve"><value>Ask the assistant</value></data>
+  <data name="Car_ResetFilters" xml:space="preserve"><value>Reset</value></data>
+  <data name="Car_NoResultsHint" xml:space="preserve"><value>Try another category or query, or describe the car you need to the assistant.</value></data>
+  <data name="Enum_Petrol" xml:space="preserve"><value>Petrol</value></data>
+  <data name="Enum_Diesel" xml:space="preserve"><value>Diesel</value></data>
+  <data name="Enum_Electric" xml:space="preserve"><value>Electric</value></data>
+  <data name="Enum_Hybrid" xml:space="preserve"><value>Hybrid</value></data>
+  <data name="Enum_Manual" xml:space="preserve"><value>Manual</value></data>
+  <data name="Enum_Automatic" xml:space="preserve"><value>Automatic</value></data>
+  <data name="Car_Specs" xml:space="preserve"><value>Specifications</value></data>
+  <data name="Car_AskAboutThis" xml:space="preserve"><value>Ask the assistant about this car</value></data>
+  <data name="Car_AskAboutMessage" xml:space="preserve"><value>I want to rent the {0}</value></data>
+  <data name="Admin_SectionMain" xml:space="preserve"><value>Main</value></data>
+  <data name="Admin_SectionSpecs" xml:space="preserve"><value>Specifications</value></data>
+  <data name="Admin_SectionPhoto" xml:space="preserve"><value>Photo</value></data>
+  <data name="Admin_ChoosePhoto" xml:space="preserve"><value>Choose a photo</value></data>
+  <data name="Admin_ImageHint" xml:space="preserve"><value>JPG, PNG or WebP · up to 5 MB</value></data>
+  <data name="Admin_ImageKeepHint" xml:space="preserve"><value>leave empty to keep the current photo</value></data>
+  <data name="Admin_PhLocation" xml:space="preserve"><value>Kyiv, Khreshchatyk St, 10</value></data>
+  <data name="Admin_PhDescription" xml:space="preserve"><value>Briefly about the car: trim, features…</value></data>
+  <data name="Admin_RentalsNav" xml:space="preserve"><value>Rentals</value></data>
+  <data name="Admin_UsersNav" xml:space="preserve"><value>Users</value></data>
+  <data name="Admin_Approve" xml:space="preserve"><value>Approve</value></data>
+  <data name="Admin_Reject" xml:space="preserve"><value>Reject</value></data>
+  <data name="Admin_AiTitle" xml:space="preserve"><value>AI assistant</value></data>
+  <data name="Admin_AiModel" xml:space="preserve"><value>Model</value></data>
+  <data name="Admin_AiSearch" xml:space="preserve"><value>Knowledge base search</value></data>
+  <data name="Admin_AiSlotFilling" xml:space="preserve"><value>Slot filling</value></data>
+  <data name="Common_On" xml:space="preserve"><value>on</value></data>
+  <data name="Common_Off" xml:space="preserve"><value>off</value></data>
+  <data name="Role_Admin" xml:space="preserve"><value>Administrator</value></data>
+  <data name="Role_User" xml:space="preserve"><value>Customer</value></data>
+  <data name="Admin_ConfirmDeactivate" xml:space="preserve"><value>Deactivate {0}?</value></data>
+  <data name="Admin_ConfirmPromote" xml:space="preserve"><value>Make {0} an administrator?</value></data>
 </root>

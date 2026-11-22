@@ -231,143 +231,106 @@
 </script>
 }
 
-<div class="container py-5">
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-action="Index">@L["Car_BrowseCars"]</a></li>
-            @if (Model.Category != null)
-            {
-                <li class="breadcrumb-item"><a asp-action="Index" asp-route-categoryId="@Model.CategoryId">@Model.Category.Name</a></li>
-            }
-            <li class="breadcrumb-item active" aria-current="page">@Model.FullName</li>
-        </ol>
+<div class="cr-page">
+    <nav class="cr-crumbs" aria-label="breadcrumb">
+        <a asp-action="Index">@L["Nav_Cars"]</a><i class="bi bi-chevron-right"></i>
+        @if (Model.Category != null)
+        {
+            <a asp-action="Index" asp-route-categoryId="@Model.CategoryId">@Model.Category.Name</a><i class="bi bi-chevron-right"></i>
+        }
+        <span>@Model.FullName</span>
     </nav>
 
-    <div class="row">
-        <div class="col-lg-7 mb-4 mb-lg-0">
+    <div class="row g-4">
+        <div class="col-lg-7">
             @if (!string.IsNullOrEmpty(Model.ImageUrl))
             {
-                <img src="@ImageHelper.Src(Model.ImageUrl)" class="img-fluid rounded shadow-sm border" alt="@Model.FullName" style="width: 100%; max-height: 450px; object-fit: cover;">
+                <img src="@ImageHelper.Src(Model.ImageUrl)" class="cr-detail-photo" alt="@Model.FullName">
             }
             else
             {
-                <div class="bg-light rounded d-flex align-items-center justify-content-center border shadow-sm mb-4" style="width: 100%; height: 350px;">
-                    <i class="bi bi-car-front text-muted opacity-25" style="font-size: 8rem;"></i>
+                <div class="cr-detail-photo d-flex align-items-center justify-content-center cr-muted" style="font-size: 6rem;"><i class="bi bi-car-front"></i></div>
+            }
+
+            @* Phones: the booking panel is at the bottom, so show the price and a jump to it under the photo. *@
+            <div class="cr-panel d-lg-none mt-3 d-flex align-items-center justify-content-between gap-3">
+                <div>
+                    <div class="fw-bold">@Model.FullName</div>
+                    <div class="cr-price-big fs-5">@Model.PricePerDay.ToString("N0") ₴ <small>@L["Car_PerDayShort"]</small></div>
+                </div>
+                <a href="#booking" class="btn btn-primary flex-shrink-0"><i class="bi bi-calendar-check me-1"></i>@L["Car_SelectDates"]</a>
+            </div>
+
+            <div class="cr-panel mt-4">
+                <h2 class="cr-panel__title"><i class="bi bi-sliders"></i>@L["Car_Specs"]</h2>
+                <div class="cr-specs">
+                    <div class="cr-spec"><i class="bi bi-geo-alt"></i><div><span class="cr-label">@L["Car_Location"]</span><div class="cr-kv__value">@Model.Location</div></div></div>
+                    <div class="cr-spec"><i class="bi bi-people"></i><div><span class="cr-label">@L["Car_SeatsLabel"]</span><div class="cr-kv__value">@Model.Seats</div></div></div>
+                    <div class="cr-spec"><i class="bi bi-fuel-pump"></i><div><span class="cr-label">@L["Car_FuelType"]</span><div class="cr-kv__value">@L["Enum_" + Model.FuelType]</div></div></div>
+                    <div class="cr-spec"><i class="bi bi-gear"></i><div><span class="cr-label">@L["Car_Transmission"]</span><div class="cr-kv__value">@L["Enum_" + Model.Transmission]</div></div></div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="cr-panel">
+                    <h2 class="cr-panel__title"><i class="bi bi-card-text"></i>@L["Car_Description"]</h2>
+                    <p class="mb-0 fs-6">@Model.Description</p>
                 </div>
             }
 
-            <div class="mt-5">
-                <h3 class="h4 mb-3 border-bottom pb-2">@L["Car_Description"]</h3>
-                <p class="lead text-muted">@Model.Description</p>
-
-                <div class="row mt-4">
-                    <div class="col-sm-6 mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-primary-subtle p-2 rounded me-3 text-primary">
-                                <i class="bi bi-geo-alt fs-4"></i>
-                            </div>
-                            <div>
-                                <small class="text-uppercase text-muted fw-bold d-block">@L["Car_Location"]</small>
-                                <span>@Model.Location</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-primary-subtle p-2 rounded me-3 text-primary">
-                                <i class="bi bi-people fs-4"></i>
-                            </div>
-                            <div>
-                                <small class="text-uppercase text-muted fw-bold d-block">@L["Car_SeatsLabel"]</small>
-                                <span>@Model.Seats</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-primary-subtle p-2 rounded me-3 text-primary">
-                                <i class="bi bi-fuel-pump fs-4"></i>
-                            </div>
-                            <div>
-                                <small class="text-uppercase text-muted fw-bold d-block">@L["Car_FuelType"]</small>
-                                <span>@Model.FuelType</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-primary-subtle p-2 rounded me-3 text-primary">
-                                <i class="bi bi-gear fs-4"></i>
-                            </div>
-                            <div>
-                                <small class="text-uppercase text-muted fw-bold d-block">@L["Car_Transmission"]</small>
-                                <span>@Model.Transmission</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="cr-panel">
+                <h2 class="cr-panel__title"><i class="bi bi-shield-check"></i>@L["Car_Includes"]</h2>
+                <ul class="cr-checklist">
+                    <li><i class="bi bi-check2"></i>@L["Car_FullInsurance"]</li>
+                    <li><i class="bi bi-check2"></i>@L["Car_Roadside"]</li>
+                    <li><i class="bi bi-check2"></i>@L["Car_FreeCancellation"]</li>
+                </ul>
             </div>
         </div>
 
         <div class="col-lg-5">
-            <div class="card shadow-sm border-0 sticky-top" style="top: 20px; z-index: 100;">
-                <div class="card-body p-4">
-                    <h2 class="h3 fw-bold mb-1">@Model.FullName</h2>
-                    <div class="fs-4 text-primary fw-bold mb-3">@Model.PricePerDay.ToString("N0") ₴ <span class="fs-6 text-muted fw-normal">@L["Car_PerDayShort"]</span></div>
+            <div class="cr-panel cr-booking" id="booking">
+                <span class="cr-car__cat">@Model.Category?.Name</span>
+                <h1 class="h3 fw-bold mt-2 mb-1">@Model.FullName</h1>
+                <div class="cr-price-big mb-3">@Model.PricePerDay.ToString("N0") ₴ <small>@L["Car_PerDayShort"]</small></div>
 
-                    @if (Model.Status == CarStatus.Available)
-                    {
-                        @* ── Availability Calendar ─────────────────────── *@
-                        <div class="avail-calendar-wrap">
-                            <div class="avail-calendar-header">
-                                <button class="avail-nav-btn" id="calPrev" title="Previous month">&#8249;</button>
-                                <span class="fw-semibold small text-secondary">@L["Car_SelectDates"]</span>
-                                <button class="avail-nav-btn" id="calNext" title="Next month">&#8250;</button>
-                            </div>
-                            <div class="avail-months" id="calMonths"></div>
-                            <div class="avail-legend">
-                                <span><span class="avail-legend-dot" style="background:#dbeafe;border:1px solid #93c5fd;"></span>@L["Car_LegendSelected"]</span>
-                                <span><span class="avail-legend-dot" style="background:#fee2e2;"></span>@L["Car_LegendBooked"]</span>
-                                <span><span class="avail-legend-dot" style="background:#f1f5f9;border:1px solid #e2e8f0;"></span>@L["Car_LegendAvailable"]</span>
-                            </div>
+                @if (Model.Status == CarStatus.Available)
+                {
+                    @* ── Availability calendar (built by the script above) ── *@
+                    <div class="avail-calendar-wrap">
+                        <div class="avail-calendar-header">
+                            <button type="button" class="avail-nav-btn" id="calPrev" aria-label="Previous month">&#8249;</button>
+                            <span class="fw-semibold small text-secondary">@L["Car_SelectDates"]</span>
+                            <button type="button" class="avail-nav-btn" id="calNext" aria-label="Next month">&#8250;</button>
                         </div>
-
-                        <div class="avail-selected-info" id="selInfo"></div>
-
-                        <a id="rentBtn"
-                           href="@Url.Action("Create","Rental",new{carId=Model.Id})"
-                           class="avail-cta disabled"
-                           aria-disabled="true">
-                            <i class="bi bi-car-front me-2"></i>@L["Car_RentNow"]
-                        </a>
-
-                        <p class="text-muted small text-center mt-2 mb-0">@L["Car_SelectDatesHint"]</p>
-                    }
-                    else
-                    {
-                        <div class="mb-3">
-                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle p-2 px-3 fs-6">
-                                <i class="bi bi-exclamation-triangle me-1"></i> @Model.Status
-                            </span>
+                        <div class="avail-months" id="calMonths"></div>
+                        <div class="avail-legend">
+                            <span><span class="avail-legend-dot" style="background:#EEEDFE;border:1px solid #AFA9EC;"></span>@L["Car_LegendSelected"]</span>
+                            <span><span class="avail-legend-dot" style="background:#fee2e2;"></span>@L["Car_LegendBooked"]</span>
+                            <span><span class="avail-legend-dot" style="background:#f1f5f9;border:1px solid #e2e8f0;"></span>@L["Car_LegendAvailable"]</span>
                         </div>
-                        <button class="btn btn-secondary btn-lg w-100 py-3 fw-bold" disabled>
-                            @L["Car_CurrentlyUnavailable"]
-                        </button>
-                    }
-
-                    <a asp-action="Index" class="btn btn-outline-secondary w-100 py-2 mt-3">
-                        @L["Car_BackToList"]
-                    </a>
-
-                    <div class="mt-4 pt-4 border-top">
-                        <h5 class="h6 fw-bold mb-3">@L["Car_Includes"]</h5>
-                        <ul class="list-unstyled mb-0 small text-muted">
-                            <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i> @L["Car_FullInsurance"]</li>
-                            <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i> @L["Car_Roadside"]</li>
-                            <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i> @L["Car_FreeCancellation"]</li>
-                        </ul>
                     </div>
-                </div>
+
+                    <div class="avail-selected-info" id="selInfo"></div>
+
+                    <a id="rentBtn" href="@Url.Action("Create","Rental",new{carId=Model.Id})" class="avail-cta disabled" aria-disabled="true">
+                        <i class="bi bi-calendar-check me-2"></i>@L["Car_RentNow"]
+                    </a>
+                    <p class="cr-muted small text-center mt-2 mb-0">@L["Car_SelectDatesHint"]</p>
+                }
+                else
+                {
+                    <div class="mb-3"><partial name="_CarStatusBadge" model="Model.Status" /></div>
+                    <button type="button" class="btn btn-secondary btn-lg w-100" disabled>@L["Car_CurrentlyUnavailable"]</button>
+                }
+
+                <hr class="cr-divider" />
+                <button type="button" class="btn btn-outline-primary w-100" data-ask="@string.Format(L["Car_AskAboutMessage"].Value, Model.FullName)"
+                        onclick="window.CarRentalChat && window.CarRentalChat.ask(this.dataset.ask)">
+                    <i class="bi bi-stars me-1"></i>@L["Car_AskAboutThis"]
+                </button>
+                <a asp-action="Index" class="btn btn-link w-100 mt-1 text-decoration-none">@L["Car_BackToList"]</a>
             </div>
         </div>
     </div>

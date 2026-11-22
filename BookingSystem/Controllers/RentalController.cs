@@ -39,6 +39,7 @@ public class RentalController(IRentalService rentalService, ICarService carServi
             Location     = car.Location,
             PricePerDay  = car.PricePerDay,
             CategoryName = car.Category?.Name ?? string.Empty,
+            ImageUrl     = car.ImageUrl,
             PickupDate   = pickupDate,
             ReturnDate   = returnDate
         };
@@ -130,6 +131,7 @@ public class RentalController(IRentalService rentalService, ICarService carServi
             vm.Location = car.Location;
             vm.PricePerDay = car.PricePerDay;
             vm.CategoryName = car.Category?.Name ?? string.Empty;
+            vm.ImageUrl = car.ImageUrl;
         }
     }
 }

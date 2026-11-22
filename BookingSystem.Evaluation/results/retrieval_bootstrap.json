@@ -1,0 +1,50 @@
+{
+  "metric": "MRR@10",
+  "resamples": 10000,
+  "comparisons": [
+    {
+      "comparison": "HybridAdaptive(tuned v1) - HybridRrf",
+      "split": "test",
+      "queries": 39,
+      "meanDifference": -0.014743589743589745,
+      "ci95": [
+        -0.06858974358974358,
+        0.03034188034188034
+      ],
+      "pValueOneSided": 0.7191
+    },
+    {
+      "comparison": "HybridAdaptive(tuned v2) - HybridRrf",
+      "split": "test",
+      "queries": 39,
+      "meanDifference": 0.01855921855921856,
+      "ci95": [
+        -0.048504273504273505,
+        0.088980463980464
+      ],
+      "pValueOneSided": 0.3017
+    },
+    {
+      "comparison": "HybridAdaptive(tuned v2) - Vector",
+      "split": "test",
+      "queries": 39,
+      "meanDifference": -0.055769230769230765,
+      "ci95": [
+        -0.13461538461538458,
+        0.01282051282051282
+      ],
+      "pValueOneSided": 0.9558
+    },
+    {
+      "comparison": "HybridRrf - Vector",
+      "split": "test",
+      "queries": 39,
+      "meanDifference": -0.07432844932844934,
+      "ci95": [
+        -0.15735653235653235,
+        -0.008547008547008544
+      ],
+      "pValueOneSided": 0.9884
+    }
+  ]
+}

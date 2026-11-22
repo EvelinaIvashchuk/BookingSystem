@@ -1,0 +1,116 @@
+@startuml CarRentalSystem_AiBooking_SequenceDiagram
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceParticipantFontSize 12
+skinparam sequenceLifeLineBorderColor #555
+skinparam sequenceArrowColor #333
+skinparam sequenceParticipantBackgroundColor #FAFAFA
+skinparam sequenceParticipantBorderColor #555
+skinparam sequenceGroupBackgroundColor #FFFDE7
+skinparam sequenceGroupBorderColor #E67E22
+skinparam sequenceBoxBackgroundColor #F4F6F7
+skinparam sequenceBoxBorderColor #AAA
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #888
+skinparam shadowing false
+skinparam responseMessageBelowArrow true
+
+title Car Rental System — Діаграма послідовності\n«Бронювання через чат: запит → інструмент → підтвердження»
+
+actor       "Користувач"                 as User
+participant "Чат-віджет\n(chat-widget.js)" as Widget  #D6EAF8
+participant "AiController"               as Ctrl    #EBF5FB
+participant "AgentService"               as Agent   #E8F8F5
+participant "ChatClientAgent +\nFunctionInvokingChatClient" as Loop #E8F8F5
+participant "LLM\n(Groq / Gemini)"       as Llm     #F4ECF7
+participant "SlotFillingEngine +\nSlotValidator" as Slots #FEF9E7
+participant "BookingTools"               as Tools   #FDEDEC
+participant "PendingActionService"       as Pending #E8F8F5
+participant "IRentalService"             as Rental  #FEF9E7
+database    "MySQL"                      as Db
+
+== 1. Запит користувача ==
+
+User -> Widget : «Беру найдешевший мінівен\nз 14 по 16 грудня»
+Widget -> Ctrl : POST /Ai/Chat {message, sessionId}\n+ antiforgery token
+activate Ctrl
+Ctrl -> Ctrl : rate limit (IP, сесія),\nвалідація довжини
+Ctrl -> Agent : ChatAsync(sessionId, userId, message)
+activate Agent
+Agent -> Db : сесія, останні N повідомлень,\nвідомі слоти (SlotsJson)
+Db --> Agent
+Agent -> Loop : RunAsync(історія + повідомлення,\nінструкції з датою «сьогодні» й відомими слотами)
+activate Loop
+
+== 2. Виклик інструмента ==
+
+loop поки модель повертає tool calls (не більше MaxAgentIterations)
+    Loop -> Llm : chat/completions (tools = 6 функцій)
+    Llm --> Loop : tool_call create_rental_draft\n{carId: 25, pickupDate, returnDate}
+    Loop -> Agent : InvokeToolAsync(name, args)
+    Agent -> Slots : PrepareAsync(name, args, turn)
+    activate Slots
+    Slots -> Slots : злиття з відомими слотами,\nперевірка дат за текстом запиту,\nмежі та enum
+    Slots --> Agent : рішення
+    deactivate Slots
+
+    alt параметри відсутні або невалідні
+        Agent --> Loop : {error: "invalid_slots", missing / invalid}
+        note right of Agent : інструмент не виконується;\nмодель отримує список\nвідсутніх параметрів
+    else параметри валідні
+        Agent -> Tools : CreateRentalDraftAsync(carId, dates)
+        activate Tools
+        Tools -> Db : авто, перетин дат,\nліміт активних оренд
+        Db --> Tools
+        Tools -> Db : старі Pending-чернетки сесії → Cancelled;\nновий PendingAction (Pending, ExpiresAt = +15 хв)
+        Tools --> Agent : RentalDraftCreated\n(«бронювання ще НЕ створено»)
+        deactivate Tools
+        Agent --> Loop : результат інструмента
+    end
+end
+
+Loop -> Llm : результати інструментів
+Llm --> Loop : текстова відповідь
+Loop --> Agent : AgentResponse (текст, usage)
+deactivate Loop
+Agent -> Db : зберегти хід, слоти сесії
+Agent --> Ctrl : AgentReply {text, cars, draft, missingSlots}
+deactivate Agent
+Ctrl --> Widget : 200 OK JSON
+deactivate Ctrl
+Widget --> User : відповідь + картка чернетки\n[Підтвердити] [Скасувати]
+
+== 3. Підтвердження (human-in-the-loop) ==
+
+User -> Widget : натискає «Підтвердити»
+Widget -> Ctrl : POST /Ai/Confirm/{pendingActionId}\n[Authorize] + antiforgery
+activate Ctrl
+Ctrl -> Pending : ConfirmAsync(id, userId)
+activate Pending
+Pending -> Db : PendingAction
+Db --> Pending
+
+alt не знайдено / чужа / вже оброблена / прострочена
+    Pending --> Ctrl : NotFound / Forbidden /\nAlreadyProcessed / Expired
+    Ctrl --> Widget : 404 / 403 / 409 / 410
+else чернетка дійсна
+    Pending -> Db : Status = Confirmed\n(маркер конкурентності: друге\nпідтвердження отримає 409)
+    Pending -> Rental : CreateRentalAsync(userId, carId, dates)
+    activate Rental
+    Rental -> Db : Rental (Pending, очікує адміністратора)
+    Rental --> Pending : ServiceResult<Rental>
+    deactivate Rental
+    alt правила оренди порушено
+        Pending -> Db : Status = Pending (повернути)
+        Pending --> Ctrl : Failed(error)
+        Ctrl --> Widget : 422
+    else успіх
+        Pending -> Db : RentalId, нотатка в історії чату
+        Pending --> Ctrl : Confirmed(rentalId)
+        Ctrl --> Widget : 200 OK {rentalId, url}
+    end
+end
+deactivate Pending
+deactivate Ctrl
+Widget --> User : «Бронювання №… створено»\n+ посилання «Мої оренди»
+
+@enduml

@@ -18,7 +18,7 @@
   <data name="Lang_Other_Culture" xml:space="preserve"><value>en</value></data>
 
   <!-- ── Home ───────────────────────────────────────────────────── -->
-  <data name="Home_Title" xml:space="preserve"><value>Головна сторінка</value></data>
+  <data name="Home_Title" xml:space="preserve"><value>Оренда авто з AI-асистентом</value></data>
   <data name="Home_Welcome" xml:space="preserve"><value>Ласкаво просимо до CarRental</value></data>
   <data name="Home_Subtitle" xml:space="preserve"><value>Знайдіть та орендуйте ідеальний автомобіль. Швидко, легко, надійно.</value></data>
   <data name="Home_SearchCars" xml:space="preserve"><value>Пошук автомобілів</value></data>
@@ -252,6 +252,29 @@
   <data name="Chat_Placeholder" xml:space="preserve"><value>Задайте питання...</value></data>
   <data name="Chat_AriaOpen" xml:space="preserve"><value>Відкрити чат</value></data>
   <data name="Chat_Error" xml:space="preserve"><value>Щось пішло не так. Спробуйте ще раз.</value></data>
+  <data name="Chat_RateLimited" xml:space="preserve"><value>Забагато повідомлень. Зачекайте трохи й спробуйте ще раз.</value></data>
+  <data name="Chat_Thinking" xml:space="preserve"><value>Помічник думає…</value></data>
+  <data name="Chat_PerDay" xml:space="preserve"><value>за добу</value></data>
+  <data name="Chat_Details" xml:space="preserve"><value>Детальніше</value></data>
+  <data name="Chat_Select" xml:space="preserve"><value>Обрати</value></data>
+  <data name="Chat_SelectMessage" xml:space="preserve"><value>Обираю {0} (авто №{1})</value></data>
+  <data name="Chat_NewChat" xml:space="preserve"><value>Новий чат</value></data>
+  <data name="Chat_Send" xml:space="preserve"><value>Надіслати</value></data>
+  <data name="Chat_DraftTitle" xml:space="preserve"><value>Підтвердіть бронювання</value></data>
+  <data name="Chat_DraftDates" xml:space="preserve"><value>{0} — {1} ({2} дн.)</value></data>
+  <data name="Chat_DraftTotal" xml:space="preserve"><value>Разом: {0} ₴</value></data>
+  <data name="Chat_DraftExpiresHint" xml:space="preserve"><value>Бронювання ще не створене. Натисніть «Підтвердити» протягом {0} хв.</value></data>
+  <data name="Chat_Confirm" xml:space="preserve"><value>Підтвердити</value></data>
+  <data name="Chat_Cancel" xml:space="preserve"><value>Скасувати</value></data>
+  <data name="Chat_BookingConfirmed" xml:space="preserve"><value>Бронювання №{0} створено. Воно очікує підтвердження адміністратора.</value></data>
+  <data name="Chat_BookingCancelled" xml:space="preserve"><value>Чернетку бронювання скасовано.</value></data>
+  <data name="Chat_BookingFailed" xml:space="preserve"><value>Не вдалося створити бронювання: {0}</value></data>
+  <data name="Chat_DraftNotFound" xml:space="preserve"><value>Чернетку бронювання не знайдено.</value></data>
+  <data name="Chat_DraftForbidden" xml:space="preserve"><value>Ця чернетка належить іншому користувачу.</value></data>
+  <data name="Chat_DraftExpired" xml:space="preserve"><value>Час на підтвердження минув. Попросіть помічника підготувати бронювання ще раз.</value></data>
+  <data name="Chat_DraftProcessed" xml:space="preserve"><value>Цю чернетку вже оброблено.</value></data>
+  <data name="Chat_SignInRequired" xml:space="preserve"><value>Увійдіть в обліковий запис, щоб підтвердити бронювання.</value></data>
+  <data name="Chat_MyRentals" xml:space="preserve"><value>Мої бронювання</value></data>
 
   <!-- ── Controller messages (TempData) ────────────────────────── -->
   <data name="Msg_RentalSubmitted" xml:space="preserve"><value>Вашу заявку на оренду подано та очікує підтвердження.</value></data>
@@ -279,4 +302,106 @@
   <data name="Val_MinDays" xml:space="preserve"><value>Оренда повинна тривати щонайменше {0} день(-ів).</value></data>
   <data name="Val_MaxDays" xml:space="preserve"><value>Оренда не може перевищувати {0} днів.</value></data>
   <data name="Val_NotesMax" xml:space="preserve"><value>Нотатки не можуть перевищувати 500 символів.</value></data>
+  <data name="Nav_PhotoCredits" xml:space="preserve"><value>Автори фото</value></data>
+  <data name="Photos_Title" xml:space="preserve"><value>Автори фотографій автомобілів</value></data>
+  <data name="Photos_Intro" xml:space="preserve"><value>Фотографії демонстраційних автомобілів узято з Wikimedia Commons і використано за ліцензіями Creative Commons. На сайті зображення масштабовано й обрізано; оригінали — на сторінках джерел.</value></data>
+  <data name="Photos_Car" xml:space="preserve"><value>Автомобіль</value></data>
+  <data name="Photos_Author" xml:space="preserve"><value>Автор</value></data>
+  <data name="Photos_License" xml:space="preserve"><value>Ліцензія</value></data>
+  <data name="Photos_Source" xml:space="preserve"><value>Джерело</value></data>
+  <data name="Chat_DatesTitle" xml:space="preserve"><value>Оберіть дати оренди</value></data>
+  <data name="Chat_PickupDate" xml:space="preserve"><value>Дата отримання</value></data>
+  <data name="Chat_ReturnDate" xml:space="preserve"><value>Дата повернення</value></data>
+  <data name="Chat_DatesSend" xml:space="preserve"><value>Надіслати дати</value></data>
+  <data name="Chat_DatesBoth" xml:space="preserve"><value>З {0} по {1}</value></data>
+  <data name="Chat_DatesPickup" xml:space="preserve"><value>Дата отримання — {0}</value></data>
+  <data name="Chat_DatesReturn" xml:space="preserve"><value>Дата повернення — {0}</value></data>
+  <data name="Chat_DatesInvalid" xml:space="preserve"><value>Дата повернення має бути пізніше за дату отримання.</value></data>
+  <data name="Home_AiEyebrow" xml:space="preserve"><value>AI-асистент оренди</value></data>
+  <data name="Home_AiTitle" xml:space="preserve"><value>Скажіть, яке авто вам потрібно</value></data>
+  <data name="Home_AiSubtitle" xml:space="preserve"><value>Асистент знайде вільне авто на ваші дати, порахує ціну й підготує бронювання. Підтверджуєте лише ви.</value></data>
+  <data name="Home_AiPlaceholder" xml:space="preserve"><value>Наприклад: автомат на 5 місць у Львові на вихідні</value></data>
+  <data name="Home_AiAsk" xml:space="preserve"><value>Запитати</value></data>
+  <data name="Home_AiChip1" xml:space="preserve"><value>Кросовер у Києві на тиждень</value></data>
+  <data name="Home_AiChip2" xml:space="preserve"><value>Найдешевше авто на вихідні</value></data>
+  <data name="Home_AiChip3" xml:space="preserve"><value>Електромобіль з 20 по 22 грудня</value></data>
+  <data name="Home_AiChip4" xml:space="preserve"><value>Який депозит потрібен?</value></data>
+  <data name="Home_AiOr" xml:space="preserve"><value>Або</value></data>
+  <data name="Home_HowItWorksSub" xml:space="preserve"><value>Від запиту до бронювання — у звичайному чаті.</value></data>
+  <data name="Home_Step1Title" xml:space="preserve"><value>Опишіть поїздку</value></data>
+  <data name="Home_Step1Desc" xml:space="preserve"><value>Дати, місто, тип авто — звичайними словами. Якщо чогось бракує, асистент перепитає.</value></data>
+  <data name="Home_Step2Title" xml:space="preserve"><value>Оберіть авто</value></data>
+  <data name="Home_Step2Desc" xml:space="preserve"><value>Асистент покаже вільні на ваші дати авто з фото й підсумковою ціною.</value></data>
+  <data name="Home_Step3Title" xml:space="preserve"><value>Підтвердіть бронювання</value></data>
+  <data name="Home_Step3Desc" xml:space="preserve"><value>Чернетку бронювання створює асистент, а оформлюється вона лише після вашого підтвердження.</value></data>
+  <data name="Home_PopularCars" xml:space="preserve"><value>Популярні авто</value></data>
+  <data name="Home_PopularCarsSub" xml:space="preserve"><value>50 авто в шести містах України</value></data>
+  <data name="Brand" xml:space="preserve"><value>Марка</value></data>
+  <data name="Model" xml:space="preserve"><value>Модель</value></data>
+  <data name="Year" xml:space="preserve"><value>Рік випуску</value></data>
+  <data name="License Plate" xml:space="preserve"><value>Номерний знак</value></data>
+  <data name="Category" xml:space="preserve"><value>Категорія</value></data>
+  <data name="Price Per Day (₴)" xml:space="preserve"><value>Ціна за добу (₴)</value></data>
+  <data name="Fuel Type" xml:space="preserve"><value>Тип пального</value></data>
+  <data name="Transmission" xml:space="preserve"><value>Коробка передач</value></data>
+  <data name="Seats" xml:space="preserve"><value>Кількість місць</value></data>
+  <data name="Location" xml:space="preserve"><value>Місце видачі</value></data>
+  <data name="Description" xml:space="preserve"><value>Опис</value></data>
+  <data name="Image URL" xml:space="preserve"><value>Посилання на фото</value></data>
+  <data name="Photo" xml:space="preserve"><value>Фото</value></data>
+  <data name="Notes" xml:space="preserve"><value>Побажання</value></data>
+  <data name="Pickup Date" xml:space="preserve"><value>Дата отримання</value></data>
+  <data name="Return Date" xml:space="preserve"><value>Дата повернення</value></data>
+  <data name="Rejection Reason" xml:space="preserve"><value>Причина відмови</value></data>
+  <data name="Status" xml:space="preserve"><value>Статус</value></data>
+  <data name="Privacy_Intro" xml:space="preserve"><value>Коротко про те, які дані зберігає CarRental і як працює AI-асистент.</value></data>
+  <data name="Privacy_DataTitle" xml:space="preserve"><value>Обліковий запис і оренди</value></data>
+  <data name="Privacy_DataText" xml:space="preserve"><value>Під час реєстрації ми зберігаємо ваше ім'я, прізвище та e-mail. Для кожної оренди — авто, дати, суму, статус і ваші побажання. Ці дані потрібні, щоб обробити бронювання; їх бачите ви та адміністратор сервісу.</value></data>
+  <data name="Privacy_ChatTitle" xml:space="preserve"><value>Історія чату</value></data>
+  <data name="Privacy_ChatText" xml:space="preserve"><value>Повідомлення чату й відповіді асистента зберігаються в базі даних разом із сесією чату. Якщо ви увійшли, сесія прив'язана до вашого облікового запису й не показується іншим користувачам. Ідентифікатор сесії зберігається у вашому браузері; кнопка «Новий чат» починає нову розмову.</value></data>
+  <data name="Privacy_AiTitle" xml:space="preserve"><value>Обробка повідомлень мовними моделями</value></data>
+  <data name="Privacy_AiText" xml:space="preserve"><value>Щоб відповісти, асистент надсилає ваші повідомлення та потрібний контекст (наприклад, знайдені авто й фрагменти правил оренди) зовнішньому постачальнику мовної моделі — Google Gemini або Groq. Не пишіть у чат паролі, номери карток, паспортні дані та іншу чутливу інформацію.</value></data>
+  <data name="Privacy_BookingTitle" xml:space="preserve"><value>Бронювання лише з вашого підтвердження</value></data>
+  <data name="Privacy_BookingText" xml:space="preserve"><value>Асистент може лише підготувати чернетку бронювання. Оренда створюється тільки після того, як ви натиснете «Підтвердити»; асистент не може підтверджувати бронювання, проводити оплату чи змінювати ціни.</value></data>
+  <data name="Privacy_CookiesTitle" xml:space="preserve"><value>Файли cookie</value></data>
+  <data name="Privacy_CookiesText" xml:space="preserve"><value>Сайт використовує лише необхідні cookie: для входу в обліковий запис, збереження вибраної мови та захисту форм від підробки запитів (antiforgery). Рекламних і сторонніх аналітичних cookie немає.</value></data>
+  <data name="Rental_Duration" xml:space="preserve"><value>Тривалість</value></data>
+  <data name="Account_FirstNamePlaceholder" xml:space="preserve"><value>Олена</value></data>
+  <data name="Account_LastNamePlaceholder" xml:space="preserve"><value>Коваленко</value></data>
+  <data name="Error_RequestId" xml:space="preserve"><value>Ідентифікатор запиту</value></data>
+  <data name="Common_GoBack" xml:space="preserve"><value>Назад</value></data>
+  <data name="Car_AskAssistant" xml:space="preserve"><value>Запитати асистента</value></data>
+  <data name="Car_ResetFilters" xml:space="preserve"><value>Скинути</value></data>
+  <data name="Car_NoResultsHint" xml:space="preserve"><value>Спробуйте іншу категорію чи запит — або опишіть потрібне авто асистентові.</value></data>
+  <data name="Enum_Petrol" xml:space="preserve"><value>Бензин</value></data>
+  <data name="Enum_Diesel" xml:space="preserve"><value>Дизель</value></data>
+  <data name="Enum_Electric" xml:space="preserve"><value>Електро</value></data>
+  <data name="Enum_Hybrid" xml:space="preserve"><value>Гібрид</value></data>
+  <data name="Enum_Manual" xml:space="preserve"><value>Механіка</value></data>
+  <data name="Enum_Automatic" xml:space="preserve"><value>Автомат</value></data>
+  <data name="Car_Specs" xml:space="preserve"><value>Характеристики</value></data>
+  <data name="Car_AskAboutThis" xml:space="preserve"><value>Запитати асистента про це авто</value></data>
+  <data name="Car_AskAboutMessage" xml:space="preserve"><value>Хочу орендувати {0}</value></data>
+  <data name="Admin_SectionMain" xml:space="preserve"><value>Основне</value></data>
+  <data name="Admin_SectionSpecs" xml:space="preserve"><value>Характеристики</value></data>
+  <data name="Admin_SectionPhoto" xml:space="preserve"><value>Фото</value></data>
+  <data name="Admin_ChoosePhoto" xml:space="preserve"><value>Оберіть фото</value></data>
+  <data name="Admin_ImageHint" xml:space="preserve"><value>JPG, PNG або WebP · до 5 МБ</value></data>
+  <data name="Admin_ImageKeepHint" xml:space="preserve"><value>залиште порожнім, щоб зберегти поточне фото</value></data>
+  <data name="Admin_PhLocation" xml:space="preserve"><value>Київ, вул. Хрещатик, 10</value></data>
+  <data name="Admin_PhDescription" xml:space="preserve"><value>Коротко про авто: комплектація, особливості…</value></data>
+  <data name="Admin_RentalsNav" xml:space="preserve"><value>Оренди</value></data>
+  <data name="Admin_UsersNav" xml:space="preserve"><value>Користувачі</value></data>
+  <data name="Admin_Approve" xml:space="preserve"><value>Підтвердити</value></data>
+  <data name="Admin_Reject" xml:space="preserve"><value>Відхилити</value></data>
+  <data name="Admin_AiTitle" xml:space="preserve"><value>AI-асистент</value></data>
+  <data name="Admin_AiModel" xml:space="preserve"><value>Модель</value></data>
+  <data name="Admin_AiSearch" xml:space="preserve"><value>Пошук у базі знань</value></data>
+  <data name="Admin_AiSlotFilling" xml:space="preserve"><value>Заповнення параметрів</value></data>
+  <data name="Common_On" xml:space="preserve"><value>увімкнено</value></data>
+  <data name="Common_Off" xml:space="preserve"><value>вимкнено</value></data>
+  <data name="Role_Admin" xml:space="preserve"><value>Адміністратор</value></data>
+  <data name="Role_User" xml:space="preserve"><value>Клієнт</value></data>
+  <data name="Admin_ConfirmDeactivate" xml:space="preserve"><value>Деактивувати {0}?</value></data>
+  <data name="Admin_ConfirmPromote" xml:space="preserve"><value>Зробити {0} адміністратором?</value></data>
 </root>

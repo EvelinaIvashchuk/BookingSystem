@@ -1,3 +1,4 @@
+using BookingSystem.Ai;
 using BookingSystem.Data;
 using BookingSystem.Data.Repositories;
 using BookingSystem.Mappings;
@@ -7,6 +8,8 @@ using BookingSystem.Services.Interfaces;
 using BookingSystem.Validators;
 using BookingSystem.ViewModels;
 using FluentValidation;
+using BookingSystem.Security;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +70,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 // ── Repositories ─────────────────────────────────────────────────────────────
 builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 builder.Services.AddScoped<ICarRepository,    CarRepository>();
+builder.Services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
+builder.Services.AddScoped<IPendingActionRepository, PendingActionRepository>();
 
 // ── Unit of Work ─────────────────────────────────────────────────────────────
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -77,7 +82,28 @@ builder.Services.AddScoped<ICarService,    CarService>();
 builder.Services.AddScoped<IUserService,   UserService>();
 builder.Services.AddScoped<IEmailService,   MockEmailService>();
 builder.Services.AddHttpClient("s3");
-builder.Services.AddSingleton<IStorageService, S3StorageService>();
+// S3 on Railway (AWS_* variables); without them (local development) images are kept in App_Data/uploads.
+if (StorageRules.IsS3Configured(builder.Configuration))
+    builder.Services.AddSingleton<IStorageService, S3StorageService>();
+else
+    builder.Services.AddSingleton<IStorageService>(sp => new LocalStorageService(
+        Path.Combine(builder.Environment.ContentRootPath, "App_Data", "uploads"),
+        sp.GetRequiredService<ILogger<LocalStorageService>>()));
+
+// ── AI agent ──────────────────────────────────────────────────────────────────
+builder.Services.AddAiAgent(builder.Configuration);
+builder.Services.AddAiRateLimiting();
+
+// ── Reverse proxy (Railway) ───────────────────────────────────────────────────
+// TLS terminates at the proxy; take the client IP and scheme from X-Forwarded-*.
+// The app is reachable only through the proxy, which appends the real client IP
+// as the last X-Forwarded-For entry (ForwardLimit = 1 reads exactly that one).
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 // ── AutoMapper ────────────────────────────────────────────────────────────────
 builder.Services.AddAutoMapper(typeof(RentalMappingProfile).Assembly);
@@ -106,6 +132,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ── Pipeline ──────────────────────────────────────────────────────────────────
+app.UseForwardedHeaders();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -152,6 +180,9 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// After authentication: the hourly AI chat limit is keyed by the signed-in user.
+app.UseRateLimiter();
 
 app.MapStaticAssets();
 

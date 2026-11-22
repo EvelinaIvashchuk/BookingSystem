@@ -31,4 +31,33 @@ public class CarRepository(ApplicationDbContext db) : GenericRepository<Car>(db)
     public async Task<bool> IsRentableAsync(int carId) =>
         await Db.Cars
             .AnyAsync(c => c.Id == carId && c.Status == CarStatus.Available);
+
+    public async Task<IReadOnlyList<Car>> SearchAvailableAsync(CarSearchCriteria criteria, CancellationToken ct = default)
+    {
+        var busyCarIds = await Db.Rentals
+            .Where(RentalPredicates.ActiveOverlapping(criteria.PickupDate, criteria.ReturnDate))
+            .Select(r => r.CarId)
+            .Distinct()
+            .ToListAsync(ct);
+
+        var query = Db.Cars
+            .Include(c => c.Category)
+            .Where(c => c.Status == CarStatus.Available && !busyCarIds.Contains(c.Id));
+
+        if (criteria.CategoryId is { } categoryId)
+            query = query.Where(c => c.CategoryId == categoryId);
+        if (criteria.Transmission is { } transmission)
+            query = query.Where(c => c.Transmission == transmission);
+        if (criteria.FuelType is { } fuelType)
+            query = query.Where(c => c.FuelType == fuelType);
+        if (criteria.MinSeats is { } minSeats)
+            query = query.Where(c => c.Seats >= minSeats);
+        if (criteria.MaxPricePerDay is { } maxPrice)
+            query = query.Where(c => c.PricePerDay <= maxPrice);
+
+        return await query
+            .OrderBy(c => c.PricePerDay)
+            .ThenBy(c => c.Id)
+            .ToListAsync(ct);
+    }
 }

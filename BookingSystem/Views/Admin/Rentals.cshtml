@@ -3,105 +3,85 @@
 @{
     ViewData["Title"] = L["Admin_ManageRentals_Title"].Value;
     var filterStatus = ViewBag.FilterStatus as RentalStatus?;
+    var filters = new (RentalStatus? Status, string Key)[]
+    {
+        (null, "Admin_All"), (RentalStatus.Pending, "Admin_Pending"), (RentalStatus.Confirmed, "Admin_Confirmed"),
+        (RentalStatus.Rejected, "Status_Rejected"), (RentalStatus.Cancelled, "Admin_Cancelled")
+    };
 }
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="cr-page">
+    <partial name="_AdminNav" />
+    <div class="cr-page-head">
         <div>
-            <h1 class="h2 mb-0">@L["Admin_ManageRentals_Title"]</h1>
-            <p class="text-muted small">@string.Format(L["Admin_RentalsFound"].Value, Model.TotalCount)</p>
-        </div>
-        <div class="btn-group shadow-sm">
-            <a asp-action="Rentals"
-               class="btn btn-outline-secondary @(filterStatus == null ? "active" : "")">@L["Admin_All"]</a>
-            <a asp-action="Rentals" asp-route-status="Pending"
-               class="btn btn-outline-secondary @(filterStatus == RentalStatus.Pending ? "active" : "")">@L["Admin_Pending"]</a>
-            <a asp-action="Rentals" asp-route-status="Confirmed"
-               class="btn btn-outline-secondary @(filterStatus == RentalStatus.Confirmed ? "active" : "")">@L["Admin_Confirmed"]</a>
-            <a asp-action="Rentals" asp-route-status="Cancelled"
-               class="btn btn-outline-secondary @(filterStatus == RentalStatus.Cancelled ? "active" : "")">@L["Admin_Cancelled"]</a>
+            <h1>@L["Admin_ManageRentals_Title"]</h1>
+            <p>@string.Format(L["Admin_RentalsFound"].Value, Model.TotalCount)</p>
         </div>
     </div>
 
+    <div class="cr-filters__chips mb-3">
+        @foreach (var (status, key) in filters)
+        {
+            <a asp-action="Rentals" asp-route-status="@status?.ToString()" class="cr-filter-chip @(filterStatus == status ? "is-active" : "")">@L[key]</a>
+        }
+    </div>
 
-
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+    @if (!Model.Any())
+    {
+        <div class="cr-panel cr-empty">
+            <div class="cr-empty__icon"><i class="bi bi-calendar-x"></i></div>
+            <p class="mb-0">@L["Admin_NoRentalsFilter"]</p>
+        </div>
+    }
+    else
+    {
+        <div class="cr-panel cr-panel--flush">
+            <table class="cr-table">
+                <thead>
+                    <tr>
+                        <th>@L["Admin_Car"]</th>
+                        <th>@L["Admin_User"]</th>
+                        <th>@L["Admin_Dates"]</th>
+                        <th>@L["Admin_Total"]</th>
+                        <th>@L["Admin_Status"]</th>
+                        <th class="text-end">@L["Admin_Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
                         <tr>
-                            <th class="ps-3">@L["Admin_Car"]</th>
-                            <th>@L["Admin_User"]</th>
-                            <th>@L["Admin_Pickup"]</th>
-                            <th>@L["Admin_Return"]</th>
-                            <th>@L["Admin_Total"]</th>
-                            <th>@L["Admin_Status"]</th>
-                            <th class="text-end pe-3">@L["Admin_Actions"]</th>
+                            <td class="cr-td-main"><div class="cr-td-title">@r.Car?.FullName</div><div class="cr-td-sub">@r.Car?.LicensePlate</div></td>
+                            <td data-label="@L["Admin_User"]"><div>@r.User?.FullName</div><div class="cr-td-sub">@r.User?.Email</div></td>
+                            <td data-label="@L["Admin_Dates"]"><div>@r.PickupDate?.ToString("dd MMM") – @r.ReturnDate?.ToString("dd MMM yyyy")</div><div class="cr-td-sub">@r.DurationDays @L["Rental_Days"]</div></td>
+                            <td data-label="@L["Admin_Total"]" class="fw-bold">@r.TotalPrice.ToString("N0") ₴</td>
+                            <td data-label="@L["Admin_Status"]"><partial name="_RentalStatusBadge" model="r.Status" /></td>
+                            <td class="cr-td-actions">
+                                @if (r.Status == RentalStatus.Pending)
+                                {
+                                    <form asp-action="ConfirmRental" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@r.Id" />
+                                        <button type="submit" class="btn btn-sm btn-success btn-icon" title="@L["Admin_Approve"]" aria-label="@L["Admin_Approve"]"><i class="bi bi-check-lg"></i></button>
+                                    </form>
+                                    <a asp-action="RejectRental" asp-route-id="@r.Id" class="btn btn-sm btn-outline-danger btn-icon" title="@L["Admin_Reject"]" aria-label="@L["Admin_Reject"]"><i class="bi bi-x-lg"></i></a>
+                                }
+                                else
+                                {
+                                    <span class="cr-muted">—</span>
+                                }
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @if (!Model.Any())
-                        {
-                            <tr>
-                                <td colspan="7" class="text-center py-5 text-muted">@L["Admin_NoRentalsFilter"]</td>
-                            </tr>
-                        }
-                        @foreach (var r in Model)
-                        {
-                            <tr>
-                                <td class="ps-3">
-                                    <div class="fw-bold">@r.Car?.FullName</div>
-                                    <div class="text-muted small">@r.Car?.LicensePlate</div>
-                                </td>
-                                <td>
-                                    <div class="small">@r.User?.FullName</div>
-                                    <div class="text-muted extra-small">@r.User?.Email</div>
-                                </td>
-                                <td class="small">@r.PickupDate?.ToString("dd MMM yyyy")</td>
-                                <td class="small">@r.ReturnDate?.ToString("dd MMM yyyy")</td>
-                                <td class="fw-bold small">@r.TotalPrice.ToString("N0") ₴</td>
-                                <td><partial name="_RentalStatusBadge" model="r.Status" /></td>
-                                <td class="text-end pe-3">
-                                    @if (r.Status == RentalStatus.Pending)
-                                    {
-                                        <div class="btn-group btn-group-sm shadow-sm">
-                                            <form asp-action="ConfirmRental" method="post" class="d-inline">
-                                                <input type="hidden" name="id" value="@r.Id" />
-                                                <button type="submit" class="btn btn-success" title="Approve">
-                                                    <i class="bi bi-check-lg"></i>
-                                                </button>
-                                            </form>
-                                            <a asp-action="RejectRental" asp-route-id="@r.Id" class="btn btn-outline-danger" title="Reject">
-                                                <i class="bi bi-x-lg"></i>
-                                            </a>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">—</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
-    </div>
+    }
 
     @{
         ViewData["PageIndex"]   = Model.PageIndex;
         ViewData["TotalPages"]  = Model.TotalPages;
         ViewData["Action"]      = "Rentals";
-        ViewData["RouteValues"] = new Dictionary<string, string>
-        {
-            ["status"] = filterStatus?.ToString() ?? ""
-        };
+        ViewData["RouteValues"] = new Dictionary<string, string> { ["status"] = filterStatus?.ToString() ?? "" };
     }
     <partial name="_Pagination" />
 </div>
-
-<style>
-    .extra-small { font-size: 0.75rem; }
-</style>

@@ -3,38 +3,35 @@
     ViewData["Title"] = L["Admin_RejectRental_Title"].Value;
 }
 
-<div class="container py-4">
+<div class="cr-page">
+    <partial name="_AdminNav" />
+    <nav class="cr-crumbs" aria-label="breadcrumb">
+        <a asp-action="Rentals">@L["Admin_RentalsNav"]</a><i class="bi bi-chevron-right"></i>
+        <span>@L["Admin_RejectRentalHeader"]</span>
+    </nav>
+
     <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-danger text-white p-4 border-0 rounded-top">
-                    <h2 class="h4 mb-0"><i class="bi bi-x-circle me-2"></i> @L["Admin_RejectRentalHeader"]</h2>
+        <div class="col-lg-7">
+            <form asp-action="RejectRental" method="post" class="cr-panel">
+                <h1 class="cr-panel__title fs-4"><i class="bi bi-x-circle" style="color:#A32D2D;"></i>@L["Admin_RejectRentalHeader"]</h1>
+                <div class="cr-note mb-4" style="background:#FAEEDA;color:#633806;">
+                    <i class="bi bi-info-circle"></i>
+                    <span class="fw-normal">@L["Admin_RejectAboutTo"] <strong>@Model.CarName</strong> @L["Admin_RejectBy"] <strong>@Model.UserFullName</strong>.</span>
                 </div>
-                <div class="card-body p-4 p-md-5">
-                    <div class="alert alert-warning mb-4">
-                        <i class="bi bi-info-circle me-2"></i> @L["Admin_RejectAboutTo"]
-                        <strong>@Model.CarName</strong> @L["Admin_RejectBy"] <strong>@Model.UserFullName</strong>.
-                    </div>
 
-                    <form asp-action="RejectRental" method="post">
-                        <input type="hidden" asp-for="RentalId" />
-                        <input type="hidden" asp-for="CarName" />
-                        <input type="hidden" asp-for="UserFullName" />
+                <input type="hidden" asp-for="RentalId" />
+                <input type="hidden" asp-for="CarName" />
+                <input type="hidden" asp-for="UserFullName" />
 
-                        <div class="mb-5">
-                            <label asp-for="AdminNote" class="form-label fw-bold">@L["Admin_ReasonForRejection"]</label>
-                            <textarea asp-for="AdminNote" class="form-control" rows="4"
-                                      placeholder="@L["Admin_RejectPlaceholder"]"></textarea>
-                            <span asp-validation-for="AdminNote" class="text-danger small"></span>
-                        </div>
+                <label asp-for="AdminNote" class="form-label">@L["Admin_ReasonForRejection"]</label>
+                <textarea asp-for="AdminNote" class="form-control" rows="4" placeholder="@L["Admin_RejectPlaceholder"]"></textarea>
+                <span asp-validation-for="AdminNote" class="text-danger small"></span>
 
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end pt-3 border-top">
-                            <a asp-action="Rentals" class="btn btn-outline-secondary px-4 me-md-2">@L["Admin_Cancel"]</a>
-                            <button type="submit" class="btn btn-danger px-5 shadow">@L["Admin_RejectRequest"]</button>
-                        </div>
-                    </form>
+                <div class="cr-form-actions">
+                    <a asp-action="Rentals" class="btn btn-outline-secondary px-4">@L["Admin_Cancel"]</a>
+                    <button type="submit" class="btn btn-danger px-4">@L["Admin_RejectRequest"]</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>

@@ -67,6 +67,19 @@ public static class DbSeeder
                     logger.LogError("Failed to seed admin account: {Errors}", errors);
                 }
             }
+
+            // Demo fleet: adds only missing cars (by licence plate), never changes existing ones,
+            // except that demo cars without an image get their Wikimedia Commons photo.
+            if (!string.Equals(config["Seed:DemoFleet"], "false", StringComparison.OrdinalIgnoreCase))
+            {
+                var added = await DemoFleet.EnsureAsync(db, keepIds: false);
+                if (added > 0)
+                    logger.LogInformation("Demo fleet seeded: {Count} cars added", added);
+
+                var photos = await DemoFleetPhotos.FillMissingAsync(db);
+                if (photos > 0)
+                    logger.LogInformation("Demo fleet photos set for {Count} cars", photos);
+            }
         }
         catch (Exception ex)
         {

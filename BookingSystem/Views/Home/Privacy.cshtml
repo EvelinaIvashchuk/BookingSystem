@@ -1,6 +1,28 @@
 @{
     ViewData["Title"] = L["Privacy_Title"].Value;
+    var sections = new[]
+    {
+        ("bi-person-vcard", "Privacy_DataTitle", "Privacy_DataText"),
+        ("bi-chat-dots", "Privacy_ChatTitle", "Privacy_ChatText"),
+        ("bi-stars", "Privacy_AiTitle", "Privacy_AiText"),
+        ("bi-shield-check", "Privacy_BookingTitle", "Privacy_BookingText"),
+        ("bi-cookie", "Privacy_CookiesTitle", "Privacy_CookiesText")
+    };
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>@L["Privacy_Desc"]</p>
+<div class="cr-page mx-auto" style="max-width: 820px;">
+    <div class="cr-page-head">
+        <div>
+            <h1>@L["Privacy_Title"]</h1>
+            <p>@L["Privacy_Intro"]</p>
+        </div>
+    </div>
+
+    @foreach (var (icon, title, text) in sections)
+    {
+        <section class="cr-panel">
+            <h2 class="cr-panel__title"><i class="bi @icon"></i>@L[title]</h2>
+            <p class="mb-0">@L[text]</p>
+        </section>
+    }
+</div>

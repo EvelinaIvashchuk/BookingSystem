@@ -1,79 +1,75 @@
+@using BookingSystem.Helpers
 @model RentalCreateViewModel
 @{
     ViewData["Title"] = L["Car_RentNow"].Value + " " + Model.CarName;
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white p-4 border-0 rounded-top">
-                    <h2 class="h4 mb-0"><i class="bi bi-car-front me-2"></i> @L["Rental_RentACar"]</h2>
-                </div>
-                <div class="card-body p-4 p-md-5">
-                    <div class="mb-5 p-4 bg-light rounded-3 border">
-                        <h3 class="h5 fw-bold mb-3 text-primary">@L["Rental_CarDetails"]</h3>
-                        <div class="row g-3">
-                            <div class="col-sm-6">
-                                <label class="text-muted small text-uppercase fw-bold d-block">@L["Rental_Car"]</label>
-                                <span class="fs-5 fw-semibold text-dark">@Model.CarName</span>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="text-muted small text-uppercase fw-bold d-block">@L["Rental_Location"]</label>
-                                <span class="text-dark">@Model.Location</span>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="text-muted small text-uppercase fw-bold d-block">@L["Rental_Category"]</label>
-                                <span class="badge bg-secondary">@Model.CategoryName</span>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="text-muted small text-uppercase fw-bold d-block">@L["Rental_Price"]</label>
-                                <span class="text-dark fw-bold text-primary">@Model.PricePerDay.ToString("N0") ₴ @L["Car_PerDayShort"]</span>
-                            </div>
-                        </div>
+<div class="cr-page">
+    <nav class="cr-crumbs" aria-label="breadcrumb">
+        <a asp-controller="Car" asp-action="Index">@L["Nav_Cars"]</a><i class="bi bi-chevron-right"></i>
+        <a asp-controller="Car" asp-action="Details" asp-route-id="@Model.CarId">@Model.CarName</a><i class="bi bi-chevron-right"></i>
+        <span>@L["Rental_RentACar"]</span>
+    </nav>
+    <div class="cr-page-head">
+        <div>
+            <h1>@L["Rental_RentACar"]</h1>
+            <p>@L["Rental_PickupHint"]</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7 order-2 order-lg-1">
+            <form asp-action="Create" method="post" class="cr-panel needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+                <input type="hidden" asp-for="CarId" />
+                <input type="hidden" asp-for="CarName" />
+                <input type="hidden" asp-for="Location" />
+                <input type="hidden" asp-for="PricePerDay" />
+                <input type="hidden" asp-for="CategoryName" />
+                <input type="hidden" asp-for="ImageUrl" />
+
+                <h2 class="cr-panel__title"><i class="bi bi-calendar-range"></i>@L["Rental_RentalPeriod"]</h2>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label asp-for="PickupDate" class="form-label"></label>
+                        <input asp-for="PickupDate" class="form-control form-control-lg" type="date" />
+                        <span asp-validation-for="PickupDate" class="text-danger small"></span>
                     </div>
+                    <div class="col-sm-6">
+                        <label asp-for="ReturnDate" class="form-label"></label>
+                        <input asp-for="ReturnDate" class="form-control form-control-lg" type="date" />
+                        <span asp-validation-for="ReturnDate" class="text-danger small"></span>
+                    </div>
+                </div>
 
-                    <form asp-action="Create" method="post" class="needs-validation" novalidate>
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
-                        <input type="hidden" asp-for="CarId" />
-                        <input type="hidden" asp-for="CarName" />
-                        <input type="hidden" asp-for="Location" />
-                        <input type="hidden" asp-for="PricePerDay" />
-                        <input type="hidden" asp-for="CategoryName" />
+                <div class="cr-note mt-3" id="priceEstimateBox">
+                    <i class="bi bi-calculator"></i><span id="priceEstimate">&nbsp;</span>
+                </div>
 
-                        <div class="row g-4 mb-4">
-                            <div class="col-md-6">
-                                <label asp-for="PickupDate" class="form-label fw-bold"></label>
-                                <input asp-for="PickupDate" class="form-control form-control-lg" type="date" />
-                                <span asp-validation-for="PickupDate" class="text-danger small"></span>
-                                <div class="form-text mt-2 small">@L["Rental_PickupHint"]</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="ReturnDate" class="form-label fw-bold"></label>
-                                <input asp-for="ReturnDate" class="form-control form-control-lg" type="date" />
-                                <span asp-validation-for="ReturnDate" class="text-danger small"></span>
-                                <div class="form-text mt-2 small">@L["Rental_ReturnHint"]</div>
-                            </div>
-                        </div>
+                <div class="mt-4">
+                    <label asp-for="Notes" class="form-label"></label>
+                    <textarea asp-for="Notes" class="form-control" rows="3" placeholder="@L["Rental_NotesPlaceholder"]"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger small"></span>
+                </div>
 
-                        <div class="mb-4 p-3 bg-primary bg-opacity-10 rounded-3 d-flex align-items-center gap-2">
-                            <i class="bi bi-calculator text-primary fs-5"></i>
-                            <span class="fw-semibold text-primary" id="priceEstimate">&nbsp;</span>
-                        </div>
+                <div class="cr-form-actions">
+                    <a asp-controller="Car" asp-action="Details" asp-route-id="@Model.CarId" class="btn btn-outline-secondary px-4">@L["Rental_Cancel"]</a>
+                    <button type="submit" class="btn btn-primary px-4"><i class="bi bi-send me-1"></i>@L["Rental_SubmitRequest"]</button>
+                </div>
+            </form>
+        </div>
 
-                        <div class="mb-5">
-                            <label asp-for="Notes" class="form-label fw-bold"></label>
-                            <textarea asp-for="Notes" class="form-control" rows="4"
-                                      placeholder="@L["Rental_NotesPlaceholder"]"></textarea>
-                            <span asp-validation-for="Notes" class="text-danger small"></span>
-                        </div>
-
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end pt-3 border-top">
-                            <a asp-controller="Car" asp-action="Details" asp-route-id="@Model.CarId"
-                               class="btn btn-outline-secondary btn-lg px-4 me-md-2">@L["Rental_Cancel"]</a>
-                            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">@L["Rental_SubmitRequest"]</button>
-                        </div>
-                    </form>
+        <div class="col-lg-5 order-1 order-lg-2">
+            <div class="cr-panel cr-panel--flush">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@ImageHelper.Src(Model.ImageUrl)" alt="@Model.CarName" class="w-100" style="height: 220px; object-fit: cover;" />
+                }
+                <div class="p-4">
+                    <span class="cr-car__cat">@Model.CategoryName</span>
+                    <h2 class="h4 fw-bold mt-2 mb-1">@Model.CarName</h2>
+                    <div class="cr-muted mb-3"><i class="bi bi-geo-alt me-1"></i>@Model.Location</div>
+                    <div class="cr-price-big">@Model.PricePerDay.ToString("N0") ₴ <small>@L["Car_PerDayShort"]</small></div>
                 </div>
             </div>
         </div>
@@ -99,16 +95,17 @@
             }
 
             // Live price estimate
-            const pricePerDay = parseFloat('@Model.PricePerDay');
+            const pricePerDay = parseFloat('@Model.PricePerDay.ToString(System.Globalization.CultureInfo.InvariantCulture)');
             const estimateEl  = document.getElementById('priceEstimate');
+            const estimateBox = document.getElementById('priceEstimateBox');
             function updateEstimate() {
-                if (!estimateEl) return;
                 const p = new Date(pickupInput.value);
                 const r = new Date(returnInput.value);
-                if (isNaN(p) || isNaN(r) || r <= p) { estimateEl.textContent = ''; return; }
+                if (isNaN(p) || isNaN(r) || r <= p) { estimateEl.textContent = ''; estimateBox.classList.add('d-none'); return; }
                 const days  = Math.round((r - p) / 86400000);
                 const total = (days * pricePerDay).toLocaleString('uk-UA');
                 estimateEl.textContent = `${days} @Html.Raw(L["Car_DaysSuffix"].Value) · @Html.Raw(L["Car_TotalLabel"].Value) ${total} ₴`;
+                estimateBox.classList.remove('d-none');
             }
             pickupInput.addEventListener('change', updateEstimate);
             returnInput.addEventListener('change', updateEstimate);

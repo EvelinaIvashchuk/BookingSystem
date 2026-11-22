@@ -13,6 +13,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Rental>   Rentals    { get; set; } = null!;
     public DbSet<Payment>  Payments   { get; set; } = null!;
 
+    // ── AI agent ──────────────────────────────────────────────────────────────
+    public DbSet<ChatSession>        ChatSessions   { get; set; } = null!;
+    public DbSet<ChatSessionMessage> ChatMessages   { get; set; } = null!;
+    public DbSet<PendingAction>      PendingActions { get; set; } = null!;
+    public DbSet<KnowledgeChunk>     KnowledgeChunks { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -104,8 +110,98 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
              .OnDelete(DeleteBehavior.Cascade);
         });
 
+        ConfigureAiAgent(builder);
+
         // ── Seed Data ─────────────────────────────────────────────────────────
         SeedData(builder);
+    }
+
+    private static void ConfigureAiAgent(ModelBuilder builder)
+    {
+        // ── ChatSession ───────────────────────────────────────────────────────
+        builder.Entity<ChatSession>(e =>
+        {
+            e.ToTable("ChatSessions");
+            e.HasKey(s => s.Id);
+            e.Property(s => s.SlotsJson).IsRequired().HasColumnType("json");
+
+            e.HasOne(s => s.User)
+             .WithMany()
+             .HasForeignKey(s => s.UserId)
+             .OnDelete(DeleteBehavior.SetNull);
+
+            e.HasIndex(s => s.UserId);
+        });
+
+        // ── ChatSessionMessage ────────────────────────────────────────────────
+        builder.Entity<ChatSessionMessage>(e =>
+        {
+            e.ToTable("ChatMessages");
+            e.HasKey(m => m.Id);
+            e.Property(m => m.Role).IsRequired().HasMaxLength(16);
+            e.Property(m => m.Content).IsRequired().HasColumnType("text");
+            e.Property(m => m.ToolCallsJson).HasColumnType("json");
+            e.Property(m => m.Model).HasMaxLength(100);
+
+            e.HasOne(m => m.Session)
+             .WithMany(s => s.Messages)
+             .HasForeignKey(m => m.SessionId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+            // History is always read as "last N messages of a session".
+            e.HasIndex(m => new { m.SessionId, m.Id });
+        });
+
+        // ── PendingAction ─────────────────────────────────────────────────────
+        builder.Entity<PendingAction>(e =>
+        {
+            e.ToTable("PendingActions");
+            e.HasKey(a => a.Id);
+            e.Property(a => a.PayloadJson).IsRequired().HasColumnType("json");
+
+            e.Property(a => a.Type)
+             .HasConversion<string>()
+             .HasMaxLength(30);
+
+            // Concurrency token: two simultaneous "Confirm" clicks cannot both move
+            // the action out of Pending (the second UPDATE affects 0 rows).
+            e.Property(a => a.Status)
+             .HasConversion<string>()
+             .HasMaxLength(20)
+             .IsConcurrencyToken();
+
+            e.HasOne(a => a.Session)
+             .WithMany()
+             .HasForeignKey(a => a.SessionId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasOne(a => a.User)
+             .WithMany()
+             .HasForeignKey(a => a.UserId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasIndex(a => new { a.UserId, a.Status });
+        });
+
+        // ── KnowledgeChunk ────────────────────────────────────────────────────
+        // The FULLTEXT index on SearchText is created in the migration with raw SQL.
+        builder.Entity<KnowledgeChunk>(e =>
+        {
+            e.ToTable("KnowledgeChunks");
+            e.HasKey(c => c.Id);
+            e.Ignore(c => c.Key);
+            e.Property(c => c.DocumentId).IsRequired().HasMaxLength(64);
+            e.Property(c => c.Category).IsRequired().HasMaxLength(32);
+            e.Property(c => c.Title).IsRequired().HasMaxLength(300);
+            e.Property(c => c.Content).IsRequired().HasColumnType("text");
+            e.Property(c => c.SearchText).IsRequired().HasColumnType("text");
+            e.Property(c => c.Embedding).HasColumnType("longblob");
+            e.Property(c => c.EmbeddingModel).HasMaxLength(100);
+            e.Property(c => c.SourceHash).IsRequired().HasMaxLength(64);
+
+            e.HasIndex(c => new { c.DocumentId, c.ChunkIndex }).IsUnique();
+            e.HasIndex(c => c.Category);
+        });
     }
 
     private static void SeedData(ModelBuilder builder)

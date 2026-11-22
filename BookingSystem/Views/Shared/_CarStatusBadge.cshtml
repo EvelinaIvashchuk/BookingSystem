@@ -1,0 +1,17 @@
+@model CarStatus
+
+@switch (Model)
+{
+    case CarStatus.Available:
+        <span class="cr-status cr-status--available"><i class="bi bi-check-circle"></i>@L["Admin_Status_Available"]</span>
+        break;
+    case CarStatus.Rented:
+        <span class="cr-status cr-status--rented"><i class="bi bi-key"></i>@L["Admin_Status_Rented"]</span>
+        break;
+    case CarStatus.UnderMaintenance:
+        <span class="cr-status cr-status--maintenance"><i class="bi bi-tools"></i>@L["Admin_Status_UnderMaintenance"]</span>
+        break;
+    default:
+        <span class="cr-status cr-status--neutral">@Model</span>
+        break;
+}

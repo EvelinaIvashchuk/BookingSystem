@@ -4,75 +4,75 @@
     ViewData["Title"] = L["Rental_MyRentals"].Value;
 }
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+<div class="cr-page">
+    <div class="cr-page-head">
         <div>
-            <h1 class="h2 mb-0">@L["Rental_MyRentals"]</h1>
-            <p class="text-muted small mb-0">@string.Format(L["Rental_RentalsTotal"].Value, Model.TotalCount)</p>
+            <h1>@L["Rental_MyRentals"]</h1>
+            <p>@string.Format(L["Rental_RentalsTotal"].Value, Model.TotalCount)</p>
         </div>
-        <a asp-controller="Car" asp-action="Index" class="btn btn-primary">
-            <i class="bi bi-car-front me-2"></i> @L["Rental_RentAnother"]
-        </a>
+        <a asp-controller="Car" asp-action="Index" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>@L["Rental_RentAnother"]</a>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-3">@L["Admin_Car"]</th>
-                            <th>@L["Rental_Dates"]</th>
-                            <th>@L["Rental_Total"]</th>
-                            <th>@L["Admin_Status"]</th>
-                            <th class="text-end pe-3">@L["Common_Actions"]</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!Model.Any())
-                        {
-                            <tr>
-                                <td colspan="5" class="text-center py-5 text-muted">
-                                    <i class="bi bi-car-front fs-3 d-block mb-2"></i>
-                                    @L["Rental_NoPrevious"]
-                                </td>
-                            </tr>
-                        }
-                        @foreach (var r in Model)
-                        {
-                            <tr>
-                                <td class="ps-3">
-                                    <div class="fw-bold">@r.Car?.FullName</div>
-                                    <div class="text-muted extra-small">@r.Car?.Location</div>
-                                </td>
-                                <td>
-                                    <div class="small">@r.PickupDate?.ToString("dd MMM yyyy") – @r.ReturnDate?.ToString("dd MMM yyyy")</div>
-                                    <div class="text-muted extra-small">@r.DurationDays @L["Rental_Days"]</div>
-                                </td>
-                                <td class="fw-bold">@r.TotalPrice.ToString("N0") ₴</td>
-                                <td>
-                                    <partial name="_RentalStatusBadge" model="r.Status" />
-                                </td>
-                                <td class="text-end pe-3">
-                                    <div class="btn-group btn-group-sm">
-                                        <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-outline-primary">@L["Rental_Details"]</a>
-                                        @if (r.CanBeCancelledByUser)
-                                        {
-                                            <form asp-action="Cancel" method="post" class="d-inline"
-                                                  onsubmit="return confirm('@L["Rental_CancelConfirm"]');">
-                                                <input type="hidden" name="id" value="@r.Id" />
-                                                <button type="submit" class="btn btn-outline-danger">@L["Common_Cancel"]</button>
-                                            </form>
-                                        }
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+    @if (!Model.Any())
+    {
+        <div class="cr-panel cr-empty">
+            <div class="cr-empty__icon"><i class="bi bi-calendar2-week"></i></div>
+            <h2>@L["Rental_NoPrevious"]</h2>
+            <p>@L["Home_AiSubtitle"]</p>
+            <a asp-controller="Car" asp-action="Index" class="btn btn-primary">@L["Home_BrowseCars"]</a>
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="cr-panel cr-panel--flush">
+            <table class="cr-table">
+                <thead>
+                    <tr>
+                        <th>@L["Admin_Car"]</th>
+                        <th>@L["Rental_Dates"]</th>
+                        <th>@L["Rental_Total"]</th>
+                        <th>@L["Admin_Status"]</th>
+                        <th class="text-end">@L["Common_Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td class="cr-td-main">
+                                <div class="d-flex align-items-center gap-3">
+                                    @if (!string.IsNullOrEmpty(r.Car?.ImageUrl))
+                                    {
+                                        <img src="@ImageHelper.Src(r.Car.ImageUrl)" alt="" class="rounded-3" style="width: 64px; height: 44px; object-fit: cover;" />
+                                    }
+                                    <div>
+                                        <div class="cr-td-title">@r.Car?.FullName</div>
+                                        <div class="cr-td-sub">@r.Car?.Location</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-label="@L["Rental_Dates"]">
+                                <div>@r.PickupDate?.ToString("dd MMM") – @r.ReturnDate?.ToString("dd MMM yyyy")</div>
+                                <div class="cr-td-sub">@r.DurationDays @L["Rental_Days"]</div>
+                            </td>
+                            <td data-label="@L["Rental_Total"]" class="fw-bold">@r.TotalPrice.ToString("N0") ₴</td>
+                            <td data-label="@L["Admin_Status"]"><partial name="_RentalStatusBadge" model="r.Status" /></td>
+                            <td class="cr-td-actions">
+                                <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-sm btn-outline-primary">@L["Rental_Details"]</a>
+                                @if (r.CanBeCancelledByUser)
+                                {
+                                    <form asp-action="Cancel" method="post" class="d-inline" onsubmit="return confirm('@L["Rental_CancelConfirm"]');">
+                                        <input type="hidden" name="id" value="@r.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">@L["Common_Cancel"]</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 
     @{
         ViewData["PageIndex"]   = Model.PageIndex;
@@ -82,7 +82,3 @@
     }
     <partial name="_Pagination" />
 </div>
-
-<style>
-    .extra-small { font-size: 0.75rem; }
-</style>

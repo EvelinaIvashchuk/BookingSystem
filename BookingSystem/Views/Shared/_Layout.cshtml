@@ -1,41 +1,56 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    string Active(string controller, string? action = null) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+        && (action is null || string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase)) ? " active" : "";
+}
 <!DOCTYPE html>
 <html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>CarRental</title>
+    <title>@(ViewData["Title"] is string pageTitle && pageTitle.Length > 0 ? $"{pageTitle} — CarRental" : "CarRental")</title>
+    <link rel="icon" href="~/favicon.svg" type="image/svg+xml" asp-append-version="true" />
+    <link rel="icon" href="~/favicon.ico" sizes="any" asp-append-version="true" />
+    <link rel="apple-touch-icon" href="~/apple-touch-icon.png" asp-append-version="true" />
+    <meta name="theme-color" content="#534AB7" />
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/BookingSystem.styles.css" asp-append-version="true"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap&subset=cyrillic">
+    <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true"/>
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom box-shadow mb-3 cr-navbar sticky-top">
         <div class="container-fluid">
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                <i class="bi bi-car-front me-1"></i>CarRental
+                <span class="cr-logo"><i class="bi bi-stars"></i></span>CarRental
             </a>
 
             @* Collapse FIRST — so on desktop nav links appear before auth block *@
             <div class="navbar-collapse collapse">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">@L["Nav_Home"]</a>
+                        <a class="nav-link@(Active("Home", "Index"))" asp-area="" asp-controller="Home" asp-action="Index">@L["Nav_Home"]</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Car" asp-action="Index">@L["Nav_Cars"]</a>
+                        <a class="nav-link@(Active("Car"))" asp-area="" asp-controller="Car" asp-action="Index">@L["Nav_Cars"]</a>
                     </li>
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Rental" asp-action="MyRentals">@L["Nav_MyRentals"]</a>
+                            <a class="nav-link@(Active("Rental"))" asp-area="" asp-controller="Rental" asp-action="MyRentals">@L["Nav_MyRentals"]</a>
                         </li>
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-primary fw-bold" asp-area="" asp-controller="Admin" asp-action="Index">
+                                <a class="nav-link cr-admin@(Active("Admin"))" asp-area="" asp-controller="Admin" asp-action="Index">
                                     <i class="bi bi-shield-lock me-1"></i>@L["Nav_AdminPanel"]
                                 </a>
                             </li>
@@ -77,9 +92,13 @@
     </main>
 </div>
 
-<footer class="border-top footer text-muted">
+<footer class="footer">
     <div class="container footer-inner">
-        <span>&copy; 2026 CarRental &mdash; <a asp-area="" asp-controller="Home" asp-action="Privacy">@L["Nav_Privacy"]</a></span>
+        <div class="cr-foot-links">
+            <span>&copy; 2026 CarRental</span>
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">@L["Nav_Privacy"]</a>
+            <a asp-area="" asp-controller="Home" asp-action="Photos" hidden>@L["Nav_PhotoCredits"]</a>
+        </div>
 
         <form id="langForm" asp-controller="Language" asp-action="Set" method="post" class="footer-lang">
             @Html.AntiForgeryToken()

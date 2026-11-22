@@ -7,15 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.S3"                                          Version="3.7.414.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"  Version="9.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools"                Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"          Version="9.0.0" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql"                   Version="9.0.0" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.414.1" />
+    <PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.28.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.13" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="BookingSystem.Tests" />
   </ItemGroup>
 
   <ItemGroup>

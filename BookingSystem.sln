@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingSystem.Infrastructur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingSystem.Tests", "BookingSystem.Tests\BookingSystem.Tests.csproj", "{E27159C9-288A-40D4-BD9C-AFA1BF145E8D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingSystem.Evaluation", "BookingSystem.Evaluation\BookingSystem.Evaluation.csproj", "{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,18 @@ Global
 		{E27159C9-288A-40D4-BD9C-AFA1BF145E8D}.Release|x64.Build.0 = Release|Any CPU
 		{E27159C9-288A-40D4-BD9C-AFA1BF145E8D}.Release|x86.ActiveCfg = Release|Any CPU
 		{E27159C9-288A-40D4-BD9C-AFA1BF145E8D}.Release|x86.Build.0 = Release|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Debug|x64.Build.0 = Debug|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Debug|x86.Build.0 = Debug|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Release|x64.ActiveCfg = Release|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Release|x64.Build.0 = Release|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Release|x86.ActiveCfg = Release|Any CPU
+		{BDC9EEE4-ADB4-4E55-80FA-FAC1A1FFD1C4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>BookingSystem.Evaluation</RootNamespace>
+    <!-- Same secrets as the web project (Ai:Providers:*:ApiKey). -->
+    <UserSecretsId>6b24e8bb-b28e-4913-87a2-f4eede2cce8e</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BookingSystem.Application\BookingSystem.Application.csproj" />
+    <ProjectReference Include="..\BookingSystem.Infrastructure\BookingSystem.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="BookingSystem.Tests" />
+  </ItemGroup>
+
+</Project>
