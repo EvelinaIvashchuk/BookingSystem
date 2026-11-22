@@ -56,7 +56,7 @@
                                 <div class="cr-td-sub">@r.DurationDays @L["Rental_Days"]</div>
                             </td>
                             <td data-label="@L["Rental_Total"]" class="fw-bold">@r.TotalPrice.ToString("N0") ₴</td>
-                            <td data-label="@L["Admin_Status"]"><partial name="_RentalStatusBadge" model="r.Status" /></td>
+                            <td data-label="@L["Admin_Status"]"><partial name="_RentalStatusBadge" model="r" /></td>
                             <td class="cr-td-actions">
                                 <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-sm btn-outline-primary">@L["Rental_Details"]</a>
                                 @if (r.CanBeCancelledByUser)

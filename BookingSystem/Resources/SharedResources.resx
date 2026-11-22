@@ -419,6 +419,8 @@
   <data name="Car_DatesBoth" xml:space="preserve"><value>Pick both dates to see only cars that are free for the whole period.</value></data>
   <data name="Car_DatesInvalid" xml:space="preserve"><value>Dates ignored: a rental lasts {0} to {1} days and starts between today and {2} days from now.</value></data>
   <data name="Car_TotalForDays" xml:space="preserve"><value>{1} ₴ for {0} days</value></data>
+  <data name="Status_Active" xml:space="preserve"><value>In progress</value></data>
+  <data name="Status_Completed" xml:space="preserve"><value>Completed</value></data>
   <data name="Car_CatalogLead" xml:space="preserve"><value>Pick a city and dates and we'll show only the cars that are free.</value></data>
   <data name="Car_FilterDates" xml:space="preserve"><value>Dates</value></data>
   <data name="Car_Find" xml:space="preserve"><value>Find</value></data>

@@ -61,6 +61,17 @@ public class Rental
         ? (int)(ReturnDate.Value.Date - PickupDate.Value.Date).TotalDays
         : null;
 
+    /// <summary>Status to show on <paramref name="today"/>; computed, so no stored status changes with time.</summary>
+    public RentalStage GetStage(DateTime today) => Status switch
+    {
+        RentalStatus.Confirmed when ReturnDate.HasValue && today.Date > ReturnDate.Value.Date => RentalStage.Completed,
+        RentalStatus.Confirmed when PickupDate.HasValue && today.Date >= PickupDate.Value.Date => RentalStage.Active,
+        RentalStatus.Confirmed => RentalStage.Confirmed,
+        RentalStatus.Cancelled => RentalStage.Cancelled,
+        RentalStatus.Rejected => RentalStage.Rejected,
+        _ => RentalStage.Pending
+    };
+
     [NotMapped]
     public bool CanBeCancelledByUser =>
         Status is RentalStatus.Pending or RentalStatus.Confirmed

@@ -419,6 +419,8 @@
   <data name="Car_DatesBoth" xml:space="preserve"><value>Вкажіть обидві дати — тоді залишаться лише авто, вільні на весь період.</value></data>
   <data name="Car_DatesInvalid" xml:space="preserve"><value>Дати не враховано: оренда триває від {0} до {1} днів і починається не раніше сьогодні та не пізніше ніж через {2} днів.</value></data>
   <data name="Car_TotalForDays" xml:space="preserve"><value>{1} ₴ за {0} дн.</value></data>
+  <data name="Status_Active" xml:space="preserve"><value>Триває</value></data>
+  <data name="Status_Completed" xml:space="preserve"><value>Завершено</value></data>
   <data name="Car_CatalogLead" xml:space="preserve"><value>Оберіть місто й дати — покажемо лише вільні авто.</value></data>
   <data name="Car_FilterDates" xml:space="preserve"><value>Дати</value></data>
   <data name="Car_Find" xml:space="preserve"><value>Знайти</value></data>

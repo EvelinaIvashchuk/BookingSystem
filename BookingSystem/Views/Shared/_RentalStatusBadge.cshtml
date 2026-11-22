@@ -1,20 +1,24 @@
-@model RentalStatus
+@model Rental
+@* Shows the stage (stored status + dates), so a confirmed rental reads "In progress" / "Completed" once its dates come. *@
 
-@switch (Model)
+@switch (Model.GetStage(DateTime.UtcNow.Date))
 {
-    case RentalStatus.Pending:
+    case RentalStage.Pending:
         <span class="cr-status cr-status--pending"><i class="bi bi-hourglass-split"></i>@L["Status_Pending"]</span>
         break;
-    case RentalStatus.Confirmed:
+    case RentalStage.Confirmed:
         <span class="cr-status cr-status--confirmed"><i class="bi bi-check-circle"></i>@L["Status_Confirmed"]</span>
         break;
-    case RentalStatus.Rejected:
+    case RentalStage.Active:
+        <span class="cr-status cr-status--info"><i class="bi bi-car-front"></i>@L["Status_Active"]</span>
+        break;
+    case RentalStage.Completed:
+        <span class="cr-status cr-status--neutral"><i class="bi bi-flag"></i>@L["Status_Completed"]</span>
+        break;
+    case RentalStage.Rejected:
         <span class="cr-status cr-status--rejected"><i class="bi bi-x-circle"></i>@L["Status_Rejected"]</span>
         break;
-    case RentalStatus.Cancelled:
+    case RentalStage.Cancelled:
         <span class="cr-status cr-status--cancelled"><i class="bi bi-dash-circle"></i>@L["Status_Cancelled"]</span>
-        break;
-    default:
-        <span class="cr-status cr-status--neutral">@Model</span>
         break;
 }

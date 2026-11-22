@@ -268,14 +268,19 @@ body > .container:first-of-type { flex: 1 0 auto; }
 }
 
 /* Rental progress line */
-.cr-steps-line { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; font-weight: 700; color: var(--cr-muted); }
+.cr-steps-line { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; font-weight: 700; color: var(--cr-muted); }
 .cr-steps-line__item { display: inline-flex; align-items: center; gap: .5rem; }
 .cr-steps-line__item > span { width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #f1f0f8; color: var(--cr-muted); font-size: .85rem; }
 .cr-steps-line__item.is-done { color: var(--cr-violet-900); }
 .cr-steps-line__item.is-done > span { background: var(--cr-violet-600); color: #fff; }
 .cr-steps-line__item.is-failed { color: #A32D2D; }
 .cr-steps-line__item.is-failed > span { background: #E24B4A; color: #fff; }
-.cr-steps-line__bar { flex: 1 1 40px; max-width: 120px; height: 2px; background: var(--cr-line); }
+.cr-steps-line__bar { flex: 1 1 12px; min-width: 12px; max-width: 120px; height: 2px; background: var(--cr-line); }
+/* On phones the four steps do not fit in a row: show them as a vertical timeline. */
+@media (max-width: 575px) {
+    .cr-steps-line { flex-direction: column; align-items: flex-start; flex-wrap: nowrap; gap: .35rem; }
+    .cr-steps-line__bar { flex: none; width: 2px; min-width: 0; height: 14px; margin-left: 14px; }
+}
 .cr-steps-line__bar.is-done { background: var(--cr-violet-600); }
 .cr-steps-line__bar.is-failed { background: #E24B4A; }
 .cr-error-code { font-size: clamp(3.5rem, 9vw, 5.5rem); font-weight: 800; line-height: 1; color: var(--cr-violet-600); letter-spacing: -.04em; margin-bottom: .75rem; }
