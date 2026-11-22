@@ -55,7 +55,7 @@
                             <td data-label="@L["Admin_User"]"><div>@r.User?.FullName</div><div class="cr-td-sub">@r.User?.Email</div></td>
                             <td data-label="@L["Admin_Dates"]"><div>@r.PickupDate?.ToString("dd MMM") – @r.ReturnDate?.ToString("dd MMM yyyy")</div><div class="cr-td-sub">@r.DurationDays @L["Rental_Days"]</div></td>
                             <td data-label="@L["Admin_Total"]" class="fw-bold">@r.TotalPrice.ToString("N0") ₴</td>
-                            <td data-label="@L["Admin_Status"]"><partial name="_RentalStatusBadge" model="r.Status" /></td>
+                            <td data-label="@L["Admin_Status"]"><partial name="_RentalStatusBadge" model="r" /></td>
                             <td class="cr-td-actions">
                                 @if (r.Status == RentalStatus.Pending)
                                 {

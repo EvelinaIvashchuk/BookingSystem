@@ -18,6 +18,12 @@ public class CarService(
     public Task<IEnumerable<Car>> GetAvailableCarsAsync() =>
         carRepo.GetAvailableWithCategoryAsync();
 
+    public Task<PagedResult<Car>> SearchCatalogAsync(CarCatalogQuery query, int page, int pageSize) =>
+        carRepo.SearchCatalogAsync(query, page, pageSize);
+
+    public Task<IReadOnlyList<string>> GetCitiesAsync() =>
+        carRepo.GetCitiesAsync();
+
     public Task<Car?> GetCarByIdAsync(int id) =>
         carRepo.GetWithCategoryAsync(id);
 

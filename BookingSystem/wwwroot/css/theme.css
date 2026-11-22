@@ -268,30 +268,83 @@ body > .container:first-of-type { flex: 1 0 auto; }
 }
 
 /* Rental progress line */
-.cr-steps-line { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; font-weight: 700; color: var(--cr-muted); }
+.cr-steps-line { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; font-weight: 700; color: var(--cr-muted); }
 .cr-steps-line__item { display: inline-flex; align-items: center; gap: .5rem; }
 .cr-steps-line__item > span { width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #f1f0f8; color: var(--cr-muted); font-size: .85rem; }
 .cr-steps-line__item.is-done { color: var(--cr-violet-900); }
 .cr-steps-line__item.is-done > span { background: var(--cr-violet-600); color: #fff; }
 .cr-steps-line__item.is-failed { color: #A32D2D; }
 .cr-steps-line__item.is-failed > span { background: #E24B4A; color: #fff; }
-.cr-steps-line__bar { flex: 1 1 40px; max-width: 120px; height: 2px; background: var(--cr-line); }
+.cr-steps-line__bar { flex: 1 1 12px; min-width: 12px; max-width: 120px; height: 2px; background: var(--cr-line); }
+/* On phones the four steps do not fit in a row: show them as a vertical timeline. */
+@media (max-width: 575px) {
+    .cr-steps-line { flex-direction: column; align-items: flex-start; flex-wrap: nowrap; gap: .35rem; }
+    .cr-steps-line__bar { flex: none; width: 2px; min-width: 0; height: 14px; margin-left: 14px; }
+}
 .cr-steps-line__bar.is-done { background: var(--cr-violet-600); }
 .cr-steps-line__bar.is-failed { background: #E24B4A; }
 .cr-error-code { font-size: clamp(3.5rem, 9vw, 5.5rem); font-weight: 800; line-height: 1; color: var(--cr-violet-600); letter-spacing: -.04em; margin-bottom: .75rem; }
 
-/* Catalog filters */
-.cr-filters { padding: 1rem; display: flex; flex-direction: column; gap: .85rem; }
-.cr-filters__search { display: flex; align-items: center; gap: .5rem; border: 1px solid var(--cr-line); border-radius: 12px; padding: .3rem .3rem .3rem .9rem; background: #fff; }
-.cr-filters__search:focus-within { border-color: var(--cr-violet-400); box-shadow: 0 0 0 .2rem rgba(83, 74, 183, .15); }
-.cr-filters__search > i { color: var(--cr-muted); }
-.cr-filters__search .form-control { border: 0; box-shadow: none !important; padding-left: .25rem; }
+/* Filter chips (catalog categories, admin rental status) */
 .cr-filters__chips { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; }
 .cr-filter-chip { padding: .38rem .9rem; border-radius: 999px; border: 1px solid var(--cr-line); color: var(--cr-ink); font-weight: 600; font-size: .88rem; text-decoration: none; background: #fff; }
 .cr-filter-chip:hover { border-color: var(--cr-violet-200); color: var(--cr-violet-800); }
 .cr-filter-chip.is-active { background: var(--cr-violet-600); border-color: var(--cr-violet-600); color: #fff; }
 .cr-filter-reset { margin-left: auto; font-size: .88rem; font-weight: 600; color: var(--cr-muted); text-decoration: none; }
 .cr-filter-reset:hover { color: #A32D2D; }
+
+/* Catalog: search bar — search | city | dates | find */
+.cr-searchbar { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, .9fr) minmax(0, 1.45fr) auto; padding: .4rem; background: #fff; border: 1px solid var(--cr-line); border-radius: 20px; box-shadow: 0 10px 30px rgba(38, 33, 92, .07); }
+.cr-searchbar__seg { position: relative; display: flex; flex-direction: column; justify-content: center; gap: .15rem; min-width: 0; margin: 0; padding: .55rem 1.1rem; border-radius: 14px; cursor: text; transition: background-color .15s; }
+.cr-searchbar__seg + .cr-searchbar__seg::before { content: ""; position: absolute; left: 0; top: 24%; bottom: 24%; width: 1px; background: var(--cr-line); }
+.cr-searchbar__seg:hover { background: #f8f7fd; }
+.cr-searchbar__seg:focus-within { background: var(--cr-violet-50); }
+.cr-searchbar__seg:hover::before, .cr-searchbar__seg:focus-within::before,
+.cr-searchbar__seg:hover + .cr-searchbar__seg::before, .cr-searchbar__seg:focus-within + .cr-searchbar__seg::before { opacity: 0; }
+.cr-searchbar__label { display: inline-flex; align-items: center; gap: .4rem; font-size: .74rem; font-weight: 700; color: var(--cr-muted); }
+.cr-searchbar__label .bi { color: var(--cr-violet-600); font-size: .85rem; }
+.cr-searchbar input, .cr-searchbar select { width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; background-color: transparent; font-size: .97rem; font-weight: 600; color: var(--cr-ink); }
+.cr-searchbar input::placeholder { color: #9d9aae; font-weight: 500; }
+.cr-searchbar select { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 1.25rem; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23625f72' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E") no-repeat right center / 11px; }
+.cr-searchbar__dates { display: flex; align-items: center; gap: .5rem; }
+.cr-searchbar__dates > .bi { flex: none; color: var(--cr-muted); font-size: .85rem; }
+.cr-searchbar__dates input { flex: 1 1 0; cursor: pointer; }
+.cr-searchbar__dates input::-webkit-calendar-picker-indicator { display: none; }
+.cr-searchbar__dates input.is-empty { color: #9d9aae; font-weight: 500; }
+.cr-searchbar__submit { margin-left: .4rem; padding: 0 1.5rem; border-radius: 15px; font-weight: 700; white-space: nowrap; }
+@media (max-width: 991px) {
+    .cr-searchbar { grid-template-columns: minmax(0, 1fr); }
+    .cr-searchbar__seg + .cr-searchbar__seg::before { left: 1.1rem; right: 1.1rem; top: 0; bottom: auto; width: auto; height: 1px; }
+    .cr-searchbar__submit { margin: .4rem 0 0; padding: .75rem; }
+}
+.cr-catalog-note { display: flex; align-items: center; gap: .5rem; margin-top: .75rem; padding: .55rem .9rem; border-radius: 12px; background: #FAEEDA; color: #854F0B; font-size: .88rem; font-weight: 600; }
+
+/* Catalog: chips row — categories, then menus for gearbox / fuel / seats / price */
+.cr-chiprow { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; margin-top: 1rem; }
+.cr-chiprow__sep { width: 1px; height: 22px; margin: 0 .3rem; background: var(--cr-line); }
+.cr-chip-menu { display: inline-flex; align-items: center; border: 1px solid var(--cr-line); border-radius: 999px; background: #fff; transition: border-color .15s, background-color .15s; }
+.cr-chip-menu:hover { border-color: var(--cr-violet-200); }
+.cr-chip-menu__toggle { display: inline-flex; align-items: center; gap: .4rem; padding: .38rem .8rem .38rem .95rem; border: 0; border-radius: 999px; background: transparent; color: var(--cr-ink); font-size: .88rem; font-weight: 600; line-height: 1.5; }
+.cr-chip-menu__toggle:focus-visible, .cr-sort-toggle:focus-visible { outline: 2px solid var(--cr-violet-400); outline-offset: 2px; }
+.cr-chip-menu__toggle .bi { font-size: .65rem; color: var(--cr-muted); transition: transform .15s; }
+.cr-chip-menu__toggle[aria-expanded="true"] .bi, .cr-sort-toggle[aria-expanded="true"] .bi-chevron-down { transform: rotate(180deg); }
+.cr-chip-menu.is-active { background: var(--cr-violet-600); border-color: var(--cr-violet-600); }
+.cr-chip-menu.is-active .cr-chip-menu__toggle { padding-right: .4rem; color: #fff; }
+.cr-chip-menu.is-active .cr-chip-menu__toggle .bi { color: rgba(255, 255, 255, .8); }
+.cr-chip-menu__clear { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin-right: .35rem; border-radius: 50%; background: rgba(255, 255, 255, .16); color: #fff; font-size: .62rem; text-decoration: none; }
+.cr-chip-menu__clear:hover { background: rgba(255, 255, 255, .32); color: #fff; }
+.cr-chip-menu .dropdown-menu, .cr-results-bar .dropdown-menu { min-width: 11rem; margin-top: .35rem !important; }
+.cr-chip-menu .dropdown-item.active, .cr-results-bar .dropdown-item.active { background: var(--cr-violet-50); color: var(--cr-violet-800); }
+
+/* Catalog: results bar — count (and dates) on the left, sort on the right */
+.cr-results-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .35rem 1rem; margin: 1.6rem 0 .9rem; }
+.cr-results-bar__count { color: var(--cr-muted); font-size: .95rem; }
+.cr-results-bar__count strong { color: var(--cr-ink); font-weight: 700; }
+.cr-sort-toggle { display: inline-flex; align-items: center; gap: .4rem; padding: .3rem 0; border: 0; background: transparent; color: var(--cr-muted); font-size: .9rem; font-weight: 600; }
+.cr-sort-toggle strong { color: var(--cr-ink); }
+.cr-sort-toggle .bi-chevron-down { font-size: .65rem; transition: transform .15s; }
+.cr-sort-toggle:hover strong { color: var(--cr-violet-600); }
+.cr-car__total { font-size: .8rem; font-weight: 700; color: var(--cr-violet-600); }
 .cr-car__name a:hover { color: var(--cr-violet-600) !important; }
 
 /* Car details */

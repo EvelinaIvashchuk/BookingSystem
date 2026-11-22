@@ -1,49 +1,160 @@
-@using BookingSystem.Helpers
-@using Microsoft.AspNetCore.Mvc.Rendering
-@model PaginatedList<BookingSystem.Models.Car>
+@using BookingSystem.Data.Repositories
+@using BookingSystem.Services
+@using Microsoft.AspNetCore.Routing
+@model CarCatalogViewModel
 @{
     ViewData["Title"] = L["Car_Title"].Value;
-    var categories = (ViewBag.Categories as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>()).ToList();
-    var search = (string?)ViewBag.Search;
-    var categoryId = ViewBag.CategoryId?.ToString() as string;
-    var filtered = !string.IsNullOrEmpty(search) || !string.IsNullOrEmpty(categoryId);
+    var f = Model.Filter;
+    var routeValues = f.ToRouteValues();
+    var today = Model.Today.ToString("yyyy-MM-dd");
+    var lastPickup = Model.Today.AddDays(RentalRules.MaxAdvanceBookingDays).ToString("yyyy-MM-dd");
+    var lastReturn = Model.Today.AddDays(RentalRules.MaxAdvanceBookingDays + RentalRules.MaxRentalDays).ToString("yyyy-MM-dd");
+    var returnMin = f.PickupDate?.AddDays(RentalRules.MinRentalDays).ToString("yyyy-MM-dd") ?? today;
+    var days = Model.RentalDays;
+    // Dates go into "Rent" links only when the catalog was actually filtered by them.
+    var rentPickup = days.HasValue ? f.PickupDate?.ToString("yyyy-MM-dd") : null;
+    var rentReturn = days.HasValue ? f.ReturnDate?.ToString("yyyy-MM-dd") : null;
+
+    var transmissionOptions = Enum.GetValues<Transmission>().Select(t => (t.ToString(), L["Enum_" + t].Value)).ToList();
+    var fuelOptions = Enum.GetValues<FuelType>().Select(t => (t.ToString(), L["Enum_" + t].Value)).ToList();
+    var seatOptions = new[] { 4, 5, 7 }.Select(n => (n.ToString(), string.Format(L["Car_SeatsFrom"].Value, n))).ToList();
+    var priceOptions = new[] { 1000, 1500, 2000, 3000, 5000 }.Select(p => (p.ToString(), string.Format(L["Car_PriceUpTo"].Value, p.ToString("N0")))).ToList();
+    var sortOptions = new (CarSort Sort, string Key)[]
+    {
+        (CarSort.Default, "Car_SortDefault"), (CarSort.PriceAsc, "Car_SortPriceAsc"),
+        (CarSort.PriceDesc, "Car_SortPriceDesc"), (CarSort.Newest, "Car_SortNewest")
+    };
+    var currentSortKey = sortOptions.First(o => o.Sort == f.Sort).Key;
+
+    // Link to the catalog with one filter changed (null removes it) and every other filter kept.
+    string Href(string key, string? value)
+    {
+        var values = new Dictionary<string, string>(routeValues);
+        values.Remove(key);
+        if (!string.IsNullOrEmpty(value)) values[key] = value;
+        return Url.Action("Index", new RouteValueDictionary(values))!;
+    }
+
+    // A pill that opens a menu of values; when a value is chosen it turns violet, shows the value and gets a ✕.
+    void ChipMenu(string key, string label, string? current, List<(string Value, string Text)> options)
+    {
+        var chosen = options.FirstOrDefault(o => o.Value == current);
+        var active = chosen.Value is not null;
+        <div class="dropdown cr-chip-menu @(active ? "is-active" : "")">
+            <button type="button" class="cr-chip-menu__toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                @(active ? chosen.Text : label)<i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
+            @if (active)
+            {
+                <a class="cr-chip-menu__clear" href="@Href(key, null)" title="@L["Car_ClearFilter"]" aria-label="@L["Car_ClearFilter"]: @label"><i class="bi bi-x-lg"></i></a>
+            }
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item @(active ? "" : "active")" href="@Href(key, null)">@L["Car_FilterAny"]</a></li>
+                @foreach (var (value, text) in options)
+                {
+                    <li><a class="dropdown-item @(value == current ? "active" : "")" href="@Href(key, value)">@text</a></li>
+                }
+            </ul>
+        </div>
+    }
 }
 
 <div class="cr-page">
     <div class="cr-page-head">
         <div>
             <h1>@L["Car_BrowseCars"]</h1>
-            <p>@string.Format(L["Car_CarsFound"].Value, Model.TotalCount)</p>
+            <p>@L["Car_CatalogLead"]</p>
         </div>
         <button type="button" class="btn btn-outline-primary" onclick="window.CarRentalChat && window.CarRentalChat.open()">
             <i class="bi bi-stars me-1"></i>@L["Car_AskAssistant"]
         </button>
     </div>
 
-    <div class="cr-panel cr-filters mb-4">
-        <form asp-action="Index" method="get" class="cr-filters__search">
-            @if (!string.IsNullOrEmpty(categoryId))
+    @* The bar submits search, city and dates; filters chosen from the chips below travel along as hidden fields. *@
+    <form asp-action="Index" method="get" class="cr-searchbar" id="cr-catalog-filters" role="search">
+        @foreach (var key in new[] { "categoryId", "transmission", "fuelType", "minSeats", "maxPrice", "sort" })
+        {
+            if (routeValues.TryGetValue(key, out var value))
             {
-                <input type="hidden" name="categoryId" value="@categoryId" />
+                <input type="hidden" name="@key" value="@value" />
             }
-            <i class="bi bi-search" aria-hidden="true"></i>
-            <input type="text" name="search" value="@search" class="form-control" placeholder="@L["Car_SearchPlaceholder"]" aria-label="@L["Car_SearchPlaceholder"]" />
-            <button type="submit" class="btn btn-primary">@L["Car_Search"]</button>
-        </form>
-        <div class="cr-filters__chips">
-            <a asp-action="Index" asp-route-search="@search" class="cr-filter-chip @(string.IsNullOrEmpty(categoryId) ? "is-active" : "")">@L["Car_AllCategories"]</a>
-            @foreach (var c in categories)
+        }
+        <label class="cr-searchbar__seg cr-searchbar__seg--search">
+            <span class="cr-searchbar__label"><i class="bi bi-search"></i>@L["Car_Search"]</span>
+            <input type="text" name="search" value="@f.Search" placeholder="@L["Car_SearchPlaceholder"]" aria-label="@L["Car_SearchPlaceholder"]" />
+        </label>
+        <label class="cr-searchbar__seg">
+            <span class="cr-searchbar__label"><i class="bi bi-geo-alt"></i>@L["Car_FilterCity"]</span>
+            <select name="city" data-autosubmit>
+                <option value="">@L["Car_AnyCity"]</option>
+                @foreach (var city in Model.Cities)
+                {
+                    <option value="@city" selected="@(string.Equals(city, f.City?.Trim(), StringComparison.OrdinalIgnoreCase))">@city</option>
+                }
+            </select>
+        </label>
+        <div class="cr-searchbar__seg cr-searchbar__seg--dates">
+            <span class="cr-searchbar__label"><i class="bi bi-calendar3"></i>@L["Car_FilterDates"]</span>
+            <div class="cr-searchbar__dates">
+                <input type="date" name="pickupDate" id="cr-filter-pickup" aria-label="@L["Car_FilterPickup"]"
+                       value="@f.PickupDate?.ToString("yyyy-MM-dd")" min="@today" max="@lastPickup" />
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                <input type="date" name="returnDate" id="cr-filter-return" aria-label="@L["Car_FilterReturn"]"
+                       value="@f.ReturnDate?.ToString("yyyy-MM-dd")" min="@returnMin" max="@lastReturn" />
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary cr-searchbar__submit"><i class="bi bi-search me-2"></i>@L["Car_Find"]</button>
+    </form>
+
+    @if (Model.DateErrorKey is not null)
+    {
+        <div class="cr-catalog-note" role="status">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@string.Format(L[Model.DateErrorKey].Value, RentalRules.MinRentalDays, RentalRules.MaxRentalDays, RentalRules.MaxAdvanceBookingDays)</span>
+        </div>
+    }
+
+    <div class="cr-chiprow">
+        <a href="@Href("categoryId", null)" class="cr-filter-chip @(f.CategoryId is null ? "is-active" : "")">@L["Car_AllCategories"]</a>
+        @foreach (var c in Model.Categories)
+        {
+            <a href="@Href("categoryId", c.Id.ToString())" class="cr-filter-chip @(c.Id == f.CategoryId ? "is-active" : "")">@c.Name</a>
+        }
+        <span class="cr-chiprow__sep" aria-hidden="true"></span>
+        @{
+            ChipMenu("transmission", L["Car_ChipTransmission"].Value, f.Transmission?.ToString(), transmissionOptions);
+            ChipMenu("fuelType", L["Car_ChipFuel"].Value, f.FuelType?.ToString(), fuelOptions);
+            ChipMenu("minSeats", L["Car_SeatsLabel"].Value, f.MinSeats?.ToString(), seatOptions);
+            ChipMenu("maxPrice", L["Car_ChipPrice"].Value, f.MaxPrice?.ToString("0"), priceOptions);
+        }
+        @if (f.IsFiltered)
+        {
+            <a asp-action="Index" class="cr-filter-reset"><i class="bi bi-x-lg me-1"></i>@L["Car_ResetFilters"]</a>
+        }
+    </div>
+
+    <div class="cr-results-bar">
+        <div class="cr-results-bar__count">
+            <strong>@string.Format(L["Car_CarsFound"].Value, Model.Cars.TotalCount)</strong>
+            @if (days.HasValue)
             {
-                <a asp-action="Index" asp-route-categoryId="@c.Value" asp-route-search="@search" class="cr-filter-chip @(c.Value == categoryId ? "is-active" : "")">@c.Text</a>
+                <span>· @string.Format(L["Car_FreeFor"].Value, f.PickupDate!.Value.ToString("d MMM"), f.ReturnDate!.Value.ToString("d MMM"), days)</span>
             }
-            @if (filtered)
-            {
-                <a asp-action="Index" class="cr-filter-reset"><i class="bi bi-x-lg me-1"></i>@L["Car_ResetFilters"]</a>
-            }
+        </div>
+        <div class="dropdown">
+            <button type="button" class="cr-sort-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-arrow-down-up" aria-hidden="true"></i>@L["Car_SortLabel"]: <strong>@L[currentSortKey]</strong><i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end cr-chip-menu__list">
+                @foreach (var (sort, key) in sortOptions)
+                {
+                    <li><a class="dropdown-item @(f.Sort == sort ? "active" : "")" href="@Href("sort", sort == CarSort.Default ? null : sort.ToString())">@L[key]</a></li>
+                }
+            </ul>
         </div>
     </div>
 
-    @if (!Model.Any())
+    @if (!Model.Cars.Any())
     {
         <div class="cr-panel cr-empty">
             <div class="cr-empty__icon"><i class="bi bi-search"></i></div>
@@ -55,7 +166,7 @@
     else
     {
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
-            @foreach (var c in Model)
+            @foreach (var c in Model.Cars)
             {
                 <div class="col">
                     <div class="cr-car">
@@ -81,8 +192,14 @@
                                 <span><i class="bi bi-people me-1"></i>@c.Seats</span>
                             </div>
                             <div class="cr-car__foot">
-                                <div class="cr-car__price">@c.PricePerDay.ToString("N0") ₴ <span>@L["Car_PerDayShort"]</span></div>
-                                <a asp-controller="Rental" asp-action="Create" asp-route-carId="@c.Id" class="btn btn-sm btn-primary">@L["Car_RentNow"]</a>
+                                <div>
+                                    <div class="cr-car__price">@c.PricePerDay.ToString("N0") ₴ <span>@L["Car_PerDayShort"]</span></div>
+                                    @if (days.HasValue)
+                                    {
+                                        <div class="cr-car__total">@string.Format(L["Car_TotalForDays"].Value, days, (c.PricePerDay * days.Value).ToString("N0"))</div>
+                                    }
+                                </div>
+                                <a asp-controller="Rental" asp-action="Create" asp-route-carId="@c.Id" asp-route-pickupDate="@rentPickup" asp-route-returnDate="@rentReturn" class="btn btn-sm btn-primary">@L["Car_RentNow"]</a>
                             </div>
                         </div>
                     </div>
@@ -90,14 +207,60 @@
             }
         </div>
 
-        ViewData["PageIndex"]  = Model.PageIndex;
-        ViewData["TotalPages"] = Model.TotalPages;
-        ViewData["Action"]     = "Index";
-        ViewData["RouteValues"] = new Dictionary<string, string>
-        {
-            ["search"]     = ViewBag.Search ?? "",
-            ["categoryId"] = ViewBag.CategoryId?.ToString() ?? ""
-        };
+        ViewData["PageIndex"]   = Model.Cars.PageIndex;
+        ViewData["TotalPages"]  = Model.Cars.TotalPages;
+        ViewData["Action"]      = "Index";
+        ViewData["RouteValues"] = routeValues;
         <partial name="_Pagination" />
     }
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var form = document.getElementById('cr-catalog-filters');
+            var pickup = document.getElementById('cr-filter-pickup');
+            var ret = document.getElementById('cr-filter-return');
+            if (!form || !pickup || !ret) return;
+
+            function submit() { form.requestSubmit ? form.requestSubmit() : form.submit(); }
+
+            // Leave empty fields out of the URL: /Car?city=Львів instead of /Car?search=&city=Львів&pickupDate=&…
+            form.addEventListener('formdata', function (e) {
+                Array.from(e.formData.keys()).forEach(function (key) {
+                    if (!e.formData.getAll(key).some(function (v) { return v !== ''; })) e.formData.delete(key);
+                });
+            });
+
+            form.querySelectorAll('[data-autosubmit]').forEach(function (el) { el.addEventListener('change', submit); });
+
+            // A click anywhere on a date field opens its calendar, not only on the small icon;
+            // an empty field ("дд.мм.рррр") is greyed like a placeholder.
+            [pickup, ret].forEach(function (input) {
+                input.addEventListener('click', function () { if (input.showPicker) { try { input.showPicker(); } catch (e) { /* not allowed */ } } });
+                function markEmpty() { input.classList.toggle('is-empty', !input.value); }
+                input.addEventListener('input', markEmpty);
+                input.addEventListener('change', markEmpty);
+                markEmpty();
+            });
+
+            function nextDay(iso) {
+                var d = new Date(iso + 'T00:00:00');
+                d.setDate(d.getDate() + @RentalRules.MinRentalDays);
+                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+            }
+
+            // Dates apply once both are set (or both cleared); return must be after pickup.
+            function onDateChange() {
+                if (pickup.value) {
+                    ret.min = nextDay(pickup.value);
+                    if (ret.value && ret.value < ret.min) ret.value = '';
+                }
+                if (!!pickup.value === !!ret.value) submit();
+                else if (pickup.value && !ret.value) { ret.focus(); if (ret.showPicker) { try { ret.showPicker(); } catch (e) { /* needs a user gesture */ } } }
+            }
+            pickup.addEventListener('change', onDateChange);
+            ret.addEventListener('change', onDateChange);
+        })();
+    </script>
+}

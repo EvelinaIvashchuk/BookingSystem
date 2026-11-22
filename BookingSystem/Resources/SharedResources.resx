@@ -41,7 +41,7 @@
   <data name="Car_BrowseCars" xml:space="preserve"><value>Browse Cars</value></data>
   <data name="Car_CarsFound" xml:space="preserve"><value>{0} available car(s) found.</value></data>
   <data name="Car_AllCategories" xml:space="preserve"><value>All Categories</value></data>
-  <data name="Car_SearchPlaceholder" xml:space="preserve"><value>Search by brand, model or description...</value></data>
+  <data name="Car_SearchPlaceholder" xml:space="preserve"><value>Brand, model or description</value></data>
   <data name="Car_Search" xml:space="preserve"><value>Search</value></data>
   <data name="Car_NoResults" xml:space="preserve"><value>No cars match your search or filter.</value></data>
   <data name="Car_ViewAllCars" xml:space="preserve"><value>View all cars</value></data>
@@ -372,7 +372,7 @@
   <data name="Common_GoBack" xml:space="preserve"><value>Go back</value></data>
   <data name="Car_AskAssistant" xml:space="preserve"><value>Ask the assistant</value></data>
   <data name="Car_ResetFilters" xml:space="preserve"><value>Reset</value></data>
-  <data name="Car_NoResultsHint" xml:space="preserve"><value>Try another category or query, or describe the car you need to the assistant.</value></data>
+  <data name="Car_NoResultsHint" xml:space="preserve"><value>Try other filters or dates, or describe the car you need to the assistant.</value></data>
   <data name="Enum_Petrol" xml:space="preserve"><value>Petrol</value></data>
   <data name="Enum_Diesel" xml:space="preserve"><value>Diesel</value></data>
   <data name="Enum_Electric" xml:space="preserve"><value>Electric</value></data>
@@ -404,4 +404,29 @@
   <data name="Role_User" xml:space="preserve"><value>Customer</value></data>
   <data name="Admin_ConfirmDeactivate" xml:space="preserve"><value>Deactivate {0}?</value></data>
   <data name="Admin_ConfirmPromote" xml:space="preserve"><value>Make {0} an administrator?</value></data>
+  <data name="Car_FilterCity" xml:space="preserve"><value>City</value></data>
+  <data name="Car_AnyCity" xml:space="preserve"><value>All cities</value></data>
+  <data name="Car_FilterPickup" xml:space="preserve"><value>Pick-up</value></data>
+  <data name="Car_FilterReturn" xml:space="preserve"><value>Return</value></data>
+  <data name="Car_FilterAny" xml:space="preserve"><value>Any</value></data>
+  <data name="Car_SeatsFrom" xml:space="preserve"><value>{0}+ seats</value></data>
+  <data name="Car_PriceUpTo" xml:space="preserve"><value>up to {0} ₴</value></data>
+  <data name="Car_SortLabel" xml:space="preserve"><value>Sort by</value></data>
+  <data name="Car_SortDefault" xml:space="preserve"><value>By category</value></data>
+  <data name="Car_SortPriceAsc" xml:space="preserve"><value>Price: low to high</value></data>
+  <data name="Car_SortPriceDesc" xml:space="preserve"><value>Price: high to low</value></data>
+  <data name="Car_SortNewest" xml:space="preserve"><value>Newest first</value></data>
+  <data name="Car_DatesBoth" xml:space="preserve"><value>Pick both dates to see only cars that are free for the whole period.</value></data>
+  <data name="Car_DatesInvalid" xml:space="preserve"><value>Dates ignored: a rental lasts {0} to {1} days and starts between today and {2} days from now.</value></data>
+  <data name="Car_TotalForDays" xml:space="preserve"><value>{1} ₴ for {0} days</value></data>
+  <data name="Status_Active" xml:space="preserve"><value>In progress</value></data>
+  <data name="Status_Completed" xml:space="preserve"><value>Completed</value></data>
+  <data name="Car_CatalogLead" xml:space="preserve"><value>Pick a city and dates and we'll show only the cars that are free.</value></data>
+  <data name="Car_FilterDates" xml:space="preserve"><value>Dates</value></data>
+  <data name="Car_Find" xml:space="preserve"><value>Find</value></data>
+  <data name="Car_ClearFilter" xml:space="preserve"><value>Clear filter</value></data>
+  <data name="Car_ChipTransmission" xml:space="preserve"><value>Gearbox</value></data>
+  <data name="Car_ChipFuel" xml:space="preserve"><value>Fuel</value></data>
+  <data name="Car_ChipPrice" xml:space="preserve"><value>Price</value></data>
+  <data name="Car_FreeFor" xml:space="preserve"><value>free {0} – {1}, {2} days</value></data>
 </root>

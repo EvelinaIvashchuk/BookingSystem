@@ -2,8 +2,13 @@
 @model Rental
 @{
     ViewData["Title"] = L["Rental_DetailsHeader"].Value + ": " + Model.Car?.FullName;
-    var closed = Model.Status is RentalStatus.Cancelled or RentalStatus.Rejected;
-    var confirmed = Model.Status == RentalStatus.Confirmed;
+    var stage = Model.GetStage(DateTime.UtcNow.Date);
+    var closed = stage is RentalStage.Cancelled or RentalStage.Rejected;
+    // Stages after "submitted", in order; a step is done once the rental has reached it.
+    var steps = new (RentalStage Stage, string Key)[]
+    {
+        (RentalStage.Confirmed, "Status_Confirmed"), (RentalStage.Active, "Status_Active"), (RentalStage.Completed, "Status_Completed")
+    };
 }
 
 <div class="cr-page">
@@ -16,23 +21,28 @@
             <h1>@Model.Car?.FullName</h1>
             <p>@L["Rental_SubmittedOn"] @Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")</p>
         </div>
-        <partial name="_RentalStatusBadge" model="Model.Status" />
+        <partial name="_RentalStatusBadge" model="Model" />
     </div>
 
     <div class="row g-4">
         <div class="col-lg-8">
-            @* Progress: submitted → confirmed (or cancelled / rejected) *@
+            @* Progress: submitted → confirmed → in progress → completed (or cancelled / rejected) *@
             <div class="cr-panel">
                 <div class="cr-steps-line">
                     <div class="cr-steps-line__item is-done"><span><i class="bi bi-check"></i></span>@L["Status_Pending"]</div>
-                    <div class="cr-steps-line__bar @(confirmed ? "is-done" : closed ? "is-failed" : "")"></div>
                     @if (closed)
                     {
-                        <div class="cr-steps-line__item is-failed"><span><i class="bi bi-x"></i></span>@(Model.Status == RentalStatus.Rejected ? L["Status_Rejected"] : L["Status_Cancelled"])</div>
+                        <div class="cr-steps-line__bar is-failed"></div>
+                        <div class="cr-steps-line__item is-failed"><span><i class="bi bi-x"></i></span>@(stage == RentalStage.Rejected ? L["Status_Rejected"] : L["Status_Cancelled"])</div>
                     }
                     else
                     {
-                        <div class="cr-steps-line__item @(confirmed ? "is-done" : "")"><span>@if (confirmed) { <i class="bi bi-check"></i> } else { @("2") }</span>@L["Status_Confirmed"]</div>
+                        for (var i = 0; i < steps.Length; i++)
+                        {
+                            var done = stage >= steps[i].Stage;
+                            <div class="cr-steps-line__bar @(done ? "is-done" : "")"></div>
+                            <div class="cr-steps-line__item @(done ? "is-done" : "")"><span>@if (done) { <i class="bi bi-check"></i> } else { @(i + 2) }</span>@L[steps[i].Key]</div>
+                        }
                     }
                 </div>
             </div>
