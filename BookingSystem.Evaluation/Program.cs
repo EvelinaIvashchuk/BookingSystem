@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 //   dotnet run --project BookingSystem.Evaluation -- agent --models groq:openai/gpt-oss-120b,gemini:gemini-3.5-flash-lite --repeats 3
 //   dotnet run --project BookingSystem.Evaluation -- ablation --model gemini:gemini-3.8-flash --model gemini:gemini-3.5-flash-lite --repeats 3
 //   dotnet run --project BookingSystem.Evaluation -- retrieval --tune-on dev --eval-on test
+//   dotnet run --project BookingSystem.Evaluation -- retrieval --folds 5   (E3 with 5-fold cross-validation, own BM25)
 //   dotnet run --project BookingSystem.Evaluation -- summary
 //   dotnet run --project BookingSystem.Evaluation -- rescore      (re-apply the clarification criterion to stored rows)
 //   dotnet run --project BookingSystem.Evaluation -- grounding-replay  (offline estimate of the date grounding check)
@@ -84,8 +85,13 @@ try
         }
 
         case "retrieval":
-            await ActivatorUtilities.CreateInstance<RetrievalExperiment>(services)
-                .RunAsync(Value("--tune-on") ?? "dev", Value("--eval-on") ?? "test", cts.Token);
+            if (Value("--folds") is { } folds)
+                // E3 with k-fold cross-validation on the expanded knowledge base (own BM25, out-of-fold tuning)
+                await ActivatorUtilities.CreateInstance<RetrievalCvExperiment>(services)
+                    .RunAsync(int.Parse(folds, System.Globalization.CultureInfo.InvariantCulture), cts.Token);
+            else
+                await ActivatorUtilities.CreateInstance<RetrievalExperiment>(services)
+                    .RunAsync(Value("--tune-on") ?? "dev", Value("--eval-on") ?? "test", cts.Token);
             break;
 
         case "rescore":

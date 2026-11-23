@@ -26,13 +26,23 @@ public sealed class KnowledgeStore
 
     internal KnowledgeStore(Func<CancellationToken, Task<IReadOnlyList<KnowledgeChunk>>> loader) => _loader = loader;
 
-    public sealed record IndexedChunk(int Id, string Key, string Category, string Title, string Content, float[]? Vector);
+    public sealed record IndexedChunk(int Id, string Key, string Category, string Title, string Content, float[]? Vector)
+    {
+        /// <summary>Stemmed text (<see cref="TextNormalizer.ToSearchText"/>) used by BM25.</summary>
+        public string SearchText { get; init; } = string.Empty;
+    }
 
     public sealed record Snapshot(
         IReadOnlyList<IndexedChunk> Chunks,
         IReadOnlyDictionary<int, IndexedChunk> ById,
         DomainVocabulary Vocabulary,
-        bool HasVectors);
+        bool HasVectors)
+    {
+        private Bm25Index? _bm25;
+
+        /// <summary>BM25 index over <see cref="IndexedChunk.SearchText"/>, built on first use.</summary>
+        public Bm25Index Bm25 => _bm25 ??= new Bm25Index(Chunks.Select(c => (c.Id, c.SearchText)));
+    }
 
     public async Task<Snapshot> GetAsync(CancellationToken ct = default)
     {
@@ -45,7 +55,10 @@ public sealed class KnowledgeStore
 
             var rows = await _loader(ct);
             var chunks = rows
-                .Select(c => new IndexedChunk(c.Id, c.Key, c.Category, c.Title, c.Content, FromBytes(c.Embedding)))
+                .Select(c => new IndexedChunk(c.Id, c.Key, c.Category, c.Title, c.Content, FromBytes(c.Embedding))
+                {
+                    SearchText = string.IsNullOrEmpty(c.SearchText) ? TextNormalizer.ToSearchText($"{c.Title}\n{c.Content}") : c.SearchText
+                })
                 .ToList();
 
             return _snapshot = new Snapshot(

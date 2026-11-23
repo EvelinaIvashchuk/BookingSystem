@@ -42,9 +42,15 @@ public sealed class KnowledgeSearch(
             vector = ranked ?? [];
         }
 
+        // Pseudo-relevance feedback only in the proposed method and only when vector hits exist; otherwise plain BM25.
+        var expansion = _search.QueryExpansion;
+        var expand = method == KnowledgeSearchMode.HybridAdaptive && expansion.Enabled && vector.Count > 0;
+        var stemsText = string.Join(' ', features.Stems);
         IReadOnlyList<(int Id, double Score)> text = method == KnowledgeSearchMode.Vector
             ? []
-            : await fullText.SearchAsync(string.Join(' ', features.Stems), candidates, ct);
+            : expand
+                ? await fullText.SearchExpandedAsync(stemsText, Ids(vector), expansion, candidates, ct)
+                : await fullText.SearchAsync(stemsText, candidates, ct);
 
         var (wFt, wVec) = features.Weights(_search.Adaptive);
         var boost = 1 + _search.Adaptive.Beta;
@@ -76,9 +82,9 @@ public sealed class KnowledgeSearch(
             .ToList();
 
         logger.LogInformation(
-            "Knowledge search {Mode} \"{Query}\": n={Words}, d={DomainShare:0.00}, num={HasNumber}, category={Category}, w_ft={FullTextWeight:0.00} -> [{Keys}]",
+            "Knowledge search {Mode} \"{Query}\": n={Words}, d={DomainShare:0.00}, num={HasNumber}, category={Category}, w_ft={FullTextWeight:0.00}, prf={Expanded} -> [{Keys}]",
             method, query, features.WordCount, features.DomainTermShare, features.HasNumber,
-            features.PredictedCategory ?? "-", wFt, string.Join(", ", hits.Select(h => h.Key)));
+            features.PredictedCategory ?? "-", wFt, expand, string.Join(", ", hits.Select(h => h.Key)));
 
         return new KnowledgeSearchResult(
             method,

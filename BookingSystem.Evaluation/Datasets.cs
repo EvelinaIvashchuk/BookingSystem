@@ -66,6 +66,12 @@ public sealed class RetrievalQuery
     public string Split { get; set; } = "test";
     public string Kind { get; set; } = "keyword";
     public string Lang { get; set; } = "uk";
+
+    /// <summary>Fold 1..5 for k-fold cross-validation (stratified by kind and language).</summary>
+    public int Fold { get; set; }
+
+    /// <summary>original — the 56 queries of the first E3 run; expanded-kb — added with the expanded knowledge base.</summary>
+    public string Origin { get; set; } = "original";
 }
 
 public static class Datasets

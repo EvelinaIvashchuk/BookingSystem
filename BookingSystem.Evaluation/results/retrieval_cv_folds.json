@@ -1,0 +1,179 @@
+{
+  "folds": 5,
+  "grid": "wide (fixed in advance)",
+  "combinations": 20160,
+  "hybridConstraint": "MinWeight \u2208 {0.1, 0.15, 0.2}",
+  "freeCombinations": 20160,
+  "perFold": [
+    {
+      "fold": 1,
+      "trainQueries": 162,
+      "testQueries": 43,
+      "A": 0.2,
+      "B": 0,
+      "C": 0.1,
+      "N0": 2,
+      "E": 0.1,
+      "Beta": 0,
+      "MinWeight": 0.1,
+      "trainMrr10": 0.9348765432098765,
+      "testMrr10": 0.9186046511627907,
+      "free": {
+        "A": 0.2,
+        "B": 0,
+        "C": 0.2,
+        "N0": 2,
+        "E": 0.1,
+        "Beta": 0,
+        "MinWeight": 0,
+        "testMrr10": 0.945736434108527
+      },
+      "prf": {
+        "A": 0.2,
+        "B": 0,
+        "C": 0.06,
+        "N0": 2,
+        "E": 0.1,
+        "Beta": 0,
+        "MinWeight": 0.15,
+        "testMrr10": 0.945736434108527
+      }
+    },
+    {
+      "fold": 2,
+      "trainQueries": 162,
+      "testQueries": 43,
+      "A": 0.2,
+      "B": 0,
+      "C": 0.1,
+      "N0": 2,
+      "E": 0.1,
+      "Beta": 0,
+      "MinWeight": 0.1,
+      "trainMrr10": 0.9297325102880659,
+      "testMrr10": 0.9379844961240309,
+      "free": {
+        "A": 0.2,
+        "B": 0,
+        "C": 0.2,
+        "N0": 2,
+        "E": 0.1,
+        "Beta": 0,
+        "MinWeight": 0,
+        "testMrr10": 0.9728682170542634
+      },
+      "prf": {
+        "A": 0.2,
+        "B": 0,
+        "C": 0.06,
+        "N0": 2,
+        "E": 0.1,
+        "Beta": 0,
+        "MinWeight": 0.15,
+        "testMrr10": 0.9728682170542634
+      }
+    },
+    {
+      "fold": 3,
+      "trainQueries": 164,
+      "testQueries": 41,
+      "A": 0.2,
+      "B": 0,
+      "C": 0.1,
+      "N0": 2,
+      "E": 0.1,
+      "Beta": 0,
+      "MinWeight": 0.1,
+      "trainMrr10": 0.9400406504065039,
+      "testMrr10": 0.8971544715447154,
+      "free": {
+        "A": 0.2,
+        "B": 0,
+        "C": 0.2,
+        "N0": 2,
+        "E": 0.1,
+        "Beta": 0,
+        "MinWeight": 0,
+        "testMrr10": 0.9144308943089431
+      },
+      "prf": {
+        "A": 0.2,
+        "B": 0,
+        "C": 0.06,
+        "N0": 4,
+        "E": 0.1,
+        "Beta": 0,
+        "MinWeight": 0.15,
+        "testMrr10": 0.8991869918699186
+      }
+    },
+    {
+      "fold": 4,
+      "trainQueries": 166,
+      "testQueries": 39,
+      "A": 0.2,
+      "B": 0,
+      "C": 0.1,
+      "N0": 2,
+      "E": 0.1,
+      "Beta": 0,
+      "MinWeight": 0.1,
+      "trainMrr10": 0.9228915662650602,
+      "testMrr10": 0.967948717948718,
+      "free": {
+        "A": 0.2,
+        "B": 0,
+        "C": 0.15,
+        "N0": 2,
+        "E": 0.1,
+        "Beta": 0,
+        "MinWeight": 0,
+        "testMrr10": 0.982905982905983
+      },
+      "prf": {
+        "A": 0.2,
+        "B": 0,
+        "C": 0.06,
+        "N0": 2,
+        "E": 0.1,
+        "Beta": 0,
+        "MinWeight": 0.15,
+        "testMrr10": 0.9871794871794872
+      }
+    },
+    {
+      "fold": 5,
+      "trainQueries": 166,
+      "testQueries": 39,
+      "A": 0.2,
+      "B": 0,
+      "C": 0.1,
+      "N0": 2,
+      "E": 0.1,
+      "Beta": 0,
+      "MinWeight": 0.1,
+      "trainMrr10": 0.9299196787148595,
+      "testMrr10": 0.9380341880341879,
+      "free": {
+        "A": 0.2,
+        "B": 0.2,
+        "C": 0.3,
+        "N0": 2,
+        "E": 0.1,
+        "Beta": 0,
+        "MinWeight": 0,
+        "testMrr10": 0.9615384615384616
+      },
+      "prf": {
+        "A": 0.2,
+        "B": 0,
+        "C": 0.06,
+        "N0": 2,
+        "E": 0.1,
+        "Beta": 0,
+        "MinWeight": 0.15,
+        "testMrr10": 1
+      }
+    }
+  ]
+}

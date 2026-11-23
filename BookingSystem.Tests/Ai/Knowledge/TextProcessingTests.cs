@@ -102,7 +102,9 @@ public class KnowledgeBaseFilesTests
     private static readonly string[] Categories =
     [
         "documents", "deposit", "insurance", "cancellation", "fuel", "mileage",
-        "late-return", "damage", "borders", "extras", "pickup", "booking"
+        "late-return", "damage", "borders", "extras", "pickup", "booking",
+        "children", "ev", "winter", "roadside", "fines", "long-term",
+        "support", "rules", "cars", "technical", "privacy", "airport"
     ];
 
     internal static string KnowledgeBaseDirectory()
@@ -129,7 +131,7 @@ public class KnowledgeBaseFilesTests
     {
         var chunks = LoadAll().SelectMany(d => d.Chunks).ToList();
 
-        chunks.Count.Should().BeInRange(100, 200);
+        chunks.Count.Should().BeInRange(150, 300);
         chunks.Should().OnlyContain(c => c.TokenCount <= 350 && c.Content.Length > 40);
     }
 

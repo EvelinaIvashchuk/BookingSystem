@@ -1,0 +1,56 @@
+{
+  "tunedOn": "all queries (for the application; reported metrics are out-of-fold)",
+  "queries": 205,
+  "A": 0.2,
+  "B": 0,
+  "C": 0.1,
+  "N0": 2,
+  "E": 0.1,
+  "Beta": 0,
+  "MinWeight": 0.1,
+  "MaxWeight": 0.85,
+  "mrr10OnAll": 0.9314634146341464,
+  "fullTextWeight": {
+    "constrained": {
+      "mean": 0.134,
+      "min": 0.1,
+      "max": 0.30000000000000004,
+      "shareZero": 0
+    },
+    "free": {
+      "mean": 0.064,
+      "min": 0,
+      "max": 0.30000000000000004,
+      "shareZero": 0.668
+    },
+    "prf": {
+      "mean": 0.168,
+      "min": 0.15,
+      "max": 0.30000000000000004,
+      "shareZero": 0
+    }
+  },
+  "free": {
+    "A": 0.2,
+    "B": 0,
+    "C": 0.2,
+    "N0": 2,
+    "E": 0.1,
+    "Beta": 0,
+    "MinWeight": 0
+  },
+  "prf": {
+    "feedbackDocs": 3,
+    "terms": 10,
+    "weight": 0.5,
+    "A": 0.2,
+    "B": 0,
+    "C": 0.06,
+    "N0": 2,
+    "E": 0.1,
+    "Beta": 0,
+    "MinWeight": 0.15,
+    "MaxWeight": 0.85,
+    "mrr10OnAll": 0.9627642276422763
+  }
+}

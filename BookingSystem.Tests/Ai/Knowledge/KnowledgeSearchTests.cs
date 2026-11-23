@@ -22,12 +22,14 @@ public class KnowledgeSearchTests
     private FakeEmbeddingGenerator _generator = new(_ => [0, 0, 1]);
     private Dictionary<string, int[]> _fullText = [];
 
+    private FakeFullTextIndex? _index;
+
     private KnowledgeSearch CreateSut(bool embeddingsAvailable = true)
     {
         var store = new KnowledgeStore(_ => Task.FromResult<IReadOnlyList<KnowledgeChunk>>(Chunks));
         return new KnowledgeSearch(
             store,
-            new FakeFullTextIndex(_fullText),
+            _index = new FakeFullTextIndex(_fullText),
             new FakeEmbeddingFactory(embeddingsAvailable ? _generator : null),
             new QueryEmbeddingCache(),
             Options.Create(_options),
@@ -130,5 +132,30 @@ public class KnowledgeSearchTests
         var result = await CreateSut().SearchAsync("депозит", 3);
 
         result.Mode.Should().Be(KnowledgeSearchMode.FullText);
+    }
+
+    [Fact]
+    public async Task HybridAdaptive_ExpandsTheLexicalQueryFromTopVectorHits()
+    {
+        _generator = new FakeEmbeddingGenerator(_ => [1, 0.1f, 0]);
+
+        await CreateSut().SearchAsync("скільки заблокують", 3, KnowledgeSearchMode.HybridAdaptive);
+
+        _index!.Feedback.Should().ContainSingle().Which.Take(2).Should().Equal(1, 4);
+    }
+
+    [Theory]
+    [InlineData(KnowledgeSearchMode.HybridRrf, true, true)]
+    [InlineData(KnowledgeSearchMode.FullText, true, true)]
+    [InlineData(KnowledgeSearchMode.HybridAdaptive, false, true)]
+    [InlineData(KnowledgeSearchMode.HybridAdaptive, true, false)]
+    public async Task QueryExpansion_OnlyInHybridAdaptiveWithVectorsWhenEnabled(KnowledgeSearchMode mode, bool enabled, bool embeddings)
+    {
+        _options.Search.QueryExpansion.Enabled = enabled;
+
+        await CreateSut(embeddings).SearchAsync("депозит", 3, mode);
+
+        _index!.Feedback.Should().BeEmpty();
+        _index.Queries.Should().ContainSingle();
     }
 }

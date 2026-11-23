@@ -227,12 +227,13 @@ public sealed class RetrievalExperiment(
             .ToList();
     }
 
-    private static IEnumerable<AdaptiveFusionOptions> Grid(AdaptiveFusionOptions defaults, bool wide)
+    /// <param name="minWeights">Values of the lower bound of w_ft; overrides the default set (used to keep BM25 in every query).</param>
+    internal static IEnumerable<AdaptiveFusionOptions> Grid(AdaptiveFusionOptions defaults, bool wide, double[]? minWeights = null)
     {
         double[] aValues = wide ? [0.2, 0.3, 0.4, 0.5, 0.6] : [0.3, 0.4, 0.5, 0.6];
         double[] cValues = wide ? [0.0, 0.03, 0.06, 0.1, 0.15, 0.2, 0.3] : [0.0, 0.03, 0.06, 0.1];
         int[] n0Values = wide ? [2, 3, 4, 6] : [3, 4, 6];
-        double[] minValues = wide ? [0.0, 0.05, defaults.MinWeight] : [defaults.MinWeight];
+        double[] minValues = minWeights ?? (wide ? [0.0, 0.05, defaults.MinWeight] : [defaults.MinWeight]);
 
         foreach (var a in aValues)
         foreach (var b in new[] { 0.0, 0.2, 0.4, 0.6 })
@@ -248,7 +249,7 @@ public sealed class RetrievalExperiment(
             };
     }
 
-    private static bool IsBetter(Metrics m, AdaptiveFusionOptions p, Metrics bestM, AdaptiveFusionOptions bestP, AdaptiveFusionOptions defaults)
+    internal static bool IsBetter(Metrics m, AdaptiveFusionOptions p, Metrics bestM, AdaptiveFusionOptions bestP, AdaptiveFusionOptions defaults)
     {
         const double eps = 1e-9;
         if (m.Mrr10 > bestM.Mrr10 + eps) return true;
@@ -275,7 +276,7 @@ public sealed class RetrievalExperiment(
         return new Metrics(Recall(3), Recall(5), rr);
     }
 
-    private static Metrics Mean(IEnumerable<Metrics> metrics)
+    internal static Metrics Mean(IEnumerable<Metrics> metrics)
     {
         var list = metrics.ToList();
         return list.Count == 0

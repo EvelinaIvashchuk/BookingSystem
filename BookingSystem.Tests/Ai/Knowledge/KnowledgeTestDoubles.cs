@@ -44,4 +44,14 @@ internal sealed class FakeFullTextIndex(Dictionary<string, int[]> rankings) : IF
         IReadOnlyList<(int, double)> result = ids.Take(limit).Select((id, i) => (id, 10.0 - i)).ToList();
         return Task.FromResult(result);
     }
+
+    /// <summary>Feedback documents passed to each expanded search.</summary>
+    public List<IReadOnlyList<int>> Feedback { get; } = [];
+
+    public Task<IReadOnlyList<(int Id, double Score)>> SearchExpandedAsync(
+        string searchText, IReadOnlyList<int> feedbackIds, QueryExpansionOptions expansion, int limit, CancellationToken ct = default)
+    {
+        Feedback.Add(feedbackIds);
+        return SearchAsync(searchText, limit, ct);
+    }
 }

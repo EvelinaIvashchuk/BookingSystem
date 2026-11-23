@@ -69,12 +69,22 @@ public class DatasetIntegrityTests
             .ToHashSet();
         var queries = Qrels.Queries;
 
-        queries.Should().HaveCountGreaterThanOrEqualTo(50);
+        // E3 on the expanded knowledge base: at least 150 queries, k = 5 folds
+        queries.Should().HaveCountGreaterThanOrEqualTo(150);
         queries.Select(q => q.Id).Should().OnlyHaveUniqueItems();
         queries.SelectMany(q => q.Relevant).Should().OnlyContain(k => keys.Contains(k));
-        var devShare = queries.Count(q => q.Split == "dev") / (double)queries.Count;
+        queries.Select(q => q.Fold).Distinct().Order().Should().Equal(1, 2, 3, 4, 5);
+        foreach (var fold in queries.GroupBy(q => q.Fold))
+        {
+            fold.Count().Should().BeInRange(queries.Count / 5 - 3, queries.Count / 5 + 3);
+            fold.Select(q => q.Kind).Distinct().Should().BeEquivalentTo(["keyword", "descriptive"]);
+        }
+        queries.Select(q => q.Lang).Distinct().Should().BeEquivalentTo(["uk", "en"]);
+
+        // the 56 original queries keep their dev/test split (first E3 run)
+        var original = queries.Where(q => q.Origin == "original").ToList();
+        original.Should().HaveCount(56);
+        var devShare = original.Count(q => q.Split == "dev") / (double)original.Count;
         devShare.Should().BeInRange(0.25, 0.35);
-        foreach (var split in new[] { "dev", "test" })
-            queries.Where(q => q.Split == split).Select(q => q.Kind).Distinct().Should().BeEquivalentTo(["keyword", "descriptive"]);
     }
 }

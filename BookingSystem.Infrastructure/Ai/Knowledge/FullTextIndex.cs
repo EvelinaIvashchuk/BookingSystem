@@ -8,6 +8,14 @@ public interface IFullTextIndex
 {
     /// <param name="searchText">Normalized query (<see cref="TextNormalizer.ToSearchText"/>).</param>
     Task<IReadOnlyList<(int Id, double Score)>> SearchAsync(string searchText, int limit, CancellationToken ct = default);
+
+    /// <summary>
+    /// Search with the query expanded from feedback documents (<see cref="QueryExpansionOptions"/>). Engines without
+    /// weighted queries (MySQL FULLTEXT) ignore the feedback and run the plain query.
+    /// </summary>
+    Task<IReadOnlyList<(int Id, double Score)>> SearchExpandedAsync(
+        string searchText, IReadOnlyList<int> feedbackIds, QueryExpansionOptions expansion, int limit, CancellationToken ct = default) =>
+        SearchAsync(searchText, limit, ct);
 }
 
 /// <summary>

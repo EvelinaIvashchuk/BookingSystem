@@ -129,6 +129,9 @@ public sealed class SearchOptions
     /// <summary>Method used by the <c>search_rental_policies</c> tool.</summary>
     public KnowledgeSearchMode Mode { get; set; } = KnowledgeSearchMode.HybridAdaptive;
 
+    /// <summary>Lexical ranking: own BM25 over the in-memory index (default) or MySQL FULLTEXT.</summary>
+    public FullTextEngine FullTextEngine { get; set; } = FullTextEngine.Bm25;
+
     /// <summary>Fragments returned to the agent.</summary>
     public int TopK { get; set; } = 3;
 
@@ -139,6 +142,37 @@ public sealed class SearchOptions
     public int RrfK { get; set; } = 60;
 
     public AdaptiveFusionOptions Adaptive { get; set; } = new();
+
+    /// <summary>Pseudo-relevance feedback for the BM25 part of <see cref="KnowledgeSearchMode.HybridAdaptive"/>.</summary>
+    public QueryExpansionOptions QueryExpansion { get; set; } = new();
+}
+
+/// <summary>
+/// Pseudo-relevance feedback (RM3-like): the BM25 query is extended with the terms that best describe the top
+/// vector hits, so lexical search also finds fragments worded differently from the question
+/// ("заблокують" → "депозит"). Uses no relevance labels; the values are fixed in advance (not tuned in E3).
+/// </summary>
+public sealed class QueryExpansionOptions
+{
+    public bool Enabled { get; set; } = true;
+
+    /// <summary>Top vector hits used as feedback documents.</summary>
+    public int FeedbackDocs { get; set; } = 3;
+
+    /// <summary>Expansion terms added to the query.</summary>
+    public int Terms { get; set; } = 10;
+
+    /// <summary>Weight of the strongest expansion term (original query terms have weight 1).</summary>
+    public double Weight { get; set; } = 0.5;
+}
+
+public enum FullTextEngine
+{
+    /// <summary>Okapi BM25 implemented in the application (k1 = 1.2, b = 0.75).</summary>
+    Bm25,
+
+    /// <summary>MySQL FULLTEXT, natural language mode.</summary>
+    MySql
 }
 
 /// <summary>

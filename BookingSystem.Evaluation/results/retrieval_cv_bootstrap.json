@@ -1,0 +1,721 @@
+{
+  "metric": "MRR@10",
+  "resamples": 10000,
+  "comparisons": [
+    {
+      "group": "all",
+      "comparison": "HybridAdaptive(cv) - Vector",
+      "queries": 205,
+      "meanDifference": -0.03191056910569106,
+      "ci95": [
+        -0.0524390243902439,
+        -0.014227642276422765
+      ],
+      "pValueOneSided": 1,
+      "better": 2,
+      "worse": 12
+    },
+    {
+      "group": "all",
+      "comparison": "HybridAdaptive(cv) - HybridRrf",
+      "queries": 205,
+      "meanDifference": 0.07039488966318234,
+      "ci95": [
+        0.046167247386759584,
+        0.09587688734030198
+      ],
+      "pValueOneSided": 0,
+      "better": 36,
+      "worse": 2
+    },
+    {
+      "group": "all",
+      "comparison": "HybridAdaptive(cv) - BM25",
+      "queries": 205,
+      "meanDifference": 0.31102787456445985,
+      "ci95": [
+        0.25638404955478117,
+        0.3674196670538133
+      ],
+      "pValueOneSided": 0,
+      "better": 89,
+      "worse": 2
+    },
+    {
+      "group": "all",
+      "comparison": "HybridRrf - Vector",
+      "queries": 205,
+      "meanDifference": -0.10230545876887341,
+      "ci95": [
+        -0.13584204413472709,
+        -0.07148083623693381
+      ],
+      "pValueOneSided": 1,
+      "better": 3,
+      "worse": 40
+    },
+    {
+      "group": "all",
+      "comparison": "BM25 - MySqlFullText",
+      "queries": 205,
+      "meanDifference": 0.009399922570654277,
+      "ci95": [
+        -0.013286875725900116,
+        0.03301006581494387
+      ],
+      "pValueOneSided": 0.2134,
+      "better": 21,
+      "worse": 17
+    },
+    {
+      "group": "all",
+      "comparison": "HybridAdaptive(cv) - HybridAdaptive(initial)",
+      "queries": 205,
+      "meanDifference": 0.1409117305458769,
+      "ci95": [
+        0.10408052651955092,
+        0.1800116144018583
+      ],
+      "pValueOneSided": 0,
+      "better": 53,
+      "worse": 2
+    },
+    {
+      "group": "all",
+      "comparison": "HybridAdaptive(cv) - HybridAdaptive(cv,free)",
+      "queries": 205,
+      "meanDifference": -0.02378048780487805,
+      "ci95": [
+        -0.04451219512195123,
+        -0.004878048780487805
+      ],
+      "pValueOneSided": 0.9956,
+      "better": 4,
+      "worse": 11
+    },
+    {
+      "group": "all",
+      "comparison": "HybridAdaptive(cv,free) - Vector",
+      "queries": 205,
+      "meanDifference": -0.008130081300813009,
+      "ci95": [
+        -0.01788617886178862,
+        -0.0008130081300813009
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 4
+    },
+    {
+      "group": "all",
+      "comparison": "BM25\u002BPRF - BM25",
+      "queries": 205,
+      "meanDifference": 0.145801393728223,
+      "ci95": [
+        0.08795005807200931,
+        0.20394502516453727
+      ],
+      "pValueOneSided": 0,
+      "better": 79,
+      "worse": 30
+    },
+    {
+      "group": "all",
+      "comparison": "HybridAdaptive(cv,PRF) - HybridAdaptive(cv)",
+      "queries": 205,
+      "meanDifference": 0.028861788617886186,
+      "ci95": [
+        0.01056910569105691,
+        0.049593495934959354
+      ],
+      "pValueOneSided": 0.0006,
+      "better": 12,
+      "worse": 4
+    },
+    {
+      "group": "all",
+      "comparison": "HybridAdaptive(cv,PRF) - Vector",
+      "queries": 205,
+      "meanDifference": -0.003048780487804878,
+      "ci95": [
+        -0.00894308943089431,
+        0.0004065040650406503
+      ],
+      "pValueOneSided": 0.9146,
+      "better": 1,
+      "worse": 2
+    },
+    {
+      "group": "keyword",
+      "comparison": "HybridAdaptive(cv) - Vector",
+      "queries": 99,
+      "meanDifference": -0.007575757575757576,
+      "ci95": [
+        -0.022727272727272728,
+        0
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 1
+    },
+    {
+      "group": "keyword",
+      "comparison": "HybridAdaptive(cv) - HybridRrf",
+      "queries": 99,
+      "meanDifference": 0.028018278018278022,
+      "ci95": [
+        0.002164502164502166,
+        0.05711880711880713
+      ],
+      "pValueOneSided": 0.0153,
+      "better": 7,
+      "worse": 1
+    },
+    {
+      "group": "keyword",
+      "comparison": "HybridAdaptive(cv) - BM25",
+      "queries": 99,
+      "meanDifference": 0.14771524771524772,
+      "ci95": [
+        0.08501683501683503,
+        0.21632996632996634
+      ],
+      "pValueOneSided": 0,
+      "better": 21,
+      "worse": 2
+    },
+    {
+      "group": "keyword",
+      "comparison": "HybridRrf - Vector",
+      "queries": 99,
+      "meanDifference": -0.035594035594035595,
+      "ci95": [
+        -0.06926406926406926,
+        -0.005050505050505051
+      ],
+      "pValueOneSided": 0.9949,
+      "better": 1,
+      "worse": 7
+    },
+    {
+      "group": "keyword",
+      "comparison": "BM25 - MySqlFullText",
+      "queries": 99,
+      "meanDifference": 0.00791245791245791,
+      "ci95": [
+        -0.030351130351130354,
+        0.04761904761904762
+      ],
+      "pValueOneSided": 0.3404,
+      "better": 7,
+      "worse": 5
+    },
+    {
+      "group": "keyword",
+      "comparison": "HybridAdaptive(cv) - HybridAdaptive(initial)",
+      "queries": 99,
+      "meanDifference": 0.09395943562610229,
+      "ci95": [
+        0.045558762225428893,
+        0.14803190636523975
+      ],
+      "pValueOneSided": 0,
+      "better": 16,
+      "worse": 2
+    },
+    {
+      "group": "keyword",
+      "comparison": "HybridAdaptive(cv) - HybridAdaptive(cv,free)",
+      "queries": 99,
+      "meanDifference": -0.0025252525252525255,
+      "ci95": [
+        -0.022727272727272728,
+        0.015151515151515152
+      ],
+      "pValueOneSided": 0.6622,
+      "better": 1,
+      "worse": 1
+    },
+    {
+      "group": "keyword",
+      "comparison": "HybridAdaptive(cv,free) - Vector",
+      "queries": 99,
+      "meanDifference": -0.005050505050505051,
+      "ci95": [
+        -0.015151515151515152,
+        0
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 1
+    },
+    {
+      "group": "keyword",
+      "comparison": "BM25\u002BPRF - BM25",
+      "queries": 99,
+      "meanDifference": -0.0040404040404040465,
+      "ci95": [
+        -0.07753727753727754,
+        0.07202982202982203
+      ],
+      "pValueOneSided": 0.5469,
+      "better": 17,
+      "worse": 19
+    },
+    {
+      "group": "keyword",
+      "comparison": "HybridAdaptive(cv,PRF) - HybridAdaptive(cv)",
+      "queries": 99,
+      "meanDifference": 0.0058922558922558915,
+      "ci95": [
+        -0.005050505050505051,
+        0.022727272727272728
+      ],
+      "pValueOneSided": 0.3699,
+      "better": 1,
+      "worse": 1
+    },
+    {
+      "group": "keyword",
+      "comparison": "HybridAdaptive(cv,PRF) - Vector",
+      "queries": 99,
+      "meanDifference": -0.0016835016835016836,
+      "ci95": [
+        -0.005050505050505051,
+        0
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 1
+    },
+    {
+      "group": "descriptive",
+      "comparison": "HybridAdaptive(cv) - Vector",
+      "queries": 106,
+      "meanDifference": -0.054638364779874216,
+      "ci95": [
+        -0.09040880503144655,
+        -0.02358490566037736
+      ],
+      "pValueOneSided": 1,
+      "better": 2,
+      "worse": 11
+    },
+    {
+      "group": "descriptive",
+      "comparison": "HybridAdaptive(cv) - HybridRrf",
+      "queries": 106,
+      "meanDifference": 0.10997304582210242,
+      "ci95": [
+        0.07279874213836476,
+        0.1507637017070979
+      ],
+      "pValueOneSided": 0,
+      "better": 29,
+      "worse": 1
+    },
+    {
+      "group": "descriptive",
+      "comparison": "HybridAdaptive(cv) - BM25",
+      "queries": 106,
+      "meanDifference": 0.4635557053009883,
+      "ci95": [
+        0.38303384246780475,
+        0.5431716082659478
+      ],
+      "pValueOneSided": 0,
+      "better": 68,
+      "worse": 0
+    },
+    {
+      "group": "descriptive",
+      "comparison": "HybridRrf - Vector",
+      "queries": 106,
+      "meanDifference": -0.16461141060197662,
+      "ci95": [
+        -0.2177672955974843,
+        -0.11507187780772686
+      ],
+      "pValueOneSided": 1,
+      "better": 2,
+      "worse": 33
+    },
+    {
+      "group": "descriptive",
+      "comparison": "BM25 - MySqlFullText",
+      "queries": 106,
+      "meanDifference": 0.010789158430667863,
+      "ci95": [
+        -0.015509883198562448,
+        0.03797544174902665
+      ],
+      "pValueOneSided": 0.2217,
+      "better": 14,
+      "worse": 12
+    },
+    {
+      "group": "descriptive",
+      "comparison": "HybridAdaptive(cv) - HybridAdaptive(initial)",
+      "queries": 106,
+      "meanDifference": 0.18476340221623241,
+      "ci95": [
+        0.130780173704702,
+        0.24065214135968857
+      ],
+      "pValueOneSided": 0,
+      "better": 37,
+      "worse": 0
+    },
+    {
+      "group": "descriptive",
+      "comparison": "HybridAdaptive(cv) - HybridAdaptive(cv,free)",
+      "queries": 106,
+      "meanDifference": -0.04363207547169811,
+      "ci95": [
+        -0.07900943396226415,
+        -0.011399371069182391
+      ],
+      "pValueOneSided": 0.9977,
+      "better": 3,
+      "worse": 10
+    },
+    {
+      "group": "descriptive",
+      "comparison": "HybridAdaptive(cv,free) - Vector",
+      "queries": 106,
+      "meanDifference": -0.011006289308176102,
+      "ci95": [
+        -0.025157232704402517,
+        0
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 3
+    },
+    {
+      "group": "descriptive",
+      "comparison": "BM25\u002BPRF - BM25",
+      "queries": 106,
+      "meanDifference": 0.2857479784366577,
+      "ci95": [
+        0.20602725366876312,
+        0.3642857142857143
+      ],
+      "pValueOneSided": 0,
+      "better": 62,
+      "worse": 11
+    },
+    {
+      "group": "descriptive",
+      "comparison": "HybridAdaptive(cv,PRF) - HybridAdaptive(cv)",
+      "queries": 106,
+      "meanDifference": 0.05031446540880505,
+      "ci95": [
+        0.017295597484276733,
+        0.08726415094339622
+      ],
+      "pValueOneSided": 0.0002,
+      "better": 11,
+      "worse": 3
+    },
+    {
+      "group": "descriptive",
+      "comparison": "HybridAdaptive(cv,PRF) - Vector",
+      "queries": 106,
+      "meanDifference": -0.004323899371069183,
+      "ci95": [
+        -0.014150943396226415,
+        0.0011792452830188677
+      ],
+      "pValueOneSided": 0.7654,
+      "better": 1,
+      "worse": 1
+    },
+    {
+      "group": "uk",
+      "comparison": "HybridAdaptive(cv) - Vector",
+      "queries": 175,
+      "meanDifference": -0.034523809523809526,
+      "ci95": [
+        -0.05833333333333333,
+        -0.014523809523809527
+      ],
+      "pValueOneSided": 1,
+      "better": 2,
+      "worse": 11
+    },
+    {
+      "group": "uk",
+      "comparison": "HybridAdaptive(cv) - HybridRrf",
+      "queries": 175,
+      "meanDifference": 0.07674829931972789,
+      "ci95": [
+        0.049414965986394555,
+        0.10537414965986396
+      ],
+      "pValueOneSided": 0,
+      "better": 34,
+      "worse": 2
+    },
+    {
+      "group": "uk",
+      "comparison": "HybridAdaptive(cv) - BM25",
+      "queries": 175,
+      "meanDifference": 0.21182993197278907,
+      "ci95": [
+        0.1621156462585034,
+        0.263750566893424
+      ],
+      "pValueOneSided": 0,
+      "better": 61,
+      "worse": 2
+    },
+    {
+      "group": "uk",
+      "comparison": "HybridRrf - Vector",
+      "queries": 175,
+      "meanDifference": -0.11127210884353742,
+      "ci95": [
+        -0.14948979591836736,
+        -0.07652380952380952
+      ],
+      "pValueOneSided": 1,
+      "better": 3,
+      "worse": 37
+    },
+    {
+      "group": "uk",
+      "comparison": "BM25 - MySqlFullText",
+      "queries": 175,
+      "meanDifference": 0.015909297052154197,
+      "ci95": [
+        -0.009741496598639458,
+        0.042621315192743786
+      ],
+      "pValueOneSided": 0.1112,
+      "better": 21,
+      "worse": 16
+    },
+    {
+      "group": "uk",
+      "comparison": "HybridAdaptive(cv) - HybridAdaptive(initial)",
+      "queries": 175,
+      "meanDifference": 0.15713151927437644,
+      "ci95": [
+        0.11482312925170067,
+        0.20028571428571426
+      ],
+      "pValueOneSided": 0,
+      "better": 51,
+      "worse": 2
+    },
+    {
+      "group": "uk",
+      "comparison": "HybridAdaptive(cv) - HybridAdaptive(cv,free)",
+      "queries": 175,
+      "meanDifference": -0.025,
+      "ci95": [
+        -0.04952380952380953,
+        -0.0040476190476190456
+      ],
+      "pValueOneSided": 0.9919,
+      "better": 4,
+      "worse": 10
+    },
+    {
+      "group": "uk",
+      "comparison": "HybridAdaptive(cv,free) - Vector",
+      "queries": 175,
+      "meanDifference": -0.009523809523809525,
+      "ci95": [
+        -0.02095238095238095,
+        -0.0009523809523809525
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 4
+    },
+    {
+      "group": "uk",
+      "comparison": "BM25\u002BPRF - BM25",
+      "queries": 175,
+      "meanDifference": 0.05589795918367348,
+      "ci95": [
+        0.0030090702947845787,
+        0.11242403628117913
+      ],
+      "pValueOneSided": 0.0203,
+      "better": 51,
+      "worse": 30
+    },
+    {
+      "group": "uk",
+      "comparison": "HybridAdaptive(cv,PRF) - HybridAdaptive(cv)",
+      "queries": 175,
+      "meanDifference": 0.03095238095238096,
+      "ci95": [
+        0.01,
+        0.055238095238095246
+      ],
+      "pValueOneSided": 0.0007,
+      "better": 11,
+      "worse": 4
+    },
+    {
+      "group": "uk",
+      "comparison": "HybridAdaptive(cv,PRF) - Vector",
+      "queries": 175,
+      "meanDifference": -0.0035714285714285713,
+      "ci95": [
+        -0.010476190476190477,
+        0.0004761904761904761
+      ],
+      "pValueOneSided": 0.9116,
+      "better": 1,
+      "worse": 2
+    },
+    {
+      "group": "en",
+      "comparison": "HybridAdaptive(cv) - Vector",
+      "queries": 30,
+      "meanDifference": -0.016666666666666666,
+      "ci95": [
+        -0.05,
+        0
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 1
+    },
+    {
+      "group": "en",
+      "comparison": "HybridAdaptive(cv) - HybridRrf",
+      "queries": 30,
+      "meanDifference": 0.03333333333333333,
+      "ci95": [
+        0,
+        0.08333333333333333
+      ],
+      "pValueOneSided": 0.1296,
+      "better": 2,
+      "worse": 0
+    },
+    {
+      "group": "en",
+      "comparison": "HybridAdaptive(cv) - BM25",
+      "queries": 30,
+      "meanDifference": 0.8896825396825396,
+      "ci95": [
+        0.7785714285714286,
+        0.9777777777777779
+      ],
+      "pValueOneSided": 0,
+      "better": 28,
+      "worse": 0
+    },
+    {
+      "group": "en",
+      "comparison": "HybridRrf - Vector",
+      "queries": 30,
+      "meanDifference": -0.05,
+      "ci95": [
+        -0.11666666666666667,
+        0
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 3
+    },
+    {
+      "group": "en",
+      "comparison": "BM25 - MySqlFullText",
+      "queries": 30,
+      "meanDifference": -0.028571428571428574,
+      "ci95": [
+        -0.08571428571428572,
+        0
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 1
+    },
+    {
+      "group": "en",
+      "comparison": "HybridAdaptive(cv) - HybridAdaptive(initial)",
+      "queries": 30,
+      "meanDifference": 0.046296296296296294,
+      "ci95": [
+        0,
+        0.12222222222222222
+      ],
+      "pValueOneSided": 0.1234,
+      "better": 2,
+      "worse": 0
+    },
+    {
+      "group": "en",
+      "comparison": "HybridAdaptive(cv) - HybridAdaptive(cv,free)",
+      "queries": 30,
+      "meanDifference": -0.016666666666666666,
+      "ci95": [
+        -0.05,
+        0
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 1
+    },
+    {
+      "group": "en",
+      "comparison": "HybridAdaptive(cv,free) - Vector",
+      "queries": 30,
+      "meanDifference": 0,
+      "ci95": [
+        0,
+        0
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 0
+    },
+    {
+      "group": "en",
+      "comparison": "BM25\u002BPRF - BM25",
+      "queries": 30,
+      "meanDifference": 0.6702380952380952,
+      "ci95": [
+        0.5507936507936508,
+        0.788888888888889
+      ],
+      "pValueOneSided": 0,
+      "better": 28,
+      "worse": 0
+    },
+    {
+      "group": "en",
+      "comparison": "HybridAdaptive(cv,PRF) - HybridAdaptive(cv)",
+      "queries": 30,
+      "meanDifference": 0.016666666666666666,
+      "ci95": [
+        0,
+        0.05
+      ],
+      "pValueOneSided": 0.3542,
+      "better": 1,
+      "worse": 0
+    },
+    {
+      "group": "en",
+      "comparison": "HybridAdaptive(cv,PRF) - Vector",
+      "queries": 30,
+      "meanDifference": 0,
+      "ci95": [
+        0,
+        0
+      ],
+      "pValueOneSided": 1,
+      "better": 0,
+      "worse": 0
+    }
+  ]
+}

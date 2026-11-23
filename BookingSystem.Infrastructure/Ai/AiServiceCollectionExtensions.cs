@@ -29,7 +29,10 @@ public static class AiServiceCollectionExtensions
         services.AddSingleton<IEmbeddingGeneratorFactory, EmbeddingGeneratorFactory>();
         services.AddSingleton<QueryEmbeddingCache>();
         services.AddSingleton<KnowledgeStore>();
-        services.AddScoped<IFullTextIndex, MySqlFullTextIndex>();
+        services.AddScoped<IFullTextIndex>(sp =>
+            sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<AiOptions>>().Value.Search.FullTextEngine == FullTextEngine.MySql
+                ? new MySqlFullTextIndex(sp.GetRequiredService<BookingSystem.Data.ApplicationDbContext>())
+                : new Bm25FullTextIndex(sp.GetRequiredService<KnowledgeStore>()));
         services.AddScoped<IKnowledgeSearch, KnowledgeSearch>();
         services.AddScoped<KnowledgeIndexer>();
         services.AddSingleton<Ranking.CarRanker>();

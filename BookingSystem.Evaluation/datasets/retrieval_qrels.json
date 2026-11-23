@@ -1,62 +1,2501 @@
 {
-  "description": "Relevance judgments for E3. 'relevant' lists knowledge-base chunk keys (document#index, see BookingSystem/KnowledgeBase). split: dev (~30%, used only for tuning the adaptive fusion) / test (final metrics). kind: keyword (short, term-heavy) / descriptive (natural question).",
-  "queries": [
-    { "id": "Q-01", "query": "депозит SUV", "relevant": ["deposit#2"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-02", "query": "розмір франшизи", "relevant": ["insurance#3"], "split": "dev", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-03", "query": "дитяче крісло ціна", "relevant": ["extras#1"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-04", "query": "мінімальний вік водія", "relevant": ["documents#2"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-05", "query": "ліміт пробігу", "relevant": ["mileage#1"], "split": "dev", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-06", "query": "Зелена карта вартість", "relevant": ["borders#3"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-07", "query": "безкоштовне скасування", "relevant": ["cancellation#1"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-08", "query": "неявка", "relevant": ["cancellation#4"], "split": "dev", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-09", "query": "європротокол", "relevant": ["damage#4"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-10", "query": "другий водій", "relevant": ["extras#3", "documents#8"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-11", "query": "пакет Повний захист", "relevant": ["insurance#5"], "split": "dev", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-12", "query": "депозит готівкою", "relevant": ["deposit#5"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-13", "query": "бустер", "relevant": ["extras#2"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-14", "query": "зимові ланцюги", "relevant": ["extras#5"], "split": "dev", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-15", "query": "штраф за паління", "relevant": ["pickup#8"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-16", "query": "графік роботи офісів", "relevant": ["pickup#1"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-17", "query": "повернення в іншому місті", "relevant": ["pickup#6"], "split": "dev", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-18", "query": "кабель Type 2", "relevant": ["fuel#6"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-19", "query": "Стандарт+", "relevant": ["insurance#4"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-20", "query": "водійський стаж", "relevant": ["documents#4"], "split": "dev", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-21", "query": "дозволені країни", "relevant": ["borders#4"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-22", "query": "молодий водій доплата", "relevant": ["documents#5"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-23", "query": "перевищення пробігу", "relevant": ["mileage#3"], "split": "dev", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-24", "query": "пільговий період", "relevant": ["late-return#1"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-25", "query": "промокод", "relevant": ["booking#7"], "split": "test", "kind": "keyword", "lang": "uk" },
-    { "id": "Q-26", "query": "deposit amount", "relevant": ["deposit#2"], "split": "dev", "kind": "keyword", "lang": "en" },
-    { "id": "Q-27", "query": "insurance excess", "relevant": ["insurance#3", "insurance#2"], "split": "test", "kind": "keyword", "lang": "en" },
-    { "id": "Q-28", "query": "child seat", "relevant": ["extras#1"], "split": "test", "kind": "keyword", "lang": "en" },
-
-    { "id": "Q-29", "query": "Що буде, якщо я поверну машину на дві години пізніше, ніж домовлялися?", "relevant": ["late-return#2"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-30", "query": "Скільки грошей заблокують на моїй картці, коли я братиму кросовер?", "relevant": ["deposit#2"], "split": "dev", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-31", "query": "Я подряпав бампер на парковці, хто платитиме за ремонт?", "relevant": ["damage#5", "insurance#2"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-32", "query": "Чи можна поїхати на орендованій машині до Польщі на відпочинок?", "relevant": ["borders#1", "borders#4"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-33", "query": "Мені 22 роки, чи дадуть мені спортивне купе?", "relevant": ["documents#2"], "split": "dev", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-34", "query": "Я хочу повернути авто на два дні раніше, чи повернуть мені гроші?", "relevant": ["late-return#7"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-35", "query": "Що робити, якщо машина зламалася посеред траси?", "relevant": ["damage#8"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-36", "query": "Можна взяти собаку з собою в поїздку?", "relevant": ["pickup#9"], "split": "dev", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-37", "query": "Я передумав їхати, як мені відмінити бронювання і коли повернуться гроші?", "relevant": ["cancellation#5", "cancellation#6"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-38", "query": "Чи обовʼязково повертати машину з повним баком?", "relevant": ["fuel#1", "fuel#2"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-39", "query": "Скільки кілометрів я можу проїхати за тиждень оренди?", "relevant": ["mileage#4", "mileage#1"], "split": "dev", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-40", "query": "Чи можна оформити оренду, якщо в мене тільки цифрові права в Дії?", "relevant": ["documents#7"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-41", "query": "Я іноземець з американськими правами, що мені потрібно для оренди?", "relevant": ["documents#6"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-42", "query": "Що станеться, якщо я заллю дизель у бензинову машину?", "relevant": ["fuel#4"], "split": "dev", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-43", "query": "Як довго чекати, поки банк поверне гроші з депозиту?", "relevant": ["deposit#3"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-44", "query": "Чи можна забрати машину о шостій ранку, до відкриття офісу?", "relevant": ["pickup#4"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-45", "query": "Скільки бронювань я можу мати одночасно на одному акаунті?", "relevant": ["booking#5"], "split": "dev", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-46", "query": "За скільки днів наперед можна забронювати авто на новорічні свята?", "relevant": ["booking#4"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-47", "query": "Що мені потрібно взяти з собою, коли я приїду забирати машину?", "relevant": ["pickup#2", "documents#1"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-48", "query": "Хто відповідає, якщо машину викрадуть, поки я в магазині?", "relevant": ["insurance#8", "pickup#10"], "split": "dev", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-49", "query": "Що робити, якщо я потрапив у аварію з іншою машиною?", "relevant": ["damage#3"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-50", "query": "Чи можна привезти машину мені додому, а не забирати в офісі?", "relevant": ["extras#8"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-51", "query": "Мене оштрафувала камера за перевищення швидкості під час оренди, що буде?", "relevant": ["damage#9"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-52", "query": "What happens if I bring the car back a day late without calling?", "relevant": ["late-return#4", "late-return#3"], "split": "dev", "kind": "descriptive", "lang": "en" },
-    { "id": "Q-53", "query": "Can I cancel my booking for free two days before pickup?", "relevant": ["cancellation#1", "cancellation#2"], "split": "test", "kind": "descriptive", "lang": "en" },
-    { "id": "Q-54", "query": "Do I need any special documents to drive the rental car abroad?", "relevant": ["borders#7", "borders#2"], "split": "test", "kind": "descriptive", "lang": "en" },
-    { "id": "Q-55", "query": "Чи можна платити за оренду готівкою або через Apple Pay?", "relevant": ["deposit#8"], "split": "test", "kind": "descriptive", "lang": "uk" },
-    { "id": "Q-56", "query": "Компанія може оплатити оренду для свого працівника безготівково?", "relevant": ["deposit#10"], "split": "test", "kind": "descriptive", "lang": "uk" }
-  ]
+ "description": "Relevance judgments for E3. 'relevant' lists knowledge-base chunk keys (document#index, see BookingSystem/KnowledgeBase). kind: keyword (short, term-heavy) / descriptive (natural question). fold: 1..5 for k-fold cross-validation (stratified by kind and language). split: dev/test of the first E3 run for the original 56 queries; 'cv' for the queries added with the expanded knowledge base. Generated by tools/retrieval/make_qrels.py.",
+ "queries": [
+  {
+   "id": "Q-01",
+   "query": "депозит SUV",
+   "relevant": [
+    "deposit#2"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-02",
+   "query": "розмір франшизи",
+   "relevant": [
+    "insurance#3"
+   ],
+   "split": "dev",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-03",
+   "query": "дитяче крісло ціна",
+   "relevant": [
+    "extras#1"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-04",
+   "query": "мінімальний вік водія",
+   "relevant": [
+    "documents#2"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 4
+  },
+  {
+   "id": "Q-05",
+   "query": "ліміт пробігу",
+   "relevant": [
+    "mileage#1"
+   ],
+   "split": "dev",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 5
+  },
+  {
+   "id": "Q-06",
+   "query": "Зелена карта вартість",
+   "relevant": [
+    "borders#3"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-07",
+   "query": "безкоштовне скасування",
+   "relevant": [
+    "cancellation#1"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-08",
+   "query": "неявка",
+   "relevant": [
+    "cancellation#4"
+   ],
+   "split": "dev",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-09",
+   "query": "європротокол",
+   "relevant": [
+    "damage#4"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 4
+  },
+  {
+   "id": "Q-10",
+   "query": "другий водій",
+   "relevant": [
+    "extras#3",
+    "documents#8"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 5
+  },
+  {
+   "id": "Q-11",
+   "query": "пакет Повний захист",
+   "relevant": [
+    "insurance#5"
+   ],
+   "split": "dev",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-12",
+   "query": "депозит готівкою",
+   "relevant": [
+    "deposit#5"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-13",
+   "query": "бустер",
+   "relevant": [
+    "extras#2"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-14",
+   "query": "зимові ланцюги",
+   "relevant": [
+    "extras#5"
+   ],
+   "split": "dev",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 4
+  },
+  {
+   "id": "Q-15",
+   "query": "штраф за паління",
+   "relevant": [
+    "pickup#8"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 5
+  },
+  {
+   "id": "Q-16",
+   "query": "графік роботи офісів",
+   "relevant": [
+    "pickup#1"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-17",
+   "query": "повернення в іншому місті",
+   "relevant": [
+    "pickup#6"
+   ],
+   "split": "dev",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-18",
+   "query": "кабель Type 2",
+   "relevant": [
+    "fuel#6"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-19",
+   "query": "Стандарт+",
+   "relevant": [
+    "insurance#4"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 4
+  },
+  {
+   "id": "Q-20",
+   "query": "водійський стаж",
+   "relevant": [
+    "documents#4"
+   ],
+   "split": "dev",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 5
+  },
+  {
+   "id": "Q-21",
+   "query": "дозволені країни",
+   "relevant": [
+    "borders#4"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-22",
+   "query": "молодий водій доплата",
+   "relevant": [
+    "documents#5"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-23",
+   "query": "перевищення пробігу",
+   "relevant": [
+    "mileage#3"
+   ],
+   "split": "dev",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-24",
+   "query": "пільговий період",
+   "relevant": [
+    "late-return#1"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 4
+  },
+  {
+   "id": "Q-25",
+   "query": "промокод",
+   "relevant": [
+    "booking#7"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 5
+  },
+  {
+   "id": "Q-26",
+   "query": "deposit amount",
+   "relevant": [
+    "deposit#2"
+   ],
+   "split": "dev",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-27",
+   "query": "insurance excess",
+   "relevant": [
+    "insurance#3",
+    "insurance#2"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-28",
+   "query": "child seat",
+   "relevant": [
+    "extras#1"
+   ],
+   "split": "test",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-29",
+   "query": "Що буде, якщо я поверну машину на дві години пізніше, ніж домовлялися?",
+   "relevant": [
+    "late-return#2"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-30",
+   "query": "Скільки грошей заблокують на моїй картці, коли я братиму кросовер?",
+   "relevant": [
+    "deposit#2"
+   ],
+   "split": "dev",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-31",
+   "query": "Я подряпав бампер на парковці, хто платитиме за ремонт?",
+   "relevant": [
+    "damage#5",
+    "insurance#2"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-32",
+   "query": "Чи можна поїхати на орендованій машині до Польщі на відпочинок?",
+   "relevant": [
+    "borders#1",
+    "borders#4"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 4
+  },
+  {
+   "id": "Q-33",
+   "query": "Мені 22 роки, чи дадуть мені спортивне купе?",
+   "relevant": [
+    "documents#2"
+   ],
+   "split": "dev",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 5
+  },
+  {
+   "id": "Q-34",
+   "query": "Я хочу повернути авто на два дні раніше, чи повернуть мені гроші?",
+   "relevant": [
+    "late-return#7"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-35",
+   "query": "Що робити, якщо машина зламалася посеред траси?",
+   "relevant": [
+    "damage#8"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-36",
+   "query": "Можна взяти собаку з собою в поїздку?",
+   "relevant": [
+    "pickup#9"
+   ],
+   "split": "dev",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-37",
+   "query": "Я передумав їхати, як мені відмінити бронювання і коли повернуться гроші?",
+   "relevant": [
+    "cancellation#5",
+    "cancellation#6"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 4
+  },
+  {
+   "id": "Q-38",
+   "query": "Чи обовʼязково повертати машину з повним баком?",
+   "relevant": [
+    "fuel#1",
+    "fuel#2"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 5
+  },
+  {
+   "id": "Q-39",
+   "query": "Скільки кілометрів я можу проїхати за тиждень оренди?",
+   "relevant": [
+    "mileage#4",
+    "mileage#1"
+   ],
+   "split": "dev",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-40",
+   "query": "Чи можна оформити оренду, якщо в мене тільки цифрові права в Дії?",
+   "relevant": [
+    "documents#7"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-41",
+   "query": "Я іноземець з американськими правами, що мені потрібно для оренди?",
+   "relevant": [
+    "documents#6"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-42",
+   "query": "Що станеться, якщо я заллю дизель у бензинову машину?",
+   "relevant": [
+    "fuel#4"
+   ],
+   "split": "dev",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 4
+  },
+  {
+   "id": "Q-43",
+   "query": "Як довго чекати, поки банк поверне гроші з депозиту?",
+   "relevant": [
+    "deposit#3"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 5
+  },
+  {
+   "id": "Q-44",
+   "query": "Чи можна забрати машину о шостій ранку, до відкриття офісу?",
+   "relevant": [
+    "pickup#4"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-45",
+   "query": "Скільки бронювань я можу мати одночасно на одному акаунті?",
+   "relevant": [
+    "booking#5"
+   ],
+   "split": "dev",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-46",
+   "query": "За скільки днів наперед можна забронювати авто на новорічні свята?",
+   "relevant": [
+    "booking#4"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-47",
+   "query": "Що мені потрібно взяти з собою, коли я приїду забирати машину?",
+   "relevant": [
+    "pickup#2",
+    "documents#1"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 4
+  },
+  {
+   "id": "Q-48",
+   "query": "Хто відповідає, якщо машину викрадуть, поки я в магазині?",
+   "relevant": [
+    "insurance#8",
+    "pickup#10"
+   ],
+   "split": "dev",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 5
+  },
+  {
+   "id": "Q-49",
+   "query": "Що робити, якщо я потрапив у аварію з іншою машиною?",
+   "relevant": [
+    "damage#3"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-50",
+   "query": "Чи можна привезти машину мені додому, а не забирати в офісі?",
+   "relevant": [
+    "extras#8"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-51",
+   "query": "Мене оштрафувала камера за перевищення швидкості під час оренди, що буде?",
+   "relevant": [
+    "damage#9"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-52",
+   "query": "What happens if I bring the car back a day late without calling?",
+   "relevant": [
+    "late-return#4",
+    "late-return#3"
+   ],
+   "split": "dev",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "original",
+   "fold": 1
+  },
+  {
+   "id": "Q-53",
+   "query": "Can I cancel my booking for free two days before pickup?",
+   "relevant": [
+    "cancellation#1",
+    "cancellation#2"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "original",
+   "fold": 2
+  },
+  {
+   "id": "Q-54",
+   "query": "Do I need any special documents to drive the rental car abroad?",
+   "relevant": [
+    "borders#7",
+    "borders#2"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "original",
+   "fold": 3
+  },
+  {
+   "id": "Q-55",
+   "query": "Чи можна платити за оренду готівкою або через Apple Pay?",
+   "relevant": [
+    "deposit#8"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 4
+  },
+  {
+   "id": "Q-56",
+   "query": "Компанія може оплатити оренду для свого працівника безготівково?",
+   "relevant": [
+    "deposit#10"
+   ],
+   "split": "test",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "original",
+   "fold": 5
+  },
+  {
+   "id": "Q-057",
+   "query": "статус бронювання очікує",
+   "relevant": [
+    "booking#2"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-058",
+   "query": "скільки часу адміністратор підтверджує заявку",
+   "relevant": [
+    "booking#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-059",
+   "query": "максимальний строк оренди",
+   "relevant": [
+    "booking#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-060",
+   "query": "чи можна взяти машину на півтора місяця одним бронюванням",
+   "relevant": [
+    "booking#3",
+    "long-term#1"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-061",
+   "query": "бронювання за 60 днів",
+   "relevant": [
+    "booking#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-062",
+   "query": "скільки замовлень можна тримати на одному акаунті одночасно",
+   "relevant": [
+    "booking#5"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-063",
+   "query": "Can I change the dates of my booking?",
+   "relevant": [
+    "booking#8",
+    "cancellation#9"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-064",
+   "query": "промокод",
+   "relevant": [
+    "booking#7"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-065",
+   "query": "чи потрібна реєстрація, щоб забронювати",
+   "relevant": [
+    "booking#9"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-066",
+   "query": "депозит готівкою",
+   "relevant": [
+    "deposit#5"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-067",
+   "query": "коли мені повернуть заблоковані гроші після оренди",
+   "relevant": [
+    "deposit#3"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-068",
+   "query": "віртуальна картка для депозиту",
+   "relevant": [
+    "deposit#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-069",
+   "query": "як платити, якщо оренду оформлює компанія",
+   "relevant": [
+    "deposit#10",
+    "long-term#5"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-070",
+   "query": "deposit amount SUV",
+   "relevant": [
+    "deposit#2"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-071",
+   "query": "оплата Apple Pay",
+   "relevant": [
+    "deposit#8"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-072",
+   "query": "чи треба вносити передоплату під час бронювання",
+   "relevant": [
+    "deposit#9"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-073",
+   "query": "мінімальний вік водія",
+   "relevant": [
+    "documents#2"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-074",
+   "query": "мені 23 роки, чи буде додаткова плата",
+   "relevant": [
+    "documents#5"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-075",
+   "query": "I am a foreign citizen, what documents do I need?",
+   "relevant": [
+    "documents#6"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-076",
+   "query": "посвідчення в Дії",
+   "relevant": [
+    "documents#7"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-077",
+   "query": "чи можна орендувати, якщо мене позбавили прав",
+   "relevant": [
+    "documents#10"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-078",
+   "query": "водійський стаж купе",
+   "relevant": [
+    "documents#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-079",
+   "query": "пакет Стандарт+ ціна",
+   "relevant": [
+    "insurance#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-080",
+   "query": "що буде, якщо пошкоджу лобове скло",
+   "relevant": [
+    "insurance#7"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-081",
+   "query": "страхування пасажирів",
+   "relevant": [
+    "insurance#9"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-082",
+   "query": "у яких випадках страховка не діє",
+   "relevant": [
+    "insurance#6"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-083",
+   "query": "full coverage insurance price",
+   "relevant": [
+    "insurance#5"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-084",
+   "query": "якщо машину вкрадуть, хто платить",
+   "relevant": [
+    "insurance#8"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-085",
+   "query": "скасування менше ніж за добу",
+   "relevant": [
+    "cancellation#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-086",
+   "query": "я не прийшов забрати машину, що буде",
+   "relevant": [
+    "cancellation#4"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-087",
+   "query": "How long does a refund take?",
+   "relevant": [
+    "cancellation#6"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-088",
+   "query": "що, якщо компанія не може надати заброньоване авто",
+   "relevant": [
+    "cancellation#7",
+    "cars#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-089",
+   "query": "відхилена заявка",
+   "relevant": [
+    "cancellation#8"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-090",
+   "query": "бензин А-92",
+   "relevant": [
+    "fuel#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-091",
+   "query": "заправив дизель у бензинову машину, що робити",
+   "relevant": [
+    "fuel#4",
+    "roadside#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-092",
+   "query": "передоплачений бак",
+   "relevant": [
+    "fuel#8"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-093",
+   "query": "What happens if I return the car with less fuel?",
+   "relevant": [
+    "fuel#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-094",
+   "query": "чек АЗС",
+   "relevant": [
+    "fuel#7"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-095",
+   "query": "пільговий період повернення",
+   "relevant": [
+    "late-return#1"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-096",
+   "query": "запізнююсь на дві години, скільки доплатити",
+   "relevant": [
+    "late-return#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-097",
+   "query": "extend rental",
+   "relevant": [
+    "late-return#6"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-098",
+   "query": "хочу повернути машину на три дні раніше, чи повернуть гроші",
+   "relevant": [
+    "late-return#7"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-099",
+   "query": "повернення вночі",
+   "relevant": [
+    "late-return#8",
+    "pickup#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-100",
+   "query": "перевищення пробігу ціна за км",
+   "relevant": [
+    "mileage#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-101",
+   "query": "скільки кілометрів можна проїхати за тиждень оренди",
+   "relevant": [
+    "mileage#4"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-102",
+   "query": "пакет далека поїздка",
+   "relevant": [
+    "mileage#5"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-103",
+   "query": "Is mileage limited for a coupe?",
+   "relevant": [
+    "mileage#1",
+    "mileage#4"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-104",
+   "query": "подряпина 2 см",
+   "relevant": [
+    "damage#2"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-105",
+   "query": "в мене сталася аварія, що робити першим",
+   "relevant": [
+    "damage#3"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-106",
+   "query": "європротокол",
+   "relevant": [
+    "damage#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-107",
+   "query": "скільки коштує загубити ключ",
+   "relevant": [
+    "damage#10"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-108",
+   "query": "interior stain cleaning cost",
+   "relevant": [
+    "damage#7"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-109",
+   "query": "зелена карта ціна",
+   "relevant": [
+    "borders#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-110",
+   "query": "чи можна поїхати в Німеччину",
+   "relevant": [
+    "borders#4"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-111",
+   "query": "Can I drive the electric car to Poland?",
+   "relevant": [
+    "borders#6",
+    "ev#7"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-112",
+   "query": "дозвіл на виїзд за кордон",
+   "relevant": [
+    "borders#2"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-113",
+   "query": "що потрібно мати з собою на кордоні",
+   "relevant": [
+    "borders#7"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-114",
+   "query": "GPS навігатор оренда",
+   "relevant": [
+    "extras#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-115",
+   "query": "багажний бокс",
+   "relevant": [
+    "extras#6"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-116",
+   "query": "чи буде інтернет у машині",
+   "relevant": [
+    "extras#7"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-117",
+   "query": "second driver fee",
+   "relevant": [
+    "extras#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-118",
+   "query": "офіс Дніпро адреса",
+   "relevant": [
+    "pickup#1"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-119",
+   "query": "скільки триває видача авто",
+   "relevant": [
+    "pickup#3"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-120",
+   "query": "штраф за паління",
+   "relevant": [
+    "pickup#8"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-121",
+   "query": "можна взяти собаку в машину",
+   "relevant": [
+    "pickup#9"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-122",
+   "query": "Can I return the car in another city?",
+   "relevant": [
+    "pickup#6"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-123",
+   "query": "де документи на авто",
+   "relevant": [
+    "pickup#10"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-124",
+   "query": "автокрісло до 12 років",
+   "relevant": [
+    "children#1"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-125",
+   "query": "яке крісло потрібне дитині на 20 кілограмів",
+   "relevant": [
+    "children#2",
+    "extras#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-126",
+   "query": "кріплення isofix",
+   "relevant": [
+    "children#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-127",
+   "query": "скільки дитячих крісел поміститься в седан",
+   "relevant": [
+    "children#4"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-128",
+   "query": "можна взяти своє крісло для дитини",
+   "relevant": [
+    "children#5"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-129",
+   "query": "візок у багажник",
+   "relevant": [
+    "children#6"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-130",
+   "query": "Can I put the baby seat in the front?",
+   "relevant": [
+    "children#7"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-131",
+   "query": "чи треба наперед замовляти крісло",
+   "relevant": [
+    "children#8"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-132",
+   "query": "які у вас є електромобілі",
+   "relevant": [
+    "ev#1"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-133",
+   "query": "запас ходу взимку",
+   "relevant": [
+    "ev#2",
+    "ev#8"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-134",
+   "query": "charging stations CCS",
+   "relevant": [
+    "ev#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-135",
+   "query": "швидка зарядка до 80%",
+   "relevant": [
+    "ev#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-136",
+   "query": "з яким зарядом треба повернути електрокар",
+   "relevant": [
+    "ev#5",
+    "fuel#5"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-137",
+   "query": "чи можна заряджати від звичайної розетки",
+   "relevant": [
+    "ev#6"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-138",
+   "query": "чи можна на теслі поїхати в Польщу",
+   "relevant": [
+    "ev#7",
+    "borders#6"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-139",
+   "query": "зимова гума",
+   "relevant": [
+    "winter#1",
+    "extras#5"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-140",
+   "query": "які машини краще для поїздки в Карпати взимку",
+   "relevant": [
+    "winter#3"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-141",
+   "query": "ланцюги на колеса",
+   "relevant": [
+    "winter#2",
+    "extras#5"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-142",
+   "query": "як їздити по льоду",
+   "relevant": [
+    "winter#5"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-143",
+   "query": "The car won't start in the cold, what should I do?",
+   "relevant": [
+    "winter#7",
+    "roadside#4"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-144",
+   "query": "ручник у мороз",
+   "relevant": [
+    "winter#6"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-145",
+   "query": "чи доставляєте авто в Буковель",
+   "relevant": [
+    "winter#8"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-146",
+   "query": "незамерзайка і щітка",
+   "relevant": [
+    "winter#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-147",
+   "query": "евакуатор безкоштовно",
+   "relevant": [
+    "roadside#2",
+    "damage#8"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-148",
+   "query": "пробив колесо в дорозі, хто платить",
+   "relevant": [
+    "roadside#3"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-149",
+   "query": "сів акумулятор",
+   "relevant": [
+    "roadside#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-150",
+   "query": "зачинив ключі в машині",
+   "relevant": [
+    "roadside#5"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-151",
+   "query": "red warning light dashboard",
+   "relevant": [
+    "roadside#6"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-152",
+   "query": "чи дадуть іншу машину, якщо ця зламалася",
+   "relevant": [
+    "roadside#7"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-153",
+   "query": "можна самому відремонтувати, а потім ви компенсуєте",
+   "relevant": [
+    "roadside#8"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-154",
+   "query": "цілодобова допомога",
+   "relevant": [
+    "roadside#1"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-155",
+   "query": "штраф з камери швидкості",
+   "relevant": [
+    "fines-parking#1",
+    "damage#9"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-156",
+   "query": "прийшов штраф через місяць після оренди",
+   "relevant": [
+    "fines-parking#3"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-157",
+   "query": "машину забрав евакуатор через паркування",
+   "relevant": [
+    "fines-parking#4"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-158",
+   "query": "оплата паркування",
+   "relevant": [
+    "fines-parking#5"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-159",
+   "query": "Do I need a vignette in Hungary?",
+   "relevant": [
+    "fines-parking#6"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-160",
+   "query": "як я дізнаюся про штраф",
+   "relevant": [
+    "fines-parking#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-161",
+   "query": "штраф за кордоном",
+   "relevant": [
+    "fines-parking#7"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-162",
+   "query": "хочу орендувати машину на пів року",
+   "relevant": [
+    "long-term#1"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-163",
+   "query": "знижка за місяць оренди",
+   "relevant": [
+    "long-term#2"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-164",
+   "query": "хто робить ТО, якщо я беру авто надовго",
+   "relevant": [
+    "long-term#4"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-165",
+   "query": "corporate rental invoice VAT",
+   "relevant": [
+    "long-term#5",
+    "deposit#10"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-166",
+   "query": "можна вписати кількох співробітників як водіїв",
+   "relevant": [
+    "long-term#6"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-167",
+   "query": "гарантійний лист замість депозиту",
+   "relevant": [
+    "long-term#7"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-168",
+   "query": "email підтримки",
+   "relevant": [
+    "support#1"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-169",
+   "query": "чи може чат-бот дати знижку",
+   "relevant": [
+    "support#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-170",
+   "query": "скарга термін розгляду",
+   "relevant": [
+    "support#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-171",
+   "query": "не згоден з тим, що утримали з депозиту",
+   "relevant": [
+    "support#4",
+    "deposit#7"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-172",
+   "query": "забув телефон у машині",
+   "relevant": [
+    "support#5"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-173",
+   "query": "Do your managers speak English?",
+   "relevant": [
+    "support#6"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-174",
+   "query": "робота в таксі Uber",
+   "relevant": [
+    "vehicle-use#1"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-175",
+   "query": "скільки людей можна посадити в машину",
+   "relevant": [
+    "vehicle-use#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-176",
+   "query": "можна перевезти холодильник",
+   "relevant": [
+    "vehicle-use#3"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-177",
+   "query": "бездоріжжя",
+   "relevant": [
+    "vehicle-use#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-178",
+   "query": "Can my friend drive the car for a while?",
+   "relevant": [
+    "vehicle-use#6",
+    "documents#8"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-179",
+   "query": "наліпки на авто",
+   "relevant": [
+    "vehicle-use#7"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-180",
+   "query": "чи можна їхати в зону бойових дій",
+   "relevant": [
+    "vehicle-use#8",
+    "borders#5"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-181",
+   "query": "чим відрізняється SUV від мінівена",
+   "relevant": [
+    "cars#1"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-182",
+   "query": "я отримаю саме ту машину, що на фото, чи схожу",
+   "relevant": [
+    "cars#2",
+    "cars#7"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-183",
+   "query": "авто з механічною коробкою",
+   "relevant": [
+    "cars#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-184",
+   "query": "гібрид зарядка",
+   "relevant": [
+    "cars#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-185",
+   "query": "Which car fits a lot of luggage?",
+   "relevant": [
+    "cars#5"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-186",
+   "query": "рік випуску авто",
+   "relevant": [
+    "cars#6"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-187",
+   "query": "як ви перевіряєте машину перед видачею",
+   "relevant": [
+    "technical#1"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-188",
+   "query": "тиск у шинах",
+   "relevant": [
+    "technical#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-189",
+   "query": "можна долити мастило самому",
+   "relevant": [
+    "technical#4"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-190",
+   "query": "камера заднього огляду",
+   "relevant": [
+    "technical#5"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-191",
+   "query": "Apple CarPlay",
+   "relevant": [
+    "technical#6"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-192",
+   "query": "чи є адаптивний круїз",
+   "relevant": [
+    "technical#7"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-193",
+   "query": "чи треба мені робити ТО під час оренди на тиждень",
+   "relevant": [
+    "technical#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-194",
+   "query": "ви стежите за моєю машиною через GPS",
+   "relevant": [
+    "privacy#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-195",
+   "query": "камери в салоні",
+   "relevant": [
+    "privacy#3"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-196",
+   "query": "скільки ви зберігаєте мої дані",
+   "relevant": [
+    "privacy#4"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-197",
+   "query": "видалити акаунт",
+   "relevant": [
+    "privacy#5"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 4
+  },
+  {
+   "id": "Q-198",
+   "query": "Is my chat with the assistant shared with anyone?",
+   "relevant": [
+    "privacy#6"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-199",
+   "query": "ви зберігаєте дані моєї картки",
+   "relevant": [
+    "privacy#1"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-200",
+   "query": "доставка Бориспіль ціна",
+   "relevant": [
+    "airport#1",
+    "extras#8"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 5
+  },
+  {
+   "id": "Q-201",
+   "query": "рейс затримується, ви дочекаєтесь",
+   "relevant": [
+    "airport#3"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-202",
+   "query": "нічний рейс видача",
+   "relevant": [
+    "airport#4",
+    "pickup#4"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 1
+  },
+  {
+   "id": "Q-203",
+   "query": "де мене зустрінуть в аеропорту",
+   "relevant": [
+    "airport#2"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 3
+  },
+  {
+   "id": "Q-204",
+   "query": "доставка на вокзал",
+   "relevant": [
+    "airport#5"
+   ],
+   "split": "cv",
+   "kind": "keyword",
+   "lang": "uk",
+   "origin": "expanded-kb",
+   "fold": 2
+  },
+  {
+   "id": "Q-205",
+   "query": "Who pays for airport parking when I return the car?",
+   "relevant": [
+    "airport#6"
+   ],
+   "split": "cv",
+   "kind": "descriptive",
+   "lang": "en",
+   "origin": "expanded-kb",
+   "fold": 3
+  }
+ ]
 }
