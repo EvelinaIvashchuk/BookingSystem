@@ -144,7 +144,7 @@ public static partial class DateGrounding
     // 1–2 digits, optionally "-го"/"th"; not part of a longer number, not a time ("10:00"), not a car number ("№17"),
     // not followed by a unit (seats, people, money, km, years, horsepower).
     [GeneratedRegex(
-        @"(?<![\d:])(?<!(?:№|#|номер\w*|id)\s*)(?<n>\d{1,2})(?:-?(?:го|е|ого|st|nd|rd|th))?(?![\d:])(?!\s*(?:-\s*)?(?:місц|місн|міс\b|осіб|особ|люд|пасаж|грн|грив|uah|₴|\$|€|%|км|km|seat|people|person|passeng|рок|рік|year|к\.?с|hp|тис|k\b|л\b|дн|день|доб|day|night|ноч|тижн|тижд|week|місяц|month|год|hour|хв|min))",
+        @"(?<!\d)(?<!\d:)(?<!(?:№|#|номер\w*|id)\s*)(?<n>\d{1,2})(?:-?(?:го|е|ого|st|nd|rd|th))?(?!\d)(?!:\d)(?!\s*(?:-\s*)?(?:місц|місн|міс\b|осіб|особ|люд|пасаж|грн|грив|uah|₴|\$|€|%|км|km|seat|people|person|passeng|рок|рік|year|к\.?с|hp|тис|k\b|л\b|дн|день|доб|day|night|ноч|тижн|тижд|week|місяц|month|год|hour|хв|min))",
         RegexOptions.CultureInvariant)]
     private static partial Regex DayNumberRegex();
 

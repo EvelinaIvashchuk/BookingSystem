@@ -52,6 +52,8 @@ public class DateGroundingTests
     [InlineData("from December 10 for a week", "2026-12-17")]
     [InlineData("на вихідні", "2026-11-23")]
     [InlineData("до кінця місяця", "2026-11-30")]
+    [InlineData("I need a car from December 14 to 17: family of five with a dog.", "2026-12-17")] // E5-agent W-A16
+    [InlineData("з 14 по 17: нас п'ятеро", "2026-12-17")]
     public void ReturnDate_StatedByUser_IsGrounded(string message, string date)
     {
         Grounded(date, isReturn: true, message).Should().BeTrue();
@@ -76,6 +78,7 @@ public class DateGroundingTests
         Grounded("2026-12-05", isReturn: true, "5 місць, з 1 грудня").Should().BeFalse();
         Grounded("2026-12-15", isReturn: true, "до 1500 грн, з 1 грудня").Should().BeFalse();
         Grounded("2026-12-10", isReturn: true, "о 10:00, з 1 грудня").Should().BeFalse();
+        Grounded("2026-12-30", isReturn: true, "о 17:30, з 1 грудня").Should().BeFalse();   // minutes of a time are not a day
         Grounded("2026-12-17", isReturn: true, "авто №17 з 1 грудня").Should().BeFalse();
     }
 
