@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 //   dotnet run --project BookingSystem.Evaluation -- rescore      (re-apply the clarification criterion to stored rows)
 //   dotnet run --project BookingSystem.Evaluation -- grounding-replay  (offline estimate of the date grounding check)
 //   dotnet run --project BookingSystem.Evaluation -- amount-replay     (offline estimate of the amount check, replays tool calls)
+//   dotnet run --project BookingSystem.Evaluation -- ranking-data      (E5: cars + embeddings for tools/ranking/train.py)
 //   dotnet run --project BookingSystem.Evaluation -- security --models gemini:gemini-3.6-flash@3 --max-cost 1.50   (E4)
 // Options: --types simple,faq  --ids S-01,F-02  --delay-ms 2000  --out results/x.csv  --max-cost 4.80
 //          --experiment E1-v2 (label of agent runs; a new label re-runs scenarios already done under E1)
@@ -21,7 +22,7 @@ using Microsoft.Extensions.Logging;
 var command = args.FirstOrDefault()?.ToLowerInvariant();
 if (command is null or "help" or "--help")
 {
-    Console.WriteLine("Commands: index | agent | ablation | security | retrieval | summary | rescore | grounding-replay | amount-replay | security-summary  (see Program.cs)");
+    Console.WriteLine("Commands: index | agent | ablation | security | retrieval | summary | rescore | grounding-replay | amount-replay | ranking-data | security-summary  (see Program.cs)");
     return 0;
 }
 
@@ -62,7 +63,8 @@ try
             var slotModes = Value("--slot-filling") switch { "off" => new[] { false }, "both" => [true, false], _ => [true] };
             var output = OutputPath("agent_runs.csv");
             await ActivatorUtilities.CreateInstance<AgentExperiment>(services).RunAsync(
-                new AgentRunPlan(Value("--experiment") ?? "E1", models, slotModes, output, Set("--types"), Set("--ids"), NullableInt("--delay-ms"), MaxCost()), cts.Token);
+                new AgentRunPlan(Value("--experiment") ?? "E1", models, slotModes, output, Set("--types"), Set("--ids"), NullableInt("--delay-ms"), MaxCost(),
+                    ScenariosFile: Value("--scenarios") ?? "agent_scenarios.json"), cts.Token);
             AgentSummary.Write(output, Path.GetDirectoryName(output)!);
             break;
         }
@@ -129,6 +131,10 @@ try
                 result.Runs, result.DateCalls, result.Flagged, result.Prevented, result.WrongDates, result.FalseBlocks);
             break;
         }
+
+        case "ranking-data":
+            await ActivatorUtilities.CreateInstance<RankingData>(services).RunAsync(paths, cts.Token);
+            break;
 
         case "amount-replay":
         {

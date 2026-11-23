@@ -1,0 +1,36 @@
+{
+ "E5-price": {
+  "scenarios": 20,
+  "searched": 20,
+  "passed_wishes": 14,
+  "used_filters": 14,
+  "hit1": 0.35,
+  "hit1_ci": [
+   0.18119182312398308,
+   0.5671457249315559
+  ],
+  "precision": 0.34750000000000003
+ },
+ "E5-ranked": {
+  "scenarios": 20,
+  "searched": 20,
+  "passed_wishes": 20,
+  "used_filters": 10,
+  "hit1": 0.95,
+  "hit1_ci": [
+   0.7638688045357189,
+   0.9911185512976646
+  ],
+  "precision": 0.8708333333333332
+ },
+ "hit1_paired": {
+  "better": 12,
+  "worse": 0,
+  "mcnemar_p": 0.00048828125
+ },
+ "precision_paired": {
+  "better": 14,
+  "worse": 1,
+  "sign_p": 0.0009765625
+ }
+}

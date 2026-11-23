@@ -1,0 +1,41 @@
+experiment,scenario,searched,wishes_arg,filters,named,names,labels,hit1,precision,best_possible
+E5-ranked,W-A01,True,"Їдемо вчотирьох у Буковель кататися на лижах, буде сніг",minSeats,2,Toyota RAV4; Toyota Sienna,3 0,1,0.5,3
+E5-ranked,W-A02,True,"маленьке й економне для поїздок Києвом, паркуватися в центрі",location,2,Toyota Yaris; Kia Ceed,3 2,1,1.0,3
+E5-ranked,W-A03,True,"шестеро людей, дві валізи",minSeats,3,Toyota Sienna; Citroen Berlingo; Volkswagen Touran,3 3 3,1,1.0,3
+E5-ranked,W-A04,True,"зустрічаю іноземних партнерів, щоб виглядало солідно",,3,Volvo XC90; Mercedes-Benz C-Class Coupe; Tesla Model 3,3 3 3,1,1.0,3
+E5-ranked,W-A05,True,"переїжджаю, коробки і невеликий стіл",,3,Citroen Berlingo; Volkswagen Touran; Toyota Sienna,3 3 3,1,1.0,3
+E5-ranked,W-A06,True,"щось швидке, покататися для настрою",,3,Mercedes-Benz C-Class Coupe; BMW 4 Series; Audi A5 Coupe,3 3 3,1,1.0,3
+E5-ranked,W-A07,True,"двоє малих дітей, візок, поїздка на 600 км",,2,Toyota Sienna; Honda CR-V,3 3,1,1.0,3
+E5-ranked,W-A08,True,кататимусь по місту,fuelType,3,Renault Zoe; Volkswagen ID.3; Hyundai Kona Electric,3 3 2,1,1.0,3
+E5-ranked,W-A09,True,великий пес і дві валізи,,3,Toyota Sienna; Citroen Berlingo; Volvo XC90,3 3 3,1,1.0,3
+E5-ranked,W-A10,True,"long road trip, fuel efficient, four people",minSeats,2,Skoda Superb; Toyota Corolla,3 3,1,1.0,3
+E5-ranked,W-A11,True,"недорого, але щоб влізли три валізи",,4,Citroen Berlingo; Renault Grand Scenic; Volkswagen Touran; Skoda Superb,2 1 1 1,1,0.25,2
+E5-ranked,W-A12,True,"на рибалку розбитими дорогами, з собою купа спорядження",,2,Volvo XC90; Toyota Land Cruiser Prado,3 2,1,1.0,3
+E5-ranked,W-A13,True,"весілля друга, гарне авто",maxPricePerDay,3,Mercedes-Benz C-Class Coupe; BMW 4 Series; Tesla Model 3,3 3 3,1,1.0,3
+E5-ranked,W-A14,True,"поїздка по Європі, комфортна для довгої дороги",transmission,3,Volvo XC90; Ford Galaxy; Toyota RAV4,3 3 3,1,1.0,3
+E5-ranked,W-A15,True,екологічне та недороге,,3,Toyota Yaris; Renault Zoe; Toyota Corolla,2 3 1,1,0.6666666666666666,3
+E5-ranked,W-A16,True,family of five with a dog,minSeats,0,,,0,0.0,3
+E5-ranked,W-A17,True,"нас семеро, їдемо в гори",minSeats,3,Volvo XC90; Toyota Land Cruiser Prado; Mitsubishi Outlander,3 3 3,1,1.0,3
+E5-ranked,W-A18,True,економна машина з великим багажником для поїздок по області,,3,Skoda Octavia; Renault Grand Scenic; Citroen Berlingo,3 3 3,1,1.0,3
+E5-ranked,W-A19,True,"повний привід, зима",transmission,4,Honda CR-V; Toyota RAV4; Mitsubishi Outlander; Volvo XC90,3 3 3 3,1,1.0,3
+E5-ranked,W-A20,True,романтична поїздка на чомусь стильному й швидкому,,3,BMW 4 Series; Audi A5 Coupe; Mercedes-Benz C-Class Coupe,3 3 3,1,1.0,3
+E5-price,W-A01,True,"їдемо вчотирьох у Буковель кататися на лижах, буде сніг",minSeats,3,Skoda Fabia; Renault Clio; Volkswagen Polo,0 0 0,0,0.0,3
+E5-price,W-A02,True,"маленьке й економне для поїздок Києвом, паркуватися в центрі",location,3,Toyota Yaris; Kia Ceed; Skoda Octavia,3 2 1,1,0.6666666666666666,3
+E5-price,W-A03,True,"шестеро людей, дві великі валізи",minSeats,4,Citroen Berlingo; Renault Grand Scenic; Volkswagen Touran; Ford Galaxy,3 3 3 3,1,1.0,3
+E5-price,W-A04,True,,carName,0,,,0,0.0,3
+E5-price,W-A05,True,"переїжджаю, треба перевезти коробки і невеликий стіл",,5,Skoda Fabia; Renault Clio; Volkswagen Polo; Peugeot 208; Volkswagen Golf,0 0 0 0 0,0,0.0,3
+E5-price,W-A06,True,,category,4,BMW 2 Series Coupe; BMW 4 Series; Audi A5 Coupe; Mercedes-Benz C-Class Coupe,3 3 3 3,1,1.0,3
+E5-price,W-A07,True,"з двома малими дітьми й візком, поїздка на 600 км",,5,Skoda Fabia; Renault Clio; Volkswagen Polo; Peugeot 208; Volkswagen Golf,1 1 1 1 1,0,0.0,3
+E5-price,W-A08,True,кататимусь по місту,fuelType,5,Renault Zoe; Volkswagen ID.3; Hyundai Kona Electric; BYD Seal; Tesla Model 3,3 3 2 1 2,1,0.8,3
+E5-price,W-A09,True,великий пес і дві валізи,,5,Skoda Fabia; Renault Clio; Volkswagen Polo; Peugeot 208; Volkswagen Golf,0 0 0 0 0,0,0.0,3
+E5-price,W-A10,True,"long road trip, fuel efficient, four people",minSeats,5,Skoda Fabia; Renault Clio; Volkswagen Polo; Peugeot 208; Volkswagen Golf,1 1 1 1 2,0,0.2,3
+E5-price,W-A11,True,"недорого, три валізи",,5,Skoda Fabia; Renault Clio; Volkswagen Polo; Peugeot 208; Volkswagen Golf,0 0 0 0 0,0,0.0,2
+E5-price,W-A12,True,"рибалка, розбиті дороги, купа спорядження",category,3,Renault Duster; Suzuki Vitara; Nissan Qashqai,1 1 0,0,0.0,3
+E5-price,W-A13,True,,"category,maxPricePerDay",4,Mercedes-Benz C-Class Coupe; Audi A5 Coupe; BMW 4 Series; BMW 2 Series Coupe,3 3 3 3,1,1.0,3
+E5-price,W-A14,True,"для поїздки по Європі, комфортна для довгої дороги",transmission,4,Volkswagen Polo; Peugeot 208; Toyota Yaris; Kia Ceed,0 0 0 1,0,0.0,3
+E5-price,W-A15,True,,fuelType,4,Toyota Yaris; Renault Zoe; Toyota Corolla; Volkswagen ID.3,2 3 1 2,1,0.75,3
+E5-price,W-A16,True,family of five with a dog,,0,,,0,0.0,3
+E5-price,W-A17,True,"нас семеро, їдемо в гори",minSeats,5,Citroen Berlingo; Renault Grand Scenic; Volkswagen Touran; Ford Galaxy; Mitsubishi Outlander,0 0 0 0 3,0,0.2,3
+E5-price,W-A18,True,економна машина з великим багажником для поїздок по області,,5,Skoda Fabia; Renault Clio; Volkswagen Polo; Peugeot 208; Volkswagen Golf,0 0 0 0 0,0,0.0,3
+E5-price,W-A19,True,,"category,transmission",3,Hyundai Tucson; Kia Sportage; Honda CR-V,1 1 3,0,0.3333333333333333,3
+E5-price,W-A20,True,,category,5,BMW 2 Series Coupe; BMW 4 Series; Audi A5 Coupe; Mercedes-Benz C-Class Coupe; Chevrolet Camaro,3 3 3 3 2,1,1.0,3

@@ -1,0 +1,3 @@
+experiment,model,slot_filling,type,scenarios,task_success_mean,task_success_std
+E5-price,gemini:gemini-3.6-flash,on,wishes,20,0.95,0
+E5-ranked,gemini:gemini-3.6-flash,on,wishes,20,0.95,0

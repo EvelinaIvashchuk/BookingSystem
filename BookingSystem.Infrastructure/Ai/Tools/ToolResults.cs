@@ -36,7 +36,11 @@ public sealed record CarOffer(
     int Seats,
     string Location,
     decimal PricePerDay,
-    decimal TotalPrice);
+    decimal TotalPrice)
+{
+    /// <summary>Trunk, consumption, drive… — only when the cars are ranked by the user's wishes.</summary>
+    public string? Specs { get; init; }
+}
 
 public sealed record CarSearchResult(
     string PickupDate,

@@ -33,6 +33,12 @@ public static class EvalHost
         builder.Configuration
             .AddJsonFile(Path.Combine(root, "BookingSystem", "appsettings.json"), optional: false)
             .AddJsonFile(Path.Combine(root, "BookingSystem.Evaluation", "appsettings.json"), optional: false)
+            // Ranking model and car specs live in the web project (BookingSystem/CarRanking).
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Ai:CarRanking:ModelPath"] = Path.Combine(root, "BookingSystem", "CarRanking", "car_ranker.json"),
+                ["Ai:CarRanking:SpecsPath"] = Path.Combine(root, "BookingSystem", "CarRanking", "car_specs.json")
+            })
             .AddUserSecrets(typeof(EvalHost).Assembly, optional: true)
             .AddEnvironmentVariables()
             .AddCommandLine(args.Where(a => a.StartsWith("--Ai:") || a.StartsWith("--Evaluation:") || a.StartsWith("--ConnectionStrings:")).ToArray());

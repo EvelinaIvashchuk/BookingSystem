@@ -17,6 +17,7 @@
     <ItemGroup>
         <!-- Rental-policy knowledge base, indexed at startup (see KnowledgeIndexer). -->
         <None Update="KnowledgeBase\**\*.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+        <Content Update="CarRanking\**\*.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     </ItemGroup>
 
     <ItemGroup>

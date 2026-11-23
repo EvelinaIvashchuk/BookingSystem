@@ -32,6 +32,7 @@ public static class AiServiceCollectionExtensions
         services.AddScoped<IFullTextIndex, MySqlFullTextIndex>();
         services.AddScoped<IKnowledgeSearch, KnowledgeSearch>();
         services.AddScoped<KnowledgeIndexer>();
+        services.AddSingleton<Ranking.CarRanker>();
         services.AddHostedService<KnowledgeIndexingHostedService>();
 
         return services;

@@ -1,0 +1,498 @@
+{
+ "now": "2026-11-18T10:00:00",
+ "about": "E5-agent: wish scenarios written before the run (not used to train or tune the ranking model). `needs` is the ground truth for tools/ranking/rubric.py; the scorer ignores it.",
+ "scenarios": [
+  {
+   "id": "W-A01",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "Потрібне авто з 10 по 14 грудня. Їдемо вчотирьох у Буковель кататися на лижах, буде сніг."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-10",
+     "returnDate": "2026-12-14"
+    }
+   },
+   "needs": [
+    {
+     "need": "people",
+     "param": 4
+    },
+    {
+     "need": "offroad",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A02",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "З 5 по 7 грудня хочу щось маленьке й економне для поїздок Києвом, паркуватися в центрі."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-05",
+     "returnDate": "2026-12-07"
+    }
+   },
+   "needs": [
+    {
+     "need": "city",
+     "param": null
+    },
+    {
+     "need": "economy",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A03",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "Шукаю машину з 12 по 19 грудня: нас шестеро, ще й дві валізи."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-12",
+     "returnDate": "2026-12-19"
+    }
+   },
+   "needs": [
+    {
+     "need": "people",
+     "param": 6
+    },
+    {
+     "need": "luggage",
+     "param": 2
+    }
+   ]
+  },
+  {
+   "id": "W-A04",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "Треба авто на 20–22 грудня, зустрічаю іноземних партнерів, щоб виглядало солідно."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-20",
+     "returnDate": "2026-12-22"
+    }
+   },
+   "needs": [
+    {
+     "need": "premium",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A05",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "З 3 по 6 грудня переїжджаю, треба перевезти коробки і невеликий стіл."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-03",
+     "returnDate": "2026-12-06"
+    }
+   },
+   "needs": [
+    {
+     "need": "cargo",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A06",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "Хочу на вихідні 12–14 грудня щось швидке, покататися для настрою."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-12",
+     "returnDate": "2026-12-14"
+    }
+   },
+   "needs": [
+    {
+     "need": "sport",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A07",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "З 8 по 15 грудня поїдемо з двома малими дітьми й візком до бабусі за 600 км."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-08",
+     "returnDate": "2026-12-15"
+    }
+   },
+   "needs": [
+    {
+     "need": "kids",
+     "param": null
+    },
+    {
+     "need": "highway",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A08",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "Потрібне авто з 1 по 4 грудня, хочу спробувати електромобіль, кататимусь по місту."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-01",
+     "returnDate": "2026-12-04"
+    }
+   },
+   "needs": [
+    {
+     "need": "eco",
+     "param": null
+    },
+    {
+     "need": "city",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A09",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "Мені треба машина з 15 по 18 грудня, з нами великий пес і дві валізи."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-15",
+     "returnDate": "2026-12-18"
+    }
+   },
+   "needs": [
+    {
+     "need": "pets",
+     "param": null
+    },
+    {
+     "need": "luggage",
+     "param": 2
+    }
+   ]
+  },
+  {
+   "id": "W-A10",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "I need a car from December 9 to 12 for a long road trip, fuel efficient, four people."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-09",
+     "returnDate": "2026-12-12"
+    }
+   },
+   "needs": [
+    {
+     "need": "highway",
+     "param": null
+    },
+    {
+     "need": "economy",
+     "param": null
+    },
+    {
+     "need": "people",
+     "param": 4
+    }
+   ]
+  },
+  {
+   "id": "W-A11",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "З 6 по 9 грудня, недорого, але щоб влізли три валізи."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-06",
+     "returnDate": "2026-12-09"
+    }
+   },
+   "needs": [
+    {
+     "need": "cheap",
+     "param": null
+    },
+    {
+     "need": "luggage",
+     "param": 3
+    }
+   ]
+  },
+  {
+   "id": "W-A12",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "З 10 по 13 грудня їду на рибалку розбитими дорогами, з собою купа спорядження."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-10",
+     "returnDate": "2026-12-13"
+    }
+   },
+   "needs": [
+    {
+     "need": "offroad",
+     "param": null
+    },
+    {
+     "need": "cargo",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A13",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "З 18 по 21 грудня весілля друга, хочеться гарне авто, бюджет до 4000 грн на день."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-18",
+     "returnDate": "2026-12-21"
+    }
+   },
+   "needs": [
+    {
+     "need": "premium",
+     "param": null
+    },
+    {
+     "need": "budget",
+     "param": 4000
+    }
+   ]
+  },
+  {
+   "id": "W-A14",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "Потрібна машина 2–6 грудня для поїздки по Європі, автомат, комфортна для довгої дороги."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-02",
+     "returnDate": "2026-12-06"
+    }
+   },
+   "needs": [
+    {
+     "need": "automatic",
+     "param": null
+    },
+    {
+     "need": "highway",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A15",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "З 7 по 8 грудня щось екологічне та недороге."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-07",
+     "returnDate": "2026-12-08"
+    }
+   },
+   "needs": [
+    {
+     "need": "eco",
+     "param": null
+    },
+    {
+     "need": "cheap",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A16",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "I need a car from December 14 to 17: family of five with a dog."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-14",
+     "returnDate": "2026-12-17"
+    }
+   },
+   "needs": [
+    {
+     "need": "people",
+     "param": 5
+    },
+    {
+     "need": "pets",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A17",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "З 11 по 15 грудня, нас семеро, їдемо в гори."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-11",
+     "returnDate": "2026-12-15"
+    }
+   },
+   "needs": [
+    {
+     "need": "people",
+     "param": 7
+    },
+    {
+     "need": "offroad",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A18",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "З 4 по 9 грудня треба економна машина з великим багажником для поїздок по області."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-04",
+     "returnDate": "2026-12-09"
+    }
+   },
+   "needs": [
+    {
+     "need": "economy",
+     "param": null
+    },
+    {
+     "need": "luggage",
+     "param": 3
+    }
+   ]
+  },
+  {
+   "id": "W-A19",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "З 16 по 20 грудня хочу авто з повним приводом і автоматом, бо зима."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-16",
+     "returnDate": "2026-12-20"
+    }
+   },
+   "needs": [
+    {
+     "need": "offroad",
+     "param": null
+    },
+    {
+     "need": "automatic",
+     "param": null
+    }
+   ]
+  },
+  {
+   "id": "W-A20",
+   "type": "wishes",
+   "user": null,
+   "turns": [
+    "З 22 по 26 грудня, нас двоє, хочемо романтичну поїздку на чомусь стильному й швидкому."
+   ],
+   "expected": {
+    "tool": "search_available_cars",
+    "args": {
+     "pickupDate": "2026-12-22",
+     "returnDate": "2026-12-26"
+    }
+   },
+   "needs": [
+    {
+     "need": "sport",
+     "param": null
+    },
+    {
+     "need": "premium",
+     "param": null
+    }
+   ]
+  }
+ ]
+}

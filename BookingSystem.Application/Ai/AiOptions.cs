@@ -38,6 +38,8 @@ public sealed class AiOptions
 
     public AmountCheckOptions AmountCheck { get; set; } = new();
 
+    public CarRankingOptions CarRanking { get; set; } = new();
+
     public RateLimitOptions RateLimit { get; set; } = new();
 
     public KnowledgeBaseOptions KnowledgeBase { get; set; } = new();
@@ -82,6 +84,17 @@ public sealed class SlotFillingOptions
 public sealed class AmountCheckOptions
 {
     public bool Enabled { get; set; } = true;
+}
+
+/// <summary>
+/// Ranking of available cars by the user's free-text wishes (<c>Ai:CarRanking</c>) with the model trained by
+/// <c>tools/ranking/train.py</c>. Paths are relative to the content root (or the application folder).
+/// </summary>
+public sealed class CarRankingOptions
+{
+    public bool Enabled { get; set; } = true;
+    public string ModelPath { get; set; } = "CarRanking/car_ranker.json";
+    public string SpecsPath { get; set; } = "CarRanking/car_specs.json";
 }
 
 /// <summary>Limits for <c>POST /Ai/Chat</c> (<c>Ai:RateLimit</c>).</summary>

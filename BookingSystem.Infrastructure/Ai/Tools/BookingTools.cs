@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using BookingSystem.Ai.Dtos;
+using BookingSystem.Ai.Ranking;
 using BookingSystem.Ai.Slots;
 using BookingSystem.Data;
 using BookingSystem.Data.Repositories;
@@ -28,7 +29,8 @@ public sealed class BookingTools(
     IKnowledgeSearch knowledge,
     AgentClock clock,
     AiOptions options,
-    AgentTurnContext turn)
+    AgentTurnContext turn,
+    CarRanker? ranker = null)
 {
     public const string SearchAvailableCarsName = "search_available_cars";
     public const string GetCarDetailsName = "get_car_details";
@@ -98,7 +100,9 @@ public sealed class BookingTools(
         "Finds rental cars that are free for the WHOLE period from pickupDate to returnDate and match optional filters. " +
         "Returns up to 5 cheapest cars with price per day and total price. " +
         "Requires both dates; if the user has not given them, ask the user instead of guessing. " +
-        "When the user names a specific car, pass carName: without it the car may simply not be among the 5 cheapest.")]
+        "When the user names a specific car, pass carName: without it the car may simply not be among the 5 cheapest. " +
+        "When the user describes soft wishes (luggage, family, economy, comfort, mountains, style...), pass them in wishes: " +
+        "the cars are then ranked by fit to the wishes instead of by price.")]
     public async Task<object> SearchAvailableCarsAsync(
         [Description("Pickup date in YYYY-MM-DD format.")] string pickupDate,
         [Description("Return date in YYYY-MM-DD format, after pickupDate.")] string returnDate,
@@ -109,6 +113,7 @@ public sealed class BookingTools(
         [Description("Minimum number of seats.")] int? minSeats = null,
         [Description("Maximum price per day in UAH.")] decimal? maxPricePerDay = null,
         [Description("Make and/or model the user asked for, e.g. \"Toyota Camry\", \"BMW 4 Series\", \"Camry\". Omit if no specific car was named.")] string? carName = null,
+        [Description("Soft wishes in the user's own words that are not exact filters, e.g. \"дві великі валізи, економне\", \"в гори взимку з дітьми\". Omit if there are none.")] string? wishes = null,
         CancellationToken cancellationToken = default)
     {
         if (ParseDates(pickupDate, returnDate) is not { } dates)
@@ -165,12 +170,32 @@ public sealed class BookingTools(
                 note = await NoCarByNameNoteAsync(carName);
         }
 
+        IReadOnlyDictionary<int, CarSpec?>? specs = null;
+        if (!string.IsNullOrWhiteSpace(wishes) && !SlotValues.IsAny(wishes) && cars.Count > 1)
+        {
+            var ranked = ranker is null ? null : await ranker.RankAsync(wishes, cars, cancellationToken);
+            if (ranked is not null)
+            {
+                cars = [.. ranked.Select(r => r.Car)];
+                specs = ranked.ToDictionary(r => r.Car.Id, r => r.Spec);
+                note ??= "Cars are ordered by how well they fit the wishes (learned ranking model), not by price. " +
+                         "Name the top cars and explain the fit briefly using Specs.";
+            }
+            else
+            {
+                note ??= "Ranking by wishes is unavailable right now; cars are ordered by price.";
+            }
+        }
+
         var days = RentalRules.CountDays(pickup, ret);
         var offers = cars.Take(MaxSearchResults)
             .Select(c => new CarOffer(
                 c.Id, c.FullName, c.Category?.Name ?? string.Empty,
                 c.Transmission.ToString(), c.FuelType.ToString(), c.Seats, c.Location,
-                c.PricePerDay, RentalRules.CalculateTotalPrice(c.PricePerDay, pickup, ret)))
+                c.PricePerDay, RentalRules.CalculateTotalPrice(c.PricePerDay, pickup, ret))
+            {
+                Specs = specs is not null && specs.TryGetValue(c.Id, out var spec) ? SpecSummary(spec) : null
+            })
             .ToList();
 
         turn.Cars = cars.Take(MaxSearchResults)
@@ -184,6 +209,21 @@ public sealed class BookingTools(
             note ?? (cars.Count == 0
                 ? "No cars match. Suggest other dates or relaxing filters; do not invent cars."
                 : null));
+    }
+
+    private static string? SpecSummary(CarSpec? spec)
+    {
+        if (spec is null) return null;
+        var ci = CultureInfo.InvariantCulture;
+        var parts = new List<string>();
+        if (spec.TrunkL is { } trunk) parts.Add($"trunk {trunk} L");
+        if (spec.Consumption is { } cons) parts.Add(string.Create(ci, $"{cons:0.0} L/100 km"));
+        if (spec.EvRangeKm is { } range) parts.Add($"range {range} km");
+        if (spec.Awd) parts.Add("AWD");
+        if (spec.LengthMm is { } len) parts.Add(string.Create(ci, $"length {len / 1000.0:0.00} m"));
+        if (spec.PowerHp is { } hp) parts.Add($"{hp} hp");
+        if (spec.Premium) parts.Add("premium");
+        return string.Join(", ", parts);
     }
 
     /// <summary>Tells "the named car is busy on these dates" apart from "there is no such car in the fleet".</summary>
@@ -453,7 +493,8 @@ public sealed class BookingToolsFactory(
     ICarService carService,
     IKnowledgeSearch knowledge,
     AgentClock clock,
-    IOptions<AiOptions> options)
+    IOptions<AiOptions> options,
+    CarRanker? ranker = null)
 {
-    public BookingTools Create(AgentTurnContext turn) => new(uow, carService, knowledge, clock, options.Value, turn);
+    public BookingTools Create(AgentTurnContext turn) => new(uow, carService, knowledge, clock, options.Value, turn, ranker);
 }

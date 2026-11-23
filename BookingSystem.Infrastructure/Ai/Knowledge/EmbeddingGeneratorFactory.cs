@@ -47,8 +47,16 @@ public sealed class QueryEmbeddingCache
         if (_cache.TryGetValue(key, out var cached)) return cached;
 
         var vector = await factory();
-        if (_cache.Count >= MaxEntries) _cache.Clear();
-        _cache[key] = vector;
+        Set(modelId, query, vector);
         return vector;
+    }
+
+    public bool TryGet(string modelId, string text, out float[] vector) =>
+        _cache.TryGetValue(modelId + "\u001f" + text.Trim(), out vector!);
+
+    public void Set(string modelId, string text, float[] vector)
+    {
+        if (_cache.Count >= MaxEntries) _cache.Clear();
+        _cache[modelId + "\u001f" + text.Trim()] = vector;
     }
 }
