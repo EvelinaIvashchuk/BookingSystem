@@ -84,6 +84,21 @@ public sealed class AgentService(
                 text = EmptyReplyText;
             }
 
+            IReadOnlyList<decimal> ungroundedAmounts = [];
+            if (_options.AmountCheck.Enabled && text != EmptyReplyText)
+            {
+                // Amounts may come only from this turn's tool results or from the conversation itself.
+                var check = AmountGrounding.Check(text, [.. turn.ToolOutputs, .. history.Select(m => m.Content), message]);
+                if (check.Changed)
+                {
+                    logger.LogWarning(
+                        "Reply of {Model} for session {SessionId} contained amounts not found in tool results: [{Amounts}]; removed",
+                        model, session.Id, string.Join(", ", check.Ungrounded));
+                    text = check.Text;
+                    ungroundedAmounts = check.Ungrounded;
+                }
+            }
+
             var reply = new AgentReply
             {
                 Text = text,
@@ -93,6 +108,7 @@ public sealed class AgentService(
                 MissingSlots = turn.MissingSlots,
                 AskedDates = DateClarification.DatesToAsk(turn, text),
                 ToolCalls = [.. turn.ToolCalls],
+                UngroundedAmounts = ungroundedAmounts,
                 Model = model,
                 InputTokens = ToInt(response.Usage?.InputTokenCount),
                 OutputTokens = ToInt(BilledOutputTokens(response.Usage)),
@@ -368,6 +384,7 @@ public sealed class AgentService(
         }
 
         stopwatch.Stop();
+        turn.ToolOutputs.Add(SerializeResult(result));
         turn.ToolCalls.Add(new ToolCallRecord(name, argumentsJson, error is null, stopwatch.ElapsedMilliseconds, error)
         {
             EffectiveArgumentsJson = effectiveJson,
@@ -394,6 +411,23 @@ public sealed class AgentService(
 
         return await slotValidator.ValidateAsync(
             toolName, snapshot, turn.ValidationContext(provided), ct);
+    }
+
+    private static string SerializeResult(object? result)
+    {
+        try
+        {
+            return result switch
+            {
+                null => string.Empty,
+                string s => s,
+                _ => JsonSerializer.Serialize(result, result.GetType(), AIJsonUtilities.DefaultOptions)
+            };
+        }
+        catch (NotSupportedException)
+        {
+            return result?.ToString() ?? string.Empty;
+        }
     }
 
     private static string SerializeArguments(AIFunctionArguments arguments) =>

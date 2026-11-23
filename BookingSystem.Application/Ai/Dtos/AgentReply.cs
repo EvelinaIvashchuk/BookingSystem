@@ -30,6 +30,11 @@ public sealed record AgentReply
 
     public IReadOnlyList<ToolCallRecord> ToolCalls { get; init; } = [];
 
+    /// <summary>
+    /// Amounts the model wrote that no tool returned (removed from <see cref="Text"/>); for logs and experiments.
+    /// </summary>
+    public IReadOnlyList<decimal> UngroundedAmounts { get; init; } = [];
+
     public string Model { get; init; } = string.Empty;
     public int? InputTokens { get; init; }
     public int? OutputTokens { get; init; }

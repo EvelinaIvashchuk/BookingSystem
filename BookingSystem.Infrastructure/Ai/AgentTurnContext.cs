@@ -55,6 +55,9 @@ public sealed class AgentTurnContext(
 
     public List<ToolCallRecord> ToolCalls { get; } = [];
 
+    /// <summary>Results of the tools executed in this turn (JSON): the evidence for <see cref="AmountGrounding"/>.</summary>
+    public List<string> ToolOutputs { get; } = [];
+
     /// <summary>Cars returned by the latest successful search, shown as cards in the widget.</summary>
     public IReadOnlyList<CarCardDto> Cars { get; set; } = [];
 

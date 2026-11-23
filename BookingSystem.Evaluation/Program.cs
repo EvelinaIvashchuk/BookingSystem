@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 //   dotnet run --project BookingSystem.Evaluation -- summary
 //   dotnet run --project BookingSystem.Evaluation -- rescore      (re-apply the clarification criterion to stored rows)
 //   dotnet run --project BookingSystem.Evaluation -- grounding-replay  (offline estimate of the date grounding check)
+//   dotnet run --project BookingSystem.Evaluation -- amount-replay     (offline estimate of the amount check, replays tool calls)
 //   dotnet run --project BookingSystem.Evaluation -- security --models gemini:gemini-3.6-flash@3 --max-cost 1.50   (E4)
 // Options: --types simple,faq  --ids S-01,F-02  --delay-ms 2000  --out results/x.csv  --max-cost 4.80
 //          --experiment E1-v2 (label of agent runs; a new label re-runs scenarios already done under E1)
@@ -20,7 +21,7 @@ using Microsoft.Extensions.Logging;
 var command = args.FirstOrDefault()?.ToLowerInvariant();
 if (command is null or "help" or "--help")
 {
-    Console.WriteLine("Commands: index | agent | ablation | security | retrieval | summary | rescore | grounding-replay | security-summary  (see Program.cs)");
+    Console.WriteLine("Commands: index | agent | ablation | security | retrieval | summary | rescore | grounding-replay | amount-replay | security-summary  (see Program.cs)");
     return 0;
 }
 
@@ -39,7 +40,7 @@ try
     {
         await using var scope = services.CreateAsyncScope();
         await ActivatorUtilities.CreateInstance<EvalDatabase>(scope.ServiceProvider)
-            .PrepareAsync(cts.Token, securityPayload: command == "security");
+            .PrepareAsync(cts.Token, securityPayload: command is "security" or "amount-replay");
     }
 
     switch (command)
@@ -105,7 +106,9 @@ try
             await ActivatorUtilities.CreateInstance<AgentExperiment>(services).RunAsync(
                 new AgentRunPlan("E4", models, [true], output, Set("--types"), Set("--ids"), NullableInt("--delay-ms"), MaxCost(),
                     ScenariosFile: "security_scenarios.json"), cts.Token);
-            SecuritySummary.Write(output, Path.GetDirectoryName(output)!);
+            // A custom --out (e.g. a re-run of a few scenarios) must not overwrite summary_security.csv of the full E4.
+            if (Value("--out") is null)
+                SecuritySummary.Write(output, Path.GetDirectoryName(output)!);
             break;
         }
 
@@ -124,6 +127,22 @@ try
             logger.LogInformation(
                 "Grounding replay: {Runs} runs, {Calls} executed calls with dates, {Flagged} ungrounded dates; runs: prevented {Prevented}, wrong dates caught {WrongDates}, false blocks {FalseBlocks}",
                 result.Runs, result.DateCalls, result.Flagged, result.Prevented, result.WrongDates, result.FalseBlocks);
+            break;
+        }
+
+        case "amount-replay":
+        {
+            // Offline estimate of Ai:AmountCheck (see AmountReplay): recorded tool calls are executed again, no model calls.
+            var results = paths.Results;
+            var replay = ActivatorUtilities.CreateInstance<AmountReplay>(services);
+            var result = await replay.RunAsync(
+            [
+                new("agent", Path.Combine(results, "agent_runs.csv"), Path.Combine(paths.Datasets, "agent_scenarios.json")),
+                new("security", Path.Combine(results, "security_runs.csv"), Path.Combine(paths.Datasets, "security_scenarios.json"))
+            ], results, cts.Token);
+            logger.LogInformation(
+                "Amount replay: {Runs} runs, {WithAmounts} replies with amounts, {Changed} changed; task success lost {Lost}, gained {Gained}",
+                result.Runs, result.WithAmounts, result.Changed, result.SuccessLost, result.SuccessGained);
             break;
         }
 

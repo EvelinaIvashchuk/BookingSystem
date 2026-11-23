@@ -36,6 +36,8 @@ public sealed class AiOptions
 
     public SlotFillingOptions SlotFilling { get; set; } = new();
 
+    public AmountCheckOptions AmountCheck { get; set; } = new();
+
     public RateLimitOptions RateLimit { get; set; } = new();
 
     public KnowledgeBaseOptions KnowledgeBase { get; set; } = new();
@@ -71,6 +73,15 @@ public sealed class SlotFillingOptions
     /// Applies only while slot filling is enabled (and in shadow validation for metrics).
     /// </summary>
     public bool RequireGroundedDates { get; set; } = true;
+}
+
+/// <summary>
+/// Check of amounts of money in the agent's reply (<c>Ai:AmountCheck</c>): every amount must come from a tool
+/// result or from the conversation; sentences with any other amount (an applied "discount", a made-up price) are removed.
+/// </summary>
+public sealed class AmountCheckOptions
+{
+    public bool Enabled { get; set; } = true;
 }
 
 /// <summary>Limits for <c>POST /Ai/Chat</c> (<c>Ai:RateLimit</c>).</summary>
