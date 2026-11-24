@@ -128,6 +128,32 @@
         return div;
     }
 
+    // ── Suggestion chips ───────────────────────────────────────────────────────
+    // Follow-up suggestions under the last reply. A chip only sends its text as an ordinary message,
+    // so the agent handles it exactly like typed text. Lists come from SharedResources ("a|b|c").
+    let chipRow = null;
+
+    function chipTexts(key) {
+        return (L[key] || '').split('|').map(function (t) { return t.trim(); }).filter(Boolean);
+    }
+    function removeChips() {
+        if (chipRow) { chipRow.remove(); chipRow = null; }
+    }
+    function appendChips(key) {
+        removeChips();
+        const texts = chipTexts(key);
+        if (!texts.length) return;
+        chipRow = el('div', 'chat-chips');
+        texts.forEach(function (text) {
+            const chip = el('button', 'chat-chip', text);
+            chip.type = 'button';
+            chip.addEventListener('click', function () { if (!busy) sendMessage(text); });
+            chipRow.appendChild(chip);
+        });
+        messages.appendChild(chipRow);
+        scrollDown();
+    }
+
     function appendThinking() {
         const div = el('div', 'chat-msg chat-msg--bot chat-msg--typing');
         div.setAttribute('role', 'status');
@@ -246,6 +272,7 @@
                 link.href = data.url;
                 card.appendChild(link);
             }
+            if (data.ok && action === 'Confirm') appendChips('chipsBooked');
         })
         .catch(function () {
             actions.querySelectorAll('button').forEach(function (b) { b.disabled = false; });
@@ -337,6 +364,7 @@
         if (!text || busy) return;
 
         closeDateForm();
+        removeChips();
         appendMessage(text, 'user');
         input.value = '';
         setBusy(true);
@@ -357,7 +385,10 @@
             appendMessage(data.reply || L.error, 'bot');
             if (Array.isArray(data.cars) && data.cars.length) appendCarCards(data.cars);
             if (data.draft) appendDraftCard(data.draft);
-            if (Array.isArray(data.askedDates) && data.askedDates.length) appendDateForm(data.askedDates);
+            const asksDates = Array.isArray(data.askedDates) && data.askedDates.length;
+            if (asksDates) appendDateForm(data.askedDates);
+            else if (data.draft) appendChips('chipsDraft');
+            else if (Array.isArray(data.cars) && data.cars.length) appendChips('chipsCars');
         })
         .catch(function () {
             thinking.remove();
@@ -367,9 +398,10 @@
     }
 
     function restoreHistory() {
+        chipRow = null;
         messages.replaceChildren();
         appendMessage(L.greeting, 'bot');
-        if (!sessionId) return;
+        if (!sessionId) { appendChips('chipsStart'); return; }
 
         fetch('/Ai/History?sessionId=' + encodeURIComponent(sessionId))
             .then(function (r) {
@@ -377,22 +409,25 @@
                 return r.ok ? r.json() : null;
             })
             .then(function (data) {
-                if (!data) return;
-                (data.messages || []).forEach(function (m) {
+                const history = (data && data.messages) || [];
+                if (!history.length && !(data && data.draft)) { appendChips('chipsStart'); return; }
+                history.forEach(function (m) {
                     appendMessage(m.text, m.role === 'user' ? 'user' : 'bot');
                 });
                 if (data.draft) appendDraftCard(data.draft);
             })
-            .catch(function () { /* history is a convenience; the chat still works */ });
+            .catch(function () { appendChips('chipsStart'); /* history is a convenience; the chat still works */ });
     }
 
     function startNewChat() {
         if (busy) return;
         openDateForm = null;
+        chipRow = null;
         clearSessionId();
         sessionId = null;
         messages.replaceChildren();
         appendMessage(L.greeting, 'bot');
+        appendChips('chipsStart');
         input.focus();
     }
 
@@ -416,6 +451,7 @@
             clearSessionId();
             sessionId = null;
             openDateForm = null;
+            chipRow = null;
             messages.replaceChildren();
             appendMessage(L.greeting, 'bot');
             setOpen(true);

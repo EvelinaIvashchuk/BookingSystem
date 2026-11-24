@@ -260,6 +260,10 @@
   <data name="Chat_SelectMessage" xml:space="preserve"><value>I choose {0} (car #{1})</value></data>
   <data name="Chat_NewChat" xml:space="preserve"><value>New chat</value></data>
   <data name="Chat_Send" xml:space="preserve"><value>Send</value></data>
+  <data name="Chat_ChipsStart" xml:space="preserve"><value>Find a car for the weekend|What deposit is required?|Which documents do I need?|Show my bookings</value></data>
+  <data name="Chat_ChipsCars" xml:space="preserve"><value>Show cheaper options|Automatic transmission only|I need more luggage space</value></data>
+  <data name="Chat_ChipsDraft" xml:space="preserve"><value>What are the cancellation terms?|What should I bring to pick up the car?</value></data>
+  <data name="Chat_ChipsBooked" xml:space="preserve"><value>Show my bookings|What should I bring to pick up the car?</value></data>
   <data name="Chat_DraftTitle" xml:space="preserve"><value>Confirm your booking</value></data>
   <data name="Chat_DraftDates" xml:space="preserve"><value>{0} — {1} ({2} days)</value></data>
   <data name="Chat_DraftTotal" xml:space="preserve"><value>Total: {0} ₴</value></data>

@@ -486,6 +486,23 @@ body {
 .chat-msg--rich .chat-amount { font-weight: 600; white-space: nowrap; }
 .chat-msg--rich .chat-link { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 
+/* Follow-up suggestion chips under the last reply */
+.chat-chips { display: flex; flex-wrap: wrap; gap: .35rem; align-self: flex-start; max-width: 100%; }
+.chat-chip {
+    border: 1px solid var(--cr-violet-100, #ddd6fe);
+    background: #fff;
+    color: var(--cr-violet-800, #4c1d95);
+    border-radius: 999px;
+    padding: .25rem .7rem;
+    font-size: .8rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: left;
+    transition: background-color .15s, border-color .15s;
+}
+.chat-chip:hover { background: var(--cr-violet-50, #f5f3ff); border-color: var(--cr-violet-400, #a78bfa); }
+.chat-chip:focus-visible { outline: 2px solid var(--cr-violet-400, #a78bfa); outline-offset: 2px; }
+
 /* Booking confirmation card */
 .chat-card {
     align-self: stretch;
