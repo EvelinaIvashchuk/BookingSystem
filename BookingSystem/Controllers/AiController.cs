@@ -63,7 +63,7 @@ public class AiController(
         return Ok(new
         {
             sessionId = history.SessionId,
-            messages = history.Messages.Select(m => new { role = m.Role, text = m.Content }),
+            messages = history.Messages.Select(m => new { role = m.Role, text = m.Content, at = DateTime.SpecifyKind(m.CreatedAt, DateTimeKind.Utc) }),
             draft = history.PendingDraft
         });
     }

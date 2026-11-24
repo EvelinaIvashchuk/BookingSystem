@@ -30,7 +30,9 @@
      data-mic-start="@L["Chat_MicStart"]"
      data-mic-stop="@L["Chat_MicStop"]"
      data-mic-denied="@L["Chat_MicDenied"]"
-     data-mic-error="@L["Chat_MicError"]">
+     data-mic-error="@L["Chat_MicError"]"
+     data-copy="@L["Chat_Copy"]"
+     data-copied="@L["Chat_Copied"]">
 
     @* Token for Confirm/Cancel; sent in the RequestVerificationToken header. *@
     @Html.AntiForgeryToken()
@@ -47,11 +49,15 @@
             <button id="chat-new" type="button" title="@L["Chat_NewChat"]" aria-label="@L["Chat_NewChat"]">
                 <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
             </button>
+            @* On phones the chat is full-screen and covers the round toggle, so it gets its own close button. *@
+            <button id="chat-close" type="button" class="d-sm-none" title="@L["Chat_Close"]" aria-label="@L["Chat_Close"]">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
         </div>
         <div id="chat-messages" aria-live="polite"></div>
         <div id="chat-input-area">
-            <input id="chat-input" type="text" placeholder="@L["Chat_Placeholder"]" autocomplete="off" maxlength="1000"
-                   aria-label="@L["Chat_Placeholder"]" />
+            <textarea id="chat-input" rows="1" placeholder="@L["Chat_Placeholder"]" autocomplete="off" maxlength="1000"
+                      aria-label="@L["Chat_Placeholder"]"></textarea>
             @* Voice input (Web Speech API); shown by chat-widget.js only where the browser supports it. *@
             <button id="chat-mic" type="button" class="d-none" title="@L["Chat_MicStart"]" aria-label="@L["Chat_MicStart"]" aria-pressed="false">
                 <i class="bi bi-mic-fill" aria-hidden="true"></i>

@@ -18,6 +18,7 @@
     const sendBtn = document.getElementById('chat-send');
     const newChatBtn = document.getElementById('chat-new');
     const micBtn = document.getElementById('chat-mic');
+    const closeBtn = document.getElementById('chat-close');
     const antiForgeryToken = (widget.querySelector('input[name="__RequestVerificationToken"]') || {}).value || '';
     const locale = document.documentElement.lang || undefined;
 
@@ -59,6 +60,45 @@
         return /^[\w-]+\/[\w.-]+$/.test(url) ? '/image/' + url : null;
     }
     function scrollDown() { messages.scrollTop = messages.scrollHeight; }
+    // Server times are UTC; a time without an offset is read as UTC. Older messages also show the date.
+    function formatTime(at) {
+        const d = at instanceof Date ? at : new Date(/(Z|[+-]\d\d:\d\d)$/.test(at) ? at : at + 'Z');
+        if (isNaN(d.getTime())) return '';
+        return d.toDateString() === new Date().toDateString()
+            ? d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
+            : d.toLocaleString(locale, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    }
+    function copyText(text, button) {
+        function done() {
+            const icon = button.querySelector('i');
+            icon.className = 'bi bi-check2';
+            button.title = L.copied;
+            button.setAttribute('aria-label', L.copied);
+            setTimeout(function () {
+                icon.className = 'bi bi-copy';
+                button.title = L.copy;
+                button.setAttribute('aria-label', L.copy);
+            }, 1500);
+        }
+        function fallback() {
+            const area = el('textarea');
+            area.value = text;
+            area.setAttribute('readonly', '');
+            area.style.position = 'fixed';
+            area.style.opacity = '0';
+            document.body.appendChild(area);
+            area.select();
+            try { if (document.execCommand('copy')) done(); } catch (e) { /* not supported */ }
+            area.remove();
+        }
+        if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback);
+        else fallback();
+    }
+    // The input is a textarea that grows with the text up to a few lines.
+    function autoResize() {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    }
 
     // ── Reply formatting ─────────────────────────────────────────────────────────
     // Replies are plain text (the prompt asks for it and the server strips Markdown); lists come as lines
@@ -116,7 +156,8 @@
     }
 
     // ── Messages ───────────────────────────────────────────────────────────────
-    function appendMessage(text, who) {
+    // at: message time (Date or ISO string); undefined means now, null means no time (the greeting).
+    function appendMessage(text, who, at) {
         let div;
         if (who === 'bot') {
             div = el('div', 'chat-msg chat-msg--bot chat-msg--rich');
@@ -124,9 +165,25 @@
         } else {
             div = el('div', 'chat-msg chat-msg--' + who, text);
         }
+        if (at !== null) div.appendChild(messageMeta(text, who, at === undefined ? new Date() : at));
         messages.appendChild(div);
         scrollDown();
         return div;
+    }
+
+    function messageMeta(text, who, at) {
+        const meta = el('div', 'chat-msg__meta');
+        meta.appendChild(el('span', 'chat-msg__time', formatTime(at)));
+        if (who === 'bot') {
+            const copy = el('button', 'chat-msg__copy');
+            copy.type = 'button';
+            copy.title = L.copy;
+            copy.setAttribute('aria-label', L.copy);
+            copy.appendChild(el('i', 'bi bi-copy'));
+            copy.addEventListener('click', function () { copyText(text, copy); });
+            meta.appendChild(copy);
+        }
+        return meta;
     }
 
     // ── Suggestion chips ───────────────────────────────────────────────────────
@@ -393,6 +450,7 @@
             let heard = '';
             for (let i = 0; i < e.results.length; i++) heard += e.results[i][0].transcript;
             input.value = ((before ? before + ' ' : '') + heard.trim()).slice(0, input.maxLength > 0 ? input.maxLength : 1000);
+            autoResize();
         };
         r.onerror = function (e) {
             if (e.error === 'not-allowed' || e.error === 'service-not-allowed') appendNote(L.micDenied);
@@ -427,6 +485,7 @@
         removeChips();
         appendMessage(text, 'user');
         input.value = '';
+        autoResize();
         setBusy(true);
         const thinking = appendThinking();
 
@@ -460,7 +519,7 @@
     function restoreHistory() {
         chipRow = null;
         messages.replaceChildren();
-        appendMessage(L.greeting, 'bot');
+        appendMessage(L.greeting, 'bot', null);
         if (!sessionId) { appendChips('chipsStart'); return; }
 
         fetch('/Ai/History?sessionId=' + encodeURIComponent(sessionId))
@@ -472,7 +531,7 @@
                 const history = (data && data.messages) || [];
                 if (!history.length && !(data && data.draft)) { appendChips('chipsStart'); return; }
                 history.forEach(function (m) {
-                    appendMessage(m.text, m.role === 'user' ? 'user' : 'bot');
+                    appendMessage(m.text, m.role === 'user' ? 'user' : 'bot', m.at || null);
                 });
                 if (data.draft) appendDraftCard(data.draft);
             })
@@ -487,13 +546,14 @@
         clearSessionId();
         sessionId = null;
         messages.replaceChildren();
-        appendMessage(L.greeting, 'bot');
+        appendMessage(L.greeting, 'bot', null);
         appendChips('chipsStart');
         input.focus();
     }
 
     function setOpen(open) {
         if (!open) stopVoice();
+        widget.classList.toggle('is-open', open);
         panel.classList.toggle('d-none', !open);
         iconOpen.classList.toggle('d-none', open);
         iconClose.classList.toggle('d-none', !open);
@@ -515,7 +575,7 @@
             openDateForm = null;
             chipRow = null;
             messages.replaceChildren();
-            appendMessage(L.greeting, 'bot');
+            appendMessage(L.greeting, 'bot', null);
             setOpen(true);
             sendMessage(text);
         }
@@ -523,6 +583,8 @@
 
     toggle.addEventListener('click', function () { setOpen(panel.classList.contains('d-none')); });
     newChatBtn.addEventListener('click', startNewChat);
+    if (closeBtn) closeBtn.addEventListener('click', function () { setOpen(false); toggle.focus(); });
+    input.addEventListener('input', autoResize);
     sendBtn.addEventListener('click', function () { sendMessage(input.value); });
     input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(input.value); }

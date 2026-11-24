@@ -442,6 +442,17 @@ body {
     cursor: pointer;
 }
 #chat-new:hover { opacity: 1; }
+#chat-close {
+    background: transparent;
+    border: none;
+    color: #fff;
+    opacity: .85;
+    font-size: 1rem;
+    padding: 0 .25rem;
+    margin-left: .35rem;
+    cursor: pointer;
+}
+#chat-close:hover { opacity: 1; }
 
 #chat-messages {
     flex: 1;
@@ -596,7 +607,7 @@ body {
     border-top: 1px solid #dee2e6;
     padding: .5rem .75rem;
     gap: .5rem;
-    align-items: center;
+    align-items: flex-end;
 }
 #chat-input {
     flex: 1;
@@ -604,6 +615,12 @@ body {
     border-radius: 8px;
     padding: .4rem .6rem;
     font-size: .875rem;
+    line-height: 1.45;
+    min-height: 36px;
+    max-height: 120px;
+    resize: none;
+    overflow-y: auto;
+    font-family: inherit;
     outline: none;
     transition: border-color .15s;
 }
@@ -656,6 +673,47 @@ body {
 @media (prefers-reduced-motion: reduce) { #chat-mic.is-listening { animation: none; } }
 .chat-note { align-self: center; max-width: 90%; font-size: .75rem; color: #6c757d; text-align: center; }
 
-@media (max-width: 400px) {
-    #chat-window { width: calc(100vw - 2rem); right: -0.5rem; }
+/* Message time and copy button */
+.chat-msg__meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .35rem;
+    margin-top: .2rem;
+    font-size: .68rem;
+    line-height: 1;
+    white-space: normal;
+}
+.chat-msg--user .chat-msg__meta { color: rgba(255, 255, 255, .75); }
+.chat-msg--bot .chat-msg__meta { color: #6c757d; }
+.chat-msg__copy {
+    border: none;
+    background: transparent;
+    color: inherit;
+    padding: .1rem .15rem;
+    font-size: .8rem;
+    line-height: 1;
+    cursor: pointer;
+    opacity: .6;
+    transition: opacity .15s;
+}
+.chat-msg__copy:hover, .chat-msg__copy:focus-visible { opacity: 1; }
+
+/* Phones: the chat opens full-screen and has its own close button in the header */
+@media (max-width: 575.98px) {
+    #chat-widget { bottom: 1rem; right: 1rem; }
+    #chat-widget.is-open #chat-toggle { display: none; }
+    #chat-widget #chat-window {   /* id prefix: beats the rounded corners set in theme.css */
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        max-height: none;
+        border-radius: 0;
+        border: none;
+    }
+    #chat-messages { max-height: none; }
+    #chat-input { font-size: 16px; }   /* prevents iOS from zooming into the field */
+    #chat-send, #chat-mic { width: 40px; height: 40px; }
 }
