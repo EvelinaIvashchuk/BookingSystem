@@ -19,6 +19,7 @@ public static class AiServiceCollectionExtensions
         services.TryAddSingleton(TimeProvider.System);
         services.AddSingleton<AgentClock>();
         services.AddSingleton<IChatClientFactory, ChatClientFactory>();
+        services.AddScoped<IChatModelSettings, ChatModelSettings>();
         services.AddScoped<BookingToolsFactory>();
         services.AddScoped<ISlotValidator, SlotValidator>();
         services.AddScoped<SlotFillingEngine>();
@@ -36,6 +37,7 @@ public static class AiServiceCollectionExtensions
         services.AddScoped<IKnowledgeSearch, KnowledgeSearch>();
         services.AddScoped<KnowledgeIndexer>();
         services.AddSingleton<Ranking.CarRanker>();
+        services.AddScoped<IRankingModelSettings, Ranking.RankingModelSettings>();
         services.AddHostedService<KnowledgeIndexingHostedService>();
 
         return services;

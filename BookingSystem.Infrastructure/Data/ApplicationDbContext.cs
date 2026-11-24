@@ -18,6 +18,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<ChatSessionMessage> ChatMessages   { get; set; } = null!;
     public DbSet<PendingAction>      PendingActions { get; set; } = null!;
     public DbSet<KnowledgeChunk>     KnowledgeChunks { get; set; } = null!;
+    public DbSet<AppSetting>         AppSettings    { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -201,6 +202,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
             e.HasIndex(c => new { c.DocumentId, c.ChunkIndex }).IsUnique();
             e.HasIndex(c => c.Category);
+        });
+
+        // ── AppSetting ────────────────────────────────────────────────────────
+        builder.Entity<AppSetting>(e =>
+        {
+            e.ToTable("AppSettings");
+            e.HasKey(a => a.Key);
+            e.Property(a => a.Key).IsRequired().HasMaxLength(64);
+            e.Property(a => a.Value).IsRequired().HasMaxLength(256);
         });
     }
 

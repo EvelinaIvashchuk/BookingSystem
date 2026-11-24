@@ -22,6 +22,25 @@ namespace BookingSystem.Data.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("BookingSystem.Models.AppSetting", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("AppSettings", (string)null);
+                });
+
             modelBuilder.Entity("BookingSystem.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")

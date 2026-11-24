@@ -30,7 +30,8 @@ public sealed class BookingTools(
     AgentClock clock,
     AiOptions options,
     AgentTurnContext turn,
-    CarRanker? ranker = null)
+    CarRanker? ranker = null,
+    IRankingModelSettings? rankingModel = null)
 {
     public const string SearchAvailableCarsName = "search_available_cars";
     public const string GetCarDetailsName = "get_car_details";
@@ -173,7 +174,9 @@ public sealed class BookingTools(
         IReadOnlyDictionary<int, CarSpec?>? specs = null;
         if (!string.IsNullOrWhiteSpace(wishes) && !SlotValues.IsAny(wishes) && cars.Count > 1)
         {
-            var ranked = ranker is null ? null : await ranker.RankAsync(wishes, cars, cancellationToken);
+            // The ranking model is the one the administrator chose in the admin panel (LightGBM, MLP or two-tower network).
+            var rankingModelId = rankingModel is null ? null : await rankingModel.GetActiveModelAsync(cancellationToken);
+            var ranked = ranker is null ? null : await ranker.RankAsync(wishes, cars, cancellationToken, rankingModelId);
             if (ranked is not null)
             {
                 cars = [.. ranked.Select(r => r.Car)];
@@ -494,7 +497,8 @@ public sealed class BookingToolsFactory(
     IKnowledgeSearch knowledge,
     AgentClock clock,
     IOptions<AiOptions> options,
-    CarRanker? ranker = null)
+    CarRanker? ranker = null,
+    IRankingModelSettings? rankingModel = null)
 {
-    public BookingTools Create(AgentTurnContext turn) => new(uow, carService, knowledge, clock, options.Value, turn, ranker);
+    public BookingTools Create(AgentTurnContext turn) => new(uow, carService, knowledge, clock, options.Value, turn, ranker, rankingModel);
 }

@@ -125,21 +125,63 @@ public sealed class CarRanker(
 {
     private readonly CarRankingOptions _options = options.Value.CarRanking;
     private readonly Lazy<(CarRankingModel? Model, CarSpecCatalog Specs)> _loaded = new(() => LoadFiles(options.Value.CarRanking, environment, logger));
+    private ICarScorer? _lightGbm;
+    private readonly Lazy<ICarScorer?> _mlp = new(() => LoadNeural(options.Value.CarRanking.MlpModelPath, environment, logger, MlpScorer.Load));
+    private readonly Lazy<ICarScorer?> _twoTower = new(() => LoadNeural(options.Value.CarRanking.TwoTowerModelPath, environment, logger, TwoTowerScorer.Load));
+
+    // LightGBM is read together with the specs (LoadFiles); expose it as a scorer.
+    private ICarScorer? LightGbm => _lightGbm ??= _loaded.Value.Model is { } model ? new LightGbmScorer(model) : null;
 
     public CarSpecCatalog Specs => _loaded.Value.Specs;
 
     public bool IsAvailable => _options.Enabled && _loaded.Value.Model is not null;
 
-    public async Task<IReadOnlyList<RankedCar>?> RankAsync(string wishes, IReadOnlyList<Car> cars, CancellationToken ct = default)
+    /// <summary>Ranking models whose files exist (the weights are not loaded), with their quality on the test wishes.</summary>
+    public IReadOnlyList<RankingModelInfo> AvailableModels()
+    {
+        if (!_options.Enabled) return [];
+        var result = new List<RankingModelInfo>();
+        foreach (var id in RankingModelIds.All)
+        {
+            if (Resolve(PathOf(id), environment) is { } path)
+                result.Add(new RankingModelInfo(id, RankingModelFiles.ReadTestNdcg5(path)));
+        }
+        return result;
+    }
+
+    private string PathOf(string id) => id switch
+    {
+        RankingModelIds.Mlp => _options.MlpModelPath,
+        RankingModelIds.TwoTower => _options.TwoTowerModelPath,
+        _ => _options.ModelPath
+    };
+
+    private ICarScorer? Scorer(string? id) => id switch
+    {
+        RankingModelIds.Mlp => _mlp.Value,
+        RankingModelIds.TwoTower => _twoTower.Value,
+        _ => LightGbm
+    };
+
+    /// <param name="modelId">Ranking model (<see cref="RankingModelIds"/>); <c>null</c> means <see cref="CarRankingOptions.DefaultModel"/>.
+    /// A model whose file cannot be loaded falls back to LightGBM.</param>
+    public async Task<IReadOnlyList<RankedCar>?> RankAsync(string wishes, IReadOnlyList<Car> cars, CancellationToken ct = default, string? modelId = null)
     {
         if (!_options.Enabled || string.IsNullOrWhiteSpace(wishes) || cars.Count == 0) return null;
-        var (model, specs) = _loaded.Value;
-        if (model is null) return null;
-
-        if (!string.Equals(model.EmbeddingModel, embeddings.ModelId, StringComparison.OrdinalIgnoreCase))
+        var specs = _loaded.Value.Specs;
+        var requested = string.IsNullOrWhiteSpace(modelId) ? _options.DefaultModel : modelId;
+        var scorer = Scorer(requested);
+        if (scorer is null && requested != RankingModelIds.LightGbm)
         {
-            logger.LogWarning("Car ranking model was trained with {Trained}, but the embedding model is {Current}; ranking skipped",
-                model.EmbeddingModel, embeddings.ModelId);
+            logger.LogWarning("Ranking model {Model} is unavailable; using {Fallback}", requested, RankingModelIds.LightGbm);
+            scorer = LightGbm;
+        }
+        if (scorer is null) return null;
+
+        if (!string.Equals(scorer.EmbeddingModel, embeddings.ModelId, StringComparison.OrdinalIgnoreCase))
+        {
+            logger.LogWarning("Car ranking model {Model} was trained with {Trained}, but the embedding model is {Current}; ranking skipped",
+                scorer.Id, scorer.EmbeddingModel, embeddings.ModelId);
             return null;
         }
 
@@ -153,14 +195,11 @@ public sealed class CarRanker(
             var texts = cars.Select(c => CarRankingFeatures.CarText(c, specs.Find(c))).ToList();
             var carVectors = await EmbedAllAsync(generator, texts, ct);
 
-            var pcs = model.Project(wishVector);
-            var ranked = new List<RankedCar>(cars.Count);
-            for (var i = 0; i < cars.Count; i++)
-            {
-                var spec = specs.Find(cars[i]);
-                var features = Features(model, CarRankingFeatures.Cosine(wishVector, carVectors[i]), pcs, CarRankingFeatures.CarVector(cars[i], spec));
-                ranked.Add(new RankedCar(cars[i], model.Score(features), spec));
-            }
+            var carSpecs = cars.Select(specs.Find).ToList();
+            var cosines = carVectors.Select(v => CarRankingFeatures.Cosine(wishVector, v)).ToList();
+            var features = cars.Select((c, i) => CarRankingFeatures.CarVector(c, carSpecs[i])).ToList();
+            var scores = scorer.Score(wishVector, cosines, features);
+            var ranked = cars.Select((c, i) => new RankedCar(c, scores[i], carSpecs[i])).ToList();
 
             return [.. ranked.OrderByDescending(r => r.Score).ThenBy(r => r.Car.PricePerDay).ThenBy(r => r.Car.Id)];
         }
@@ -202,6 +241,20 @@ public sealed class CarRanker(
             }
         }
         return [.. result];
+    }
+
+    private static ICarScorer? LoadNeural(string path, IHostEnvironment? environment, ILogger logger, Func<string, ICarScorer> load)
+    {
+        try
+        {
+            if (Resolve(path, environment) is { } resolved) return load(resolved);
+            logger.LogWarning("Neural ranking model {Path} not found", path);
+        }
+        catch (Exception ex) when (ex is IOException or JsonException or InvalidDataException or FormatException or KeyNotFoundException)
+        {
+            logger.LogError(ex, "Neural ranking model {Path} could not be loaded", path);
+        }
+        return null;
     }
 
     private static (CarRankingModel?, CarSpecCatalog) LoadFiles(CarRankingOptions options, IHostEnvironment? environment, ILogger logger)

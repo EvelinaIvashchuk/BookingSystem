@@ -22,6 +22,7 @@ namespace BookingSystem.Ai;
 /// </summary>
 public sealed class AgentService(
     IChatClientFactory chatClientFactory,
+    IChatModelSettings modelSettings,
     IUnitOfWork uow,
     BookingToolsFactory toolsFactory,
     SlotFillingEngine slotFilling,
@@ -46,7 +47,10 @@ public sealed class AgentService(
         AgentChatOptions? chatOptions = null,
         CancellationToken cancellationToken = default)
     {
-        var model = string.IsNullOrWhiteSpace(chatOptions?.Model) ? _options.DefaultModel : chatOptions.Model!;
+        // An explicit model (experiments) wins; otherwise the model the administrator chose in the admin panel.
+        var model = string.IsNullOrWhiteSpace(chatOptions?.Model)
+            ? await modelSettings.GetActiveModelAsync(cancellationToken)
+            : chatOptions.Model!;
 
         var session = await ResolveSessionAsync(sessionId, userId, cancellationToken);
         var history = await uow.ChatSessions.GetRecentMessagesAsync(session.Id, _options.HistoryLength, cancellationToken);

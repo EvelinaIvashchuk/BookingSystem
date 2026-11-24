@@ -1,3 +1,4 @@
+using BookingSystem.Ai;
 using BookingSystem.Resources;
 using BookingSystem.Data;
 using BookingSystem.Enums;
@@ -15,7 +16,8 @@ namespace BookingSystem.Controllers;
 
 [Authorize(Roles = "Admin")]
 public class AdminController(IRentalService rentalService, ICarService carService, IUserService userService,
-    IStorageService storageService, ApplicationDbContext db, IStringLocalizer<SharedResources> localizer) : Controller
+    IStorageService storageService, ApplicationDbContext db, IStringLocalizer<SharedResources> localizer,
+    IChatModelSettings chatModels, IRankingModelSettings rankingModels, Microsoft.Extensions.Options.IOptions<AiOptions> aiOptions) : Controller
 {
     public async Task<IActionResult> Index()
     {
@@ -30,10 +32,51 @@ public class AdminController(IRentalService rentalService, ICarService carServic
             TotalRentals = allRentals.Count,
             PendingRentals = allRentals.Count(r => r.Status == RentalStatus.Pending),
             TodaysRentals = allRentals.Count(r => r.PickupDate.HasValue && r.PickupDate.Value.Date == today),
-            RecentPending = allRentals.Where(r => r.Status == RentalStatus.Pending).Take(10)
+            RecentPending = allRentals.Where(r => r.Status == RentalStatus.Pending).Take(10),
+            ActiveAiModel = await chatModels.GetActiveModelAsync(),
+            AiModels = chatModels.GetAvailableModels(),
+            DefaultAiModel = aiOptions.Value.DefaultModel,
+            ActiveRankingModel = await rankingModels.GetActiveModelAsync(),
+            RankingModels = rankingModels.GetAvailableModels()
         };
 
         return View(vm);
+    }
+
+    /// <summary>Lets an administrator choose the model that ranks cars by the client's wishes; applies from the next search.</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetRankingModel(string model)
+    {
+        try
+        {
+            await rankingModels.SetActiveModelAsync(model);
+            TempData["Success"] = string.Format(localizer["Msg_RankingModelChanged"].Value, localizer[$"Ranking_{model.Trim()}"].Value);
+        }
+        catch (ArgumentException)
+        {
+            TempData["Error"] = localizer["Msg_RankingModelInvalid"].Value;
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    /// <summary>Lets an administrator choose the model the chat uses; applies from the next message.</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetAiModel(string model)
+    {
+        try
+        {
+            await chatModels.SetActiveModelAsync(model);
+            TempData["Success"] = string.Format(localizer["Msg_AiModelChanged"].Value, model.Trim());
+        }
+        catch (ArgumentException)
+        {
+            TempData["Error"] = localizer["Msg_AiModelInvalid"].Value;
+        }
+
+        return RedirectToAction(nameof(Index));
     }
     
     public async Task<IActionResult> Cars()

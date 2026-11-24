@@ -20,10 +20,16 @@ public class AgentServiceTests : IAsyncLifetime
     private static readonly DateTimeOffset UtcNow = new(2026, 11, 20, 8, 0, 0, TimeSpan.Zero);
 
     private readonly Mock<IChatClientFactory> _factory = new();
+    private readonly Mock<IChatModelSettings> _modelSettings = new();
     private readonly AiOptions _options = new() { DefaultModel = "groq:test-model", HistoryLength = 12 };
     private readonly ApplicationDbContext _db = TestDbContextFactory.Create();
 
-    public Task InitializeAsync() => AiTestData.SeedAsync(_db);
+    public Task InitializeAsync()
+    {
+        // Until an administrator chooses a model, the configured default is used.
+        _modelSettings.Setup(m => m.GetActiveModelAsync(It.IsAny<CancellationToken>())).ReturnsAsync(_options.DefaultModel);
+        return AiTestData.SeedAsync(_db);
+    }
 
     public Task DisposeAsync()
     {
@@ -39,6 +45,7 @@ public class AgentServiceTests : IAsyncLifetime
 
         return new AgentService(
             _factory.Object,
+            _modelSettings.Object,
             uow,
             new BookingToolsFactory(uow, AiTestData.CreateCarService(_db), Mock.Of<IKnowledgeSearch>(),
                 new AgentClock(new FixedTimeProvider(UtcNow), options), options),
@@ -58,6 +65,30 @@ public class AgentServiceTests : IAsyncLifetime
     }
 
     // ── Basic turn ───────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task ChatAsync_UsesModelChosenByAdministrator()
+    {
+        _modelSettings.Setup(m => m.GetActiveModelAsync(It.IsAny<CancellationToken>())).ReturnsAsync("gemini:admin-choice");
+        _factory.Setup(f => f.Create("gemini:admin-choice")).Returns(FakeChatClient.Replying("ok"));
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "hi");
+
+        reply.Model.Should().Be("gemini:admin-choice");
+        _factory.Verify(f => f.Create("gemini:admin-choice"), Times.Once);
+    }
+
+    [Fact]
+    public async Task ChatAsync_ExplicitModelOverridesAdministratorChoice()
+    {
+        _modelSettings.Setup(m => m.GetActiveModelAsync(It.IsAny<CancellationToken>())).ReturnsAsync("gemini:admin-choice");
+        _factory.Setup(f => f.Create("groq:experiment")).Returns(FakeChatClient.Replying("ok"));
+
+        var reply = await CreateSut().ChatAsync(Guid.Empty, null, "hi", new AgentChatOptions { Model = "groq:experiment" });
+
+        reply.Model.Should().Be("groq:experiment");
+        _modelSettings.Verify(m => m.GetActiveModelAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
 
     [Fact]
     public async Task ChatAsync_ReplyAskingForDates_OffersDateInputs()

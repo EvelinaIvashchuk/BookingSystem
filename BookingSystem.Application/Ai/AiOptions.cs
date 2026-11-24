@@ -95,6 +95,13 @@ public sealed class CarRankingOptions
     public bool Enabled { get; set; } = true;
     public string ModelPath { get; set; } = "CarRanking/car_ranker.json";
     public string SpecsPath { get; set; } = "CarRanking/car_specs.json";
+
+    /// <summary>Neural ranking models (E6): ensembles of 5 networks exported by <c>tools/ranking/export_nn.py</c>.</summary>
+    public string MlpModelPath { get; set; } = "CarRanking/car_ranker_mlp.json";
+    public string TwoTowerModelPath { get; set; } = "CarRanking/car_ranker_two_tower.json";
+
+    /// <summary>Model used until an administrator chooses another: <c>lightgbm</c>, <c>mlp</c> or <c>two_tower</c>.</summary>
+    public string DefaultModel { get; set; } = "lightgbm";
 }
 
 /// <summary>Limits for <c>POST /Ai/Chat</c> (<c>Ai:RateLimit</c>).</summary>

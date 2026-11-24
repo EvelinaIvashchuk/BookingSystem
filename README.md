@@ -91,7 +91,8 @@ dotnet run --project BookingSystem
 
 | Ключ | Значення за замовчуванням | Призначення |
 |---|---|---|
-| `DefaultModel` | `gemini:gemini-3.6-flash` | модель чату, `provider:model`; змінюється без зміни коду (обрано за E1) |
+| `DefaultModel` | `gemini:gemini-3.6-flash` | модель чату за замовчуванням, `provider:model` (обрано за E1). Адміністратор може обрати іншу в панелі адміністратора (блок «AI-асистент»): вибір зберігається в таблиці `AppSettings` і діє з наступного повідомлення; у списку — `DefaultModel` і моделі з `Pricing`, для провайдерів із ключем |
+| `CarRanking:DefaultModel`, `ModelPath`, `MlpModelPath`, `TwoTowerModelPath` | `lightgbm`, `CarRanking/car_ranker*.json` | модель, що впорядковує авто за побажаннями: `lightgbm` (E5), `mlp` або `two_tower` (нейромережі E6, ансамбль із 5 мереж; ваги float16, обчислюються в C# без ML-бібліотек). Адміністратор обирає модель у панелі адміністратора (блок «AI-асистент»), вибір діє з наступного пошуку. Файли моделей створюють `tools/ranking/train.py` та `tools/ranking/export_nn.py` |
 | `Providers:<name>:Endpoint`, `ApiKey`, `TimeoutSeconds` | Groq, Gemini | OpenAI-сумісні провайдери |
 | `Temperature`, `MaxOutputTokens`, `MaxAgentIterations`, `HistoryLength` | 0.2, 1024, 5, 12 | параметри агента |
 | `SlotFilling:Enabled` | `true` | внесок 1 (вимкнення — базовий варіант для ablation) |

@@ -407,6 +407,18 @@
   <data name="Admin_Reject" xml:space="preserve"><value>Reject</value></data>
   <data name="Admin_AiTitle" xml:space="preserve"><value>AI assistant</value></data>
   <data name="Admin_AiModel" xml:space="preserve"><value>Model</value></data>
+  <data name="Admin_AiModelSave" xml:space="preserve"><value>Save</value></data>
+  <data name="Admin_AiModelHint" xml:space="preserve"><value>Applies from the next chat message. Price: $ per 1M tokens (input / output).</value></data>
+  <data name="Admin_AiModelDefault" xml:space="preserve"><value>Default</value></data>
+  <data name="Msg_AiModelChanged" xml:space="preserve"><value>Chat model changed to {0}.</value></data>
+  <data name="Msg_AiModelInvalid" xml:space="preserve"><value>This model is not available.</value></data>
+  <data name="Admin_RankingModel" xml:space="preserve"><value>Car ranking model</value></data>
+  <data name="Admin_RankingModelHint" xml:space="preserve"><value>Orders cars by the client's wishes. NDCG@5 is the quality on the held-out test wishes. Applies from the next search.</value></data>
+  <data name="Ranking_lightgbm" xml:space="preserve"><value>LightGBM</value></data>
+  <data name="Ranking_mlp" xml:space="preserve"><value>Neural network MLP</value></data>
+  <data name="Ranking_two_tower" xml:space="preserve"><value>Two-tower network</value></data>
+  <data name="Msg_RankingModelChanged" xml:space="preserve"><value>Car ranking model changed to {0}.</value></data>
+  <data name="Msg_RankingModelInvalid" xml:space="preserve"><value>This ranking model is not available.</value></data>
   <data name="Admin_AiSearch" xml:space="preserve"><value>Knowledge base search</value></data>
   <data name="Admin_AiSlotFilling" xml:space="preserve"><value>Slot filling</value></data>
   <data name="Common_On" xml:space="preserve"><value>on</value></data>
