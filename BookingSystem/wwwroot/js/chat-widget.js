@@ -1,6 +1,7 @@
 // CarRental AI assistant widget.
 // Security: everything that comes from the server or the model is inserted with textContent
-// (or as attribute values that are validated), never as HTML.
+// (or as attribute values that are validated), never as HTML. Reply formatting (paragraphs, lists,
+// links, amounts) builds DOM nodes from plain text; nothing is parsed as markup.
 (function () {
     'use strict';
 
@@ -58,9 +59,70 @@
     }
     function scrollDown() { messages.scrollTop = messages.scrollHeight; }
 
+    // ── Reply formatting ─────────────────────────────────────────────────────────
+    // Replies are plain text (the prompt asks for it and the server strips Markdown); lists come as lines
+    // starting with "- ". Rendered as paragraphs and lists, with phone numbers and e-mails as links and
+    // amounts in hryvnias highlighted.
+    const INLINE_RE = /(\+380[\d ]{8,13}\d)|([\w.+-]+@[\w-]+(?:\.[\w-]+)+)|(\d[\d\u00a0\u202f ]*(?:[.,]\d+)?[\u00a0 ]?(?:₴|грн\.?|UAH))/g;
+    const LIST_RE = /^\s*(?:([-–•])|(\d{1,2})[.)])\s+(.+)$/;
+
+    function appendInline(parent, text) {
+        let last = 0;
+        INLINE_RE.lastIndex = 0;
+        let m;
+        while ((m = INLINE_RE.exec(text)) !== null) {
+            if (m.index > last) parent.appendChild(document.createTextNode(text.slice(last, m.index)));
+            let node;
+            if (m[1]) {
+                node = el('a', 'chat-link', m[1]);
+                node.href = 'tel:' + m[1].replace(/\s+/g, '');
+            } else if (m[2]) {
+                node = el('a', 'chat-link', m[2]);
+                node.href = 'mailto:' + m[2];
+            } else {
+                node = el('strong', 'chat-amount', m[3]);
+            }
+            parent.appendChild(node);
+            last = INLINE_RE.lastIndex;
+        }
+        if (last < text.length) parent.appendChild(document.createTextNode(text.slice(last)));
+    }
+
+    function renderReply(container, text) {
+        let paragraph = null;
+        let list = null;
+        String(text).split(/\r?\n/).forEach(function (line) {
+            const item = LIST_RE.exec(line);
+            if (item) {
+                const tag = item[2] ? 'ol' : 'ul';
+                if (!list || list.tagName.toLowerCase() !== tag) {
+                    list = el(tag);
+                    if (item[2] && item[2] !== '1') list.start = +item[2];
+                    container.appendChild(list);
+                }
+                const li = el('li');
+                appendInline(li, item[3]);
+                list.appendChild(li);
+                paragraph = null;
+                return;
+            }
+            if (!line.trim()) { paragraph = null; list = null; return; }
+            list = null;
+            if (paragraph) paragraph.appendChild(el('br'));
+            else { paragraph = el('p'); container.appendChild(paragraph); }
+            appendInline(paragraph, line.trim());
+        });
+    }
+
     // ── Messages ───────────────────────────────────────────────────────────────
     function appendMessage(text, who) {
-        const div = el('div', 'chat-msg chat-msg--' + who, text);
+        let div;
+        if (who === 'bot') {
+            div = el('div', 'chat-msg chat-msg--bot chat-msg--rich');
+            renderReply(div, text);
+        } else {
+            div = el('div', 'chat-msg chat-msg--' + who, text);
+        }
         messages.appendChild(div);
         scrollDown();
         return div;

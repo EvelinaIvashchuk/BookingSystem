@@ -475,6 +475,16 @@ body {
     border-bottom-left-radius: 3px;
     white-space: pre-line;
 }
+/* Formatted replies: paragraphs and lists are built by chat-widget.js from plain text. */
+.chat-msg--rich { white-space: normal; }
+.chat-msg--rich p { margin: 0; }
+.chat-msg--rich p + p,
+.chat-msg--rich p + ul, .chat-msg--rich p + ol,
+.chat-msg--rich ul + p, .chat-msg--rich ol + p { margin-top: .4rem; }
+.chat-msg--rich ul, .chat-msg--rich ol { margin: 0; padding-left: 1.15rem; }
+.chat-msg--rich li + li { margin-top: .15rem; }
+.chat-msg--rich .chat-amount { font-weight: 600; white-space: nowrap; }
+.chat-msg--rich .chat-link { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 
 /* Booking confirmation card */
 .chat-card {
