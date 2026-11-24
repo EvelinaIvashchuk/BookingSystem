@@ -1,0 +1,15 @@
+{
+ "mlp": {
+  "epochs": 59,
+  "train_seconds_one_network": 3.5,
+  "inference_ms_per_wish_mean": 0.37,
+  "inference_ms_per_wish_p95": 0.42
+ },
+ "two_tower": {
+  "epochs": 50,
+  "train_seconds_one_network": 4.8,
+  "inference_ms_per_wish_mean": 0.09,
+  "inference_ms_per_wish_p95": 0.1
+ },
+ "device": "CPU, torch 2.8.0, 4 threads"
+}

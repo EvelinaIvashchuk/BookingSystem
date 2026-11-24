@@ -1,0 +1,38 @@
+{
+ "split": "test",
+ "models": {
+  "gemini-3.6-flash": {
+   "wishes": 160,
+   "incomplete_rankings": 0,
+   "metrics": {
+    "ndcg5": 0.9011503258638183,
+    "p5": 0.8712500000000001,
+    "hit1": 0.94375,
+    "mrr": 0.9611057692307693
+   },
+   "prompt_tokens": 853336,
+   "completion_tokens": 6666,
+   "thinking_tokens": 291294,
+   "cost_usd": 1.7574,
+   "latency_s_mean": 9.187000000000001,
+   "latency_s_p95": 12.862999999999996
+  },
+  "gemini-3.5-flash-lite": {
+   "wishes": 160,
+   "incomplete_rankings": 0,
+   "metrics": {
+    "ndcg5": 0.8270713553323439,
+    "p5": 0.8262499999999999,
+    "hit1": 0.8875,
+    "mrr": 0.92329346001221
+   },
+   "prompt_tokens": 853336,
+   "completion_tokens": 8538,
+   "thinking_tokens": 0,
+   "cost_usd": 0.2773,
+   "latency_s_mean": 0.8848749999999999,
+   "latency_s_p95": 1.0109999999999997
+  }
+ },
+ "top": 10
+}

@@ -1,0 +1,32 @@
+{
+ "mlp": {
+  "file": "BookingSystem/CarRanking/car_ranker_mlp.json",
+  "file_mb": 1.08,
+  "raw_blob_mb": 0.87,
+  "params_per_network": 46593,
+  "networks": 5,
+  "test_float32": 0.945344423098252,
+  "test_float16_export": {
+   "ndcg5": 0.945344423098252,
+   "p5": 0.8875,
+   "hit1": 0.96875,
+   "mrr": 0.9833333333333334
+  },
+  "max_abs_diff_vs_torch_float32_probe": 0.0012332896441238361
+ },
+ "two_tower": {
+  "file": "BookingSystem/CarRanking/car_ranker_two_tower.json",
+  "file_mb": 20.32,
+  "raw_blob_mb": 16.53,
+  "params_per_network": 1650304,
+  "networks": 5,
+  "test_float32": 0.9622693440210724,
+  "test_float16_export": {
+   "ndcg5": 0.9622693440210724,
+   "p5": 0.9075000000000001,
+   "hit1": 0.99375,
+   "mrr": 0.996875
+  },
+  "max_abs_diff_vs_torch_float32_probe": 0.00035640040332429734
+ }
+}
