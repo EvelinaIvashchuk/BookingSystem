@@ -17,7 +17,7 @@ namespace BookingSystem.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminController(IRentalService rentalService, ICarService carService, IUserService userService,
     IStorageService storageService, ApplicationDbContext db, IStringLocalizer<SharedResources> localizer,
-    IChatModelSettings chatModels, IRankingModelSettings rankingModels, IKnowledgeSearchSettings searchSettings, Microsoft.Extensions.Options.IOptions<AiOptions> aiOptions) : Controller
+    IChatModelSettings chatModels, IRankingModelSettings rankingModels, IKnowledgeSearchSettings searchSettings) : Controller
 {
     public async Task<IActionResult> Index()
     {
@@ -35,7 +35,6 @@ public class AdminController(IRentalService rentalService, ICarService carServic
             RecentPending = allRentals.Where(r => r.Status == RentalStatus.Pending).Take(10),
             ActiveAiModel = await chatModels.GetActiveModelAsync(),
             AiModels = chatModels.GetAvailableModels(),
-            DefaultAiModel = aiOptions.Value.DefaultModel,
             ActiveRankingModel = await rankingModels.GetActiveModelAsync(),
             RankingModels = rankingModels.GetAvailableModels(),
             ActiveSearchMode = await searchSettings.GetActiveModeAsync(),

@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Options;
 using Moq;
 
 namespace BookingSystem.Tests.Controllers;
@@ -39,7 +38,7 @@ public class AdminAiSettingsTests
 
         var controller = new AdminController(Mock.Of<IRentalService>(), Mock.Of<ICarService>(), Mock.Of<IUserService>(),
             Mock.Of<IStorageService>(), TestDbContextFactory.Create(), localizer.Object,
-            _chat.Object, _ranking.Object, _search.Object, Options.Create(new AiOptions()));
+            _chat.Object, _ranking.Object, _search.Object);
         controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
         return controller;
     }

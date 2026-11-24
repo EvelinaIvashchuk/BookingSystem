@@ -407,17 +407,23 @@
   <data name="Admin_Reject" xml:space="preserve"><value>Відхилити</value></data>
   <data name="Admin_AiTitle" xml:space="preserve"><value>AI-асистент</value></data>
   <data name="Admin_AiModel" xml:space="preserve"><value>Модель</value></data>
+  <data name="Admin_AiHelpTitle" xml:space="preserve"><value>Яку модель обрати?</value></data>
+  <data name="Admin_AiHelpRecommended" xml:space="preserve"><value>Рекомендовано</value></data>
+  <data name="Admin_AiHelpChatBest" xml:space="preserve"><value>gemini-3.6-flash</value></data>
+  <data name="Admin_AiHelpChat" xml:space="preserve"><value>У тесті з 74 сценаріїв вона виконала 98,6 % без помилок в аргументах, а gpt-oss-120b (Groq) — 91,9 %. Відповідь займає близько 5 с і коштує близько 0,5 цента за сценарій. gpt-oss швидша (близько 1,3 с) і безкоштовна, але помиляється частіше: годиться для демонстрації чи перевірок.</value></data>
+  <data name="Admin_AiHelpRankBest" xml:space="preserve"><value>Двобаштова мережа</value></data>
+  <data name="Admin_AiHelpRank" xml:space="preserve"><value>Найточніша на тестових побажаннях: NDCG@5 0,962 проти 0,945 у MLP та 0,895 у LightGBM. Усі три працюють за соті частки мілісекунди й безкоштовно. LightGBM — вибір за замовчуванням, його перевірено в роботі агента; нейромережі перевірено поки лише на тестових побажаннях.</value></data>
+  <data name="Admin_AiHelpSearchBest" xml:space="preserve"><value>Гібридний (адаптивний) або Векторний</value></data>
+  <data name="Admin_AiHelpSearch" xml:space="preserve"><value>На 205 тестових запитах вони майже однакові (MRR@10 близько 0,96). Гібридний RRF слабший (0,86), повнотекстовий найслабший (0,61): обирайте його лише коли недоступні ембединги Gemini.</value></data>
+  <data name="Admin_AiHelpSource" xml:space="preserve"><value>За результатами експериментів E1, E3 і E6.</value></data>
+  <data name="Common_Close" xml:space="preserve"><value>Закрити</value></data>
   <data name="Admin_AiModelSave" xml:space="preserve"><value>Зберегти</value></data>
-  <data name="Admin_AiModelHint" xml:space="preserve"><value>Діє з наступного повідомлення в чаті. Ціна: $ за 1 млн токенів (вхід / вихід).</value></data>
-  <data name="Admin_AiModelDefault" xml:space="preserve"><value>За замовчуванням</value></data>
   <data name="Msg_AiSettingsSaved" xml:space="preserve"><value>Налаштування AI-асистента збережено.</value></data>
   <data name="Msg_AiSettingsInvalid" xml:space="preserve"><value>Деякі з обраних значень недоступні; нічого не збережено.</value></data>
   <data name="Admin_RankingModel" xml:space="preserve"><value>Модель ранжування авто</value></data>
-  <data name="Admin_RankingModelHint" xml:space="preserve"><value>Упорядковує авто за побажаннями клієнта. NDCG@5 — якість на відкладених тестових побажаннях. Діє з наступного пошуку.</value></data>
   <data name="Ranking_lightgbm" xml:space="preserve"><value>LightGBM</value></data>
   <data name="Ranking_mlp" xml:space="preserve"><value>Нейромережа MLP</value></data>
   <data name="Ranking_two_tower" xml:space="preserve"><value>Двобаштова мережа</value></data>
-  <data name="Admin_SearchHint" xml:space="preserve"><value>Як агент шукає у базі правил оренди. Діє з наступного запитання.</value></data>
   <data name="Search_Vector" xml:space="preserve"><value>Векторний</value></data>
   <data name="Search_FullText" xml:space="preserve"><value>Повнотекстовий</value></data>
   <data name="Search_HybridRrf" xml:space="preserve"><value>Гібридний (RRF)</value></data>

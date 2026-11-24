@@ -407,17 +407,23 @@
   <data name="Admin_Reject" xml:space="preserve"><value>Reject</value></data>
   <data name="Admin_AiTitle" xml:space="preserve"><value>AI assistant</value></data>
   <data name="Admin_AiModel" xml:space="preserve"><value>Model</value></data>
+  <data name="Admin_AiHelpTitle" xml:space="preserve"><value>Which one to choose?</value></data>
+  <data name="Admin_AiHelpRecommended" xml:space="preserve"><value>Recommended</value></data>
+  <data name="Admin_AiHelpChatBest" xml:space="preserve"><value>gemini-3.6-flash</value></data>
+  <data name="Admin_AiHelpChat" xml:space="preserve"><value>In the test with 74 scenarios it completed 98.6 % with no argument errors, against 91.9 % for gpt-oss-120b (Groq). A reply takes about 5 s and costs about half a cent per scenario. gpt-oss is faster (about 1.3 s) and free, but makes more mistakes: fine for demos and checks.</value></data>
+  <data name="Admin_AiHelpRankBest" xml:space="preserve"><value>Two-tower network</value></data>
+  <data name="Admin_AiHelpRank" xml:space="preserve"><value>The most accurate on the test wishes: NDCG@5 0.962 against 0.945 for the MLP and 0.895 for LightGBM. All three take a fraction of a millisecond and are free. LightGBM is the default and has been checked in the agent; the networks have so far only been checked on the test wishes.</value></data>
+  <data name="Admin_AiHelpSearchBest" xml:space="preserve"><value>Hybrid (adaptive) or Vector</value></data>
+  <data name="Admin_AiHelpSearch" xml:space="preserve"><value>On 205 test queries they are almost equal (MRR@10 about 0.96). Hybrid RRF is weaker (0.86) and full-text the weakest (0.61): choose it only when Gemini embeddings are unavailable.</value></data>
+  <data name="Admin_AiHelpSource" xml:space="preserve"><value>Based on experiments E1, E3 and E6.</value></data>
+  <data name="Common_Close" xml:space="preserve"><value>Close</value></data>
   <data name="Admin_AiModelSave" xml:space="preserve"><value>Save</value></data>
-  <data name="Admin_AiModelHint" xml:space="preserve"><value>Applies from the next chat message. Price: $ per 1M tokens (input / output).</value></data>
-  <data name="Admin_AiModelDefault" xml:space="preserve"><value>Default</value></data>
   <data name="Msg_AiSettingsSaved" xml:space="preserve"><value>AI assistant settings saved.</value></data>
   <data name="Msg_AiSettingsInvalid" xml:space="preserve"><value>Some of the chosen values are not available; nothing was saved.</value></data>
   <data name="Admin_RankingModel" xml:space="preserve"><value>Car ranking model</value></data>
-  <data name="Admin_RankingModelHint" xml:space="preserve"><value>Orders cars by the client's wishes. NDCG@5 is the quality on the held-out test wishes. Applies from the next search.</value></data>
   <data name="Ranking_lightgbm" xml:space="preserve"><value>LightGBM</value></data>
   <data name="Ranking_mlp" xml:space="preserve"><value>Neural network MLP</value></data>
   <data name="Ranking_two_tower" xml:space="preserve"><value>Two-tower network</value></data>
-  <data name="Admin_SearchHint" xml:space="preserve"><value>How the agent searches the rental-policy knowledge base. Applies from the next question.</value></data>
   <data name="Search_Vector" xml:space="preserve"><value>Vector</value></data>
   <data name="Search_FullText" xml:space="preserve"><value>Full-text</value></data>
   <data name="Search_HybridRrf" xml:space="preserve"><value>Hybrid (RRF)</value></data>

@@ -19,8 +19,6 @@ public class AdminDashboardViewModel
     /// <summary>Models the administrator can choose for the chat.</summary>
     public IReadOnlyList<ChatModelOption> AiModels { get; set; } = [];
 
-    /// <summary>The configured default model (<c>Ai:DefaultModel</c>).</summary>
-    public string DefaultAiModel { get; set; } = string.Empty;
 
     /// <summary>Car ranking model in use now (lightgbm, mlp or two_tower).</summary>
     public string ActiveRankingModel { get; set; } = string.Empty;

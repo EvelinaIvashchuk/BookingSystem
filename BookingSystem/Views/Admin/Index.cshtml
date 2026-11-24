@@ -74,7 +74,11 @@
             </div>
 
             <div class="cr-panel">
-                <h2 class="cr-panel__title"><i class="bi bi-stars"></i>@L["Admin_AiTitle"]</h2>
+                <h2 class="cr-panel__title">
+                    <i class="bi bi-stars"></i>@L["Admin_AiTitle"]
+                    <button type="button" class="btn btn-link p-0 cr-panel__aside" data-bs-toggle="modal" data-bs-target="#aiHelpModal"
+                            title="@L["Admin_AiHelpTitle"]" aria-label="@L["Admin_AiHelpTitle"]"><i class="bi bi-question-circle fs-5"></i></button>
+                </h2>
                 <form asp-action="SaveAiSettings" method="post" class="d-grid gap-3">
                     <div>
                         <label class="cr-label" for="aiModel">@L["Admin_AiModel"]</label>
@@ -85,8 +89,6 @@
                                 <option value="@m.Id" selected="@(m.Id.Equals(Model.ActiveAiModel, StringComparison.OrdinalIgnoreCase))">@m.Model · @price</option>
                             }
                         </select>
-                        <div class="cr-td-sub mt-1">@L["Admin_AiModelHint"]</div>
-                        <div class="cr-td-sub">@L["Admin_AiModelDefault"]: <code>@Model.DefaultAiModel</code></div>
                     </div>
                     @if (Model.RankingModels.Count > 0)
                     {
@@ -99,7 +101,6 @@
                                     <option value="@m.Id" selected="@(m.Id == Model.ActiveRankingModel)">@L["Ranking_" + m.Id].Value@quality</option>
                                 }
                             </select>
-                            <div class="cr-td-sub mt-1">@L["Admin_RankingModelHint"]</div>
                         </div>
                     }
                     <div>
@@ -110,10 +111,41 @@
                                 <option value="@m" selected="@(m == Model.ActiveSearchMode)">@L["Search_" + m.ToString()].Value</option>
                             }
                         </select>
-                        <div class="cr-td-sub mt-1">@L["Admin_SearchHint"]</div>
                     </div>
                     <button type="submit" class="btn btn-primary">@L["Admin_AiModelSave"]</button>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="aiHelpModal" tabindex="-1" aria-labelledby="aiHelpTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="aiHelpTitle"><i class="bi bi-stars me-2"></i>@L["Admin_AiHelpTitle"]</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Common_Close"]"></button>
+            </div>
+            <div class="modal-body d-grid gap-3">
+                <section>
+                    <div class="cr-label">@L["Admin_AiModel"]</div>
+                    <div><strong>@L["Admin_AiHelpRecommended"]: @L["Admin_AiHelpChatBest"]</strong></div>
+                    <p class="mb-0">@L["Admin_AiHelpChat"]</p>
+                </section>
+                <section>
+                    <div class="cr-label">@L["Admin_RankingModel"]</div>
+                    <div><strong>@L["Admin_AiHelpRecommended"]: @L["Admin_AiHelpRankBest"]</strong></div>
+                    <p class="mb-0">@L["Admin_AiHelpRank"]</p>
+                </section>
+                <section>
+                    <div class="cr-label">@L["Admin_AiSearch"]</div>
+                    <div><strong>@L["Admin_AiHelpRecommended"]: @L["Admin_AiHelpSearchBest"]</strong></div>
+                    <p class="mb-0">@L["Admin_AiHelpSearch"]</p>
+                </section>
+                <div class="cr-td-sub">@L["Admin_AiHelpSource"]</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">@L["Common_Close"]</button>
             </div>
         </div>
     </div>
