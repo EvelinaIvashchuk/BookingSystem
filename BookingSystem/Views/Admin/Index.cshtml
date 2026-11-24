@@ -1,8 +1,6 @@
 @model AdminDashboardViewModel
-@inject Microsoft.Extensions.Options.IOptions<BookingSystem.Ai.AiOptions> AiOptions
 @{
     ViewData["Title"] = L["Admin_Dashboard_Title"].Value;
-    var ai = AiOptions.Value;
 }
 
 <div class="cr-page">
@@ -77,44 +75,45 @@
 
             <div class="cr-panel">
                 <h2 class="cr-panel__title"><i class="bi bi-stars"></i>@L["Admin_AiTitle"]</h2>
-                <div class="d-grid gap-3">
-                    <form asp-action="SetAiModel" method="post">
+                <form asp-action="SaveAiSettings" method="post" class="d-grid gap-3">
+                    <div>
                         <label class="cr-label" for="aiModel">@L["Admin_AiModel"]</label>
-                        <div class="d-flex gap-2">
-                            <select id="aiModel" name="model" class="form-select">
-                                @foreach (var m in Model.AiModels)
-                                {
-                                    var price = $"${m.InputPer1M.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)} / ${m.OutputPer1M.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}";
-                                    <option value="@m.Id" selected="@(m.Id.Equals(Model.ActiveAiModel, StringComparison.OrdinalIgnoreCase))">@m.Model · @price</option>
-                                }
-                            </select>
-                            <button type="submit" class="btn btn-primary">@L["Admin_AiModelSave"]</button>
-                        </div>
+                        <select id="aiModel" name="chatModel" class="form-select">
+                            @foreach (var m in Model.AiModels)
+                            {
+                                var price = $"${m.InputPer1M.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)} / ${m.OutputPer1M.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}";
+                                <option value="@m.Id" selected="@(m.Id.Equals(Model.ActiveAiModel, StringComparison.OrdinalIgnoreCase))">@m.Model · @price</option>
+                            }
+                        </select>
                         <div class="cr-td-sub mt-1">@L["Admin_AiModelHint"]</div>
                         <div class="cr-td-sub">@L["Admin_AiModelDefault"]: <code>@Model.DefaultAiModel</code></div>
-                    </form>
+                    </div>
                     @if (Model.RankingModels.Count > 0)
                     {
-                        <form asp-action="SetRankingModel" method="post">
+                        <div>
                             <label class="cr-label" for="rankingModel">@L["Admin_RankingModel"]</label>
-                            <div class="d-flex gap-2">
-                                <select id="rankingModel" name="model" class="form-select">
-                                    @foreach (var m in Model.RankingModels)
-                                    {
-                                        var quality = m.TestNdcg5 is { } q ? " · NDCG@5 " + q.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) : "";
-                                        <option value="@m.Id" selected="@(m.Id == Model.ActiveRankingModel)">@L["Ranking_" + m.Id].Value@quality</option>
-                                    }
-                                </select>
-                                <button type="submit" class="btn btn-primary">@L["Admin_AiModelSave"]</button>
-                            </div>
+                            <select id="rankingModel" name="rankingModel" class="form-select">
+                                @foreach (var m in Model.RankingModels)
+                                {
+                                    var quality = m.TestNdcg5 is { } q ? " · NDCG@5 " + q.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) : "";
+                                    <option value="@m.Id" selected="@(m.Id == Model.ActiveRankingModel)">@L["Ranking_" + m.Id].Value@quality</option>
+                                }
+                            </select>
                             <div class="cr-td-sub mt-1">@L["Admin_RankingModelHint"]</div>
-                        </form>
+                        </div>
                     }
-                    <div><span class="cr-label">@L["Admin_AiSearch"]</span><span class="cr-kv__value">@ai.Search.Mode</span></div>
-                    <div><span class="cr-label">@L["Admin_AiSlotFilling"]</span>
-                        @if (ai.SlotFilling.Enabled) { <span class="cr-status cr-status--active">@L["Common_On"]</span> } else { <span class="cr-status cr-status--neutral">@L["Common_Off"]</span> }
+                    <div>
+                        <label class="cr-label" for="searchMode">@L["Admin_AiSearch"]</label>
+                        <select id="searchMode" name="searchMode" class="form-select">
+                            @foreach (var m in Model.SearchModes)
+                            {
+                                <option value="@m" selected="@(m == Model.ActiveSearchMode)">@L["Search_" + m.ToString()].Value</option>
+                            }
+                        </select>
+                        <div class="cr-td-sub mt-1">@L["Admin_SearchHint"]</div>
                     </div>
-                </div>
+                    <button type="submit" class="btn btn-primary">@L["Admin_AiModelSave"]</button>
+                </form>
             </div>
         </div>
     </div>

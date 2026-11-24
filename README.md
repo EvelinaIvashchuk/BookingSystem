@@ -97,7 +97,7 @@ dotnet run --project BookingSystem
 | `Temperature`, `MaxOutputTokens`, `MaxAgentIterations`, `HistoryLength` | 0.2, 1024, 5, 12 | параметри агента |
 | `SlotFilling:Enabled` | `true` | внесок 1 (вимкнення — базовий варіант для ablation) |
 | `SlotFilling:RequireGroundedDates` | `true` | блокувати дати, яких користувач не називав (діє разом із `Enabled`) |
-| `Search:Mode`, `TopK`, `Candidates`, `RrfK`, `Adaptive:*` | `Vector`, 3, 20, 60 | внесок 2 — режим `HybridAdaptive` (параметри `Adaptive` підібрано на dev-вибірці); на сайті `Vector` — найкращий у цілому за E3 |
+| `Search:Mode`, `TopK`, `Candidates`, `RrfK`, `Adaptive:*` | `HybridAdaptive`, 3, 20, 60 | внесок 2 — режим `HybridAdaptive` (параметри `Adaptive` підібрано на dev-вибірці; на сайті після E3 із крос-валідацією ввімкнено саме його). Адміністратор може обрати `Vector`, `FullText`, `HybridRrf` або `HybridAdaptive` у панелі адміністратора (блок «AI-асистент»); вибір зберігається в `AppSettings` і діє з наступного запитання |
 | `PendingActionTtlMinutes` | 15 | строк дії чернетки бронювання |
 | `RateLimit:PerIpPerMinute`, `PerSessionPerHour` | 20, 60 | обмеження запитів до чату |
 | `Pricing[]` | — | ціни моделей за 1M токенів (для оцінки вартості в логах і експериментах) |

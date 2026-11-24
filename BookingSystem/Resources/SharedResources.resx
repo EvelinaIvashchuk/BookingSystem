@@ -410,15 +410,18 @@
   <data name="Admin_AiModelSave" xml:space="preserve"><value>Save</value></data>
   <data name="Admin_AiModelHint" xml:space="preserve"><value>Applies from the next chat message. Price: $ per 1M tokens (input / output).</value></data>
   <data name="Admin_AiModelDefault" xml:space="preserve"><value>Default</value></data>
-  <data name="Msg_AiModelChanged" xml:space="preserve"><value>Chat model changed to {0}.</value></data>
-  <data name="Msg_AiModelInvalid" xml:space="preserve"><value>This model is not available.</value></data>
+  <data name="Msg_AiSettingsSaved" xml:space="preserve"><value>AI assistant settings saved.</value></data>
+  <data name="Msg_AiSettingsInvalid" xml:space="preserve"><value>Some of the chosen values are not available; nothing was saved.</value></data>
   <data name="Admin_RankingModel" xml:space="preserve"><value>Car ranking model</value></data>
   <data name="Admin_RankingModelHint" xml:space="preserve"><value>Orders cars by the client's wishes. NDCG@5 is the quality on the held-out test wishes. Applies from the next search.</value></data>
   <data name="Ranking_lightgbm" xml:space="preserve"><value>LightGBM</value></data>
   <data name="Ranking_mlp" xml:space="preserve"><value>Neural network MLP</value></data>
   <data name="Ranking_two_tower" xml:space="preserve"><value>Two-tower network</value></data>
-  <data name="Msg_RankingModelChanged" xml:space="preserve"><value>Car ranking model changed to {0}.</value></data>
-  <data name="Msg_RankingModelInvalid" xml:space="preserve"><value>This ranking model is not available.</value></data>
+  <data name="Admin_SearchHint" xml:space="preserve"><value>How the agent searches the rental-policy knowledge base. Applies from the next question.</value></data>
+  <data name="Search_Vector" xml:space="preserve"><value>Vector</value></data>
+  <data name="Search_FullText" xml:space="preserve"><value>Full-text</value></data>
+  <data name="Search_HybridRrf" xml:space="preserve"><value>Hybrid (RRF)</value></data>
+  <data name="Search_HybridAdaptive" xml:space="preserve"><value>Hybrid (adaptive)</value></data>
   <data name="Admin_AiSearch" xml:space="preserve"><value>Knowledge base search</value></data>
   <data name="Admin_AiSlotFilling" xml:space="preserve"><value>Slot filling</value></data>
   <data name="Common_On" xml:space="preserve"><value>on</value></data>

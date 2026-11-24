@@ -17,7 +17,7 @@ namespace BookingSystem.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminController(IRentalService rentalService, ICarService carService, IUserService userService,
     IStorageService storageService, ApplicationDbContext db, IStringLocalizer<SharedResources> localizer,
-    IChatModelSettings chatModels, IRankingModelSettings rankingModels, Microsoft.Extensions.Options.IOptions<AiOptions> aiOptions) : Controller
+    IChatModelSettings chatModels, IRankingModelSettings rankingModels, IKnowledgeSearchSettings searchSettings, Microsoft.Extensions.Options.IOptions<AiOptions> aiOptions) : Controller
 {
     public async Task<IActionResult> Index()
     {
@@ -37,48 +37,46 @@ public class AdminController(IRentalService rentalService, ICarService carServic
             AiModels = chatModels.GetAvailableModels(),
             DefaultAiModel = aiOptions.Value.DefaultModel,
             ActiveRankingModel = await rankingModels.GetActiveModelAsync(),
-            RankingModels = rankingModels.GetAvailableModels()
+            RankingModels = rankingModels.GetAvailableModels(),
+            ActiveSearchMode = await searchSettings.GetActiveModeAsync(),
+            SearchModes = searchSettings.GetAvailableModes()
         };
 
         return View(vm);
     }
 
-    /// <summary>Lets an administrator choose the model that ranks cars by the client's wishes; applies from the next search.</summary>
+    /// <summary>
+    /// Saves the AI assistant settings chosen in the admin panel: chat model, car ranking model and knowledge-base search mode.
+    /// All values are validated first and nothing is saved if one of them is not available; only values that differ from the
+    /// current ones are stored, so an untouched setting keeps following the configured default. Applies from the next message.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SetRankingModel(string model)
+    public async Task<IActionResult> SaveAiSettings(string chatModel, string? rankingModel, string searchMode)
     {
-        try
+        var chat = chatModel?.Trim() ?? string.Empty;
+        var ranking = rankingModel?.Trim();
+        var chatValid = chatModels.GetAvailableModels().Any(m => m.Id.Equals(chat, StringComparison.OrdinalIgnoreCase));
+        var rankingValid = ranking is null || rankingModels.GetAvailableModels().Any(m => m.Id == ranking);
+        var searchValid = Enum.TryParse<KnowledgeSearchMode>(searchMode, ignoreCase: false, out var search) && Enum.IsDefined(search);
+
+        if (!chatValid || !rankingValid || !searchValid)
         {
-            await rankingModels.SetActiveModelAsync(model);
-            TempData["Success"] = string.Format(localizer["Msg_RankingModelChanged"].Value, localizer[$"Ranking_{model.Trim()}"].Value);
-        }
-        catch (ArgumentException)
-        {
-            TempData["Error"] = localizer["Msg_RankingModelInvalid"].Value;
+            TempData["Error"] = localizer["Msg_AiSettingsInvalid"].Value;
+            return RedirectToAction(nameof(Index));
         }
 
+        if (!chat.Equals(await chatModels.GetActiveModelAsync(), StringComparison.OrdinalIgnoreCase))
+            await chatModels.SetActiveModelAsync(chat);
+        if (ranking is not null && ranking != await rankingModels.GetActiveModelAsync())
+            await rankingModels.SetActiveModelAsync(ranking);
+        if (search != await searchSettings.GetActiveModeAsync())
+            await searchSettings.SetActiveModeAsync(search);
+
+        TempData["Success"] = localizer["Msg_AiSettingsSaved"].Value;
         return RedirectToAction(nameof(Index));
     }
 
-    /// <summary>Lets an administrator choose the model the chat uses; applies from the next message.</summary>
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SetAiModel(string model)
-    {
-        try
-        {
-            await chatModels.SetActiveModelAsync(model);
-            TempData["Success"] = string.Format(localizer["Msg_AiModelChanged"].Value, model.Trim());
-        }
-        catch (ArgumentException)
-        {
-            TempData["Error"] = localizer["Msg_AiModelInvalid"].Value;
-        }
-
-        return RedirectToAction(nameof(Index));
-    }
-    
     public async Task<IActionResult> Cars()
     {
         var cars = await carService.GetAllCarsAsync();

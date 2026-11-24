@@ -35,6 +35,7 @@ public static class AiServiceCollectionExtensions
                 ? new MySqlFullTextIndex(sp.GetRequiredService<BookingSystem.Data.ApplicationDbContext>())
                 : new Bm25FullTextIndex(sp.GetRequiredService<KnowledgeStore>()));
         services.AddScoped<IKnowledgeSearch, KnowledgeSearch>();
+        services.AddScoped<IKnowledgeSearchSettings, KnowledgeSearchSettings>();
         services.AddScoped<KnowledgeIndexer>();
         services.AddSingleton<Ranking.CarRanker>();
         services.AddScoped<IRankingModelSettings, Ranking.RankingModelSettings>();

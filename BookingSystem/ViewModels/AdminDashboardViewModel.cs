@@ -27,4 +27,10 @@ public class AdminDashboardViewModel
 
     /// <summary>Ranking models the administrator can choose.</summary>
     public IReadOnlyList<RankingModelOption> RankingModels { get; set; } = [];
+
+    /// <summary>Knowledge-base search mode in use now.</summary>
+    public KnowledgeSearchMode ActiveSearchMode { get; set; }
+
+    /// <summary>Search modes the administrator can choose.</summary>
+    public IReadOnlyList<KnowledgeSearchMode> SearchModes { get; set; } = [];
 }

@@ -410,15 +410,18 @@
   <data name="Admin_AiModelSave" xml:space="preserve"><value>Зберегти</value></data>
   <data name="Admin_AiModelHint" xml:space="preserve"><value>Діє з наступного повідомлення в чаті. Ціна: $ за 1 млн токенів (вхід / вихід).</value></data>
   <data name="Admin_AiModelDefault" xml:space="preserve"><value>За замовчуванням</value></data>
-  <data name="Msg_AiModelChanged" xml:space="preserve"><value>Модель чату змінено на {0}.</value></data>
-  <data name="Msg_AiModelInvalid" xml:space="preserve"><value>Ця модель недоступна.</value></data>
+  <data name="Msg_AiSettingsSaved" xml:space="preserve"><value>Налаштування AI-асистента збережено.</value></data>
+  <data name="Msg_AiSettingsInvalid" xml:space="preserve"><value>Деякі з обраних значень недоступні; нічого не збережено.</value></data>
   <data name="Admin_RankingModel" xml:space="preserve"><value>Модель ранжування авто</value></data>
   <data name="Admin_RankingModelHint" xml:space="preserve"><value>Упорядковує авто за побажаннями клієнта. NDCG@5 — якість на відкладених тестових побажаннях. Діє з наступного пошуку.</value></data>
   <data name="Ranking_lightgbm" xml:space="preserve"><value>LightGBM</value></data>
   <data name="Ranking_mlp" xml:space="preserve"><value>Нейромережа MLP</value></data>
   <data name="Ranking_two_tower" xml:space="preserve"><value>Двобаштова мережа</value></data>
-  <data name="Msg_RankingModelChanged" xml:space="preserve"><value>Модель ранжування авто змінено на {0}.</value></data>
-  <data name="Msg_RankingModelInvalid" xml:space="preserve"><value>Ця модель ранжування недоступна.</value></data>
+  <data name="Admin_SearchHint" xml:space="preserve"><value>Як агент шукає у базі правил оренди. Діє з наступного запитання.</value></data>
+  <data name="Search_Vector" xml:space="preserve"><value>Векторний</value></data>
+  <data name="Search_FullText" xml:space="preserve"><value>Повнотекстовий</value></data>
+  <data name="Search_HybridRrf" xml:space="preserve"><value>Гібридний (RRF)</value></data>
+  <data name="Search_HybridAdaptive" xml:space="preserve"><value>Гібридний (адаптивний)</value></data>
   <data name="Admin_AiSearch" xml:space="preserve"><value>Пошук у базі знань</value></data>
   <data name="Admin_AiSlotFilling" xml:space="preserve"><value>Заповнення параметрів</value></data>
   <data name="Common_On" xml:space="preserve"><value>увімкнено</value></data>

@@ -31,7 +31,8 @@ public sealed class BookingTools(
     AiOptions options,
     AgentTurnContext turn,
     CarRanker? ranker = null,
-    IRankingModelSettings? rankingModel = null)
+    IRankingModelSettings? rankingModel = null,
+    IKnowledgeSearchSettings? searchSettings = null)
 {
     public const string SearchAvailableCarsName = "search_available_cars";
     public const string GetCarDetailsName = "get_car_details";
@@ -435,7 +436,9 @@ public sealed class BookingTools(
         if (string.IsNullOrWhiteSpace(query))
             return new ToolError(ToolErrorCodes.InvalidArguments, "The query is empty.");
 
-        var result = await knowledge.SearchAsync(query.Trim(), options.Search.TopK, ct: cancellationToken);
+        // The search mode is the one the administrator chose in the admin panel (null = Ai:Search:Mode).
+        KnowledgeSearchMode? mode = searchSettings is null ? null : await searchSettings.GetActiveModeAsync(cancellationToken);
+        var result = await knowledge.SearchAsync(query.Trim(), options.Search.TopK, mode, cancellationToken);
 
         return new PolicySearchResult(
             [.. result.Hits.Select(h => new PolicyFragment(h.Key, h.Title, h.Content))],
@@ -498,7 +501,8 @@ public sealed class BookingToolsFactory(
     AgentClock clock,
     IOptions<AiOptions> options,
     CarRanker? ranker = null,
-    IRankingModelSettings? rankingModel = null)
+    IRankingModelSettings? rankingModel = null,
+    IKnowledgeSearchSettings? searchSettings = null)
 {
-    public BookingTools Create(AgentTurnContext turn) => new(uow, carService, knowledge, clock, options.Value, turn, ranker, rankingModel);
+    public BookingTools Create(AgentTurnContext turn) => new(uow, carService, knowledge, clock, options.Value, turn, ranker, rankingModel, searchSettings);
 }
