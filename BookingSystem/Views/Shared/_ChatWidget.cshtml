@@ -26,7 +26,11 @@
      data-chips-start="@L["Chat_ChipsStart"]"
      data-chips-cars="@L["Chat_ChipsCars"]"
      data-chips-draft="@L["Chat_ChipsDraft"]"
-     data-chips-booked="@L["Chat_ChipsBooked"]">
+     data-chips-booked="@L["Chat_ChipsBooked"]"
+     data-mic-start="@L["Chat_MicStart"]"
+     data-mic-stop="@L["Chat_MicStop"]"
+     data-mic-denied="@L["Chat_MicDenied"]"
+     data-mic-error="@L["Chat_MicError"]">
 
     @* Token for Confirm/Cancel; sent in the RequestVerificationToken header. *@
     @Html.AntiForgeryToken()
@@ -48,6 +52,10 @@
         <div id="chat-input-area">
             <input id="chat-input" type="text" placeholder="@L["Chat_Placeholder"]" autocomplete="off" maxlength="1000"
                    aria-label="@L["Chat_Placeholder"]" />
+            @* Voice input (Web Speech API); shown by chat-widget.js only where the browser supports it. *@
+            <button id="chat-mic" type="button" class="d-none" title="@L["Chat_MicStart"]" aria-label="@L["Chat_MicStart"]" aria-pressed="false">
+                <i class="bi bi-mic-fill" aria-hidden="true"></i>
+            </button>
             <button id="chat-send" type="button" title="@L["Chat_Send"]" aria-label="@L["Chat_Send"]">
                 <i class="bi bi-send-fill" aria-hidden="true"></i>
             </button>

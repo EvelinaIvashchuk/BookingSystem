@@ -17,6 +17,7 @@
     const input = document.getElementById('chat-input');
     const sendBtn = document.getElementById('chat-send');
     const newChatBtn = document.getElementById('chat-new');
+    const micBtn = document.getElementById('chat-mic');
     const antiForgeryToken = (widget.querySelector('input[name="__RequestVerificationToken"]') || {}).value || '';
     const locale = document.documentElement.lang || undefined;
 
@@ -170,6 +171,7 @@
         busy = value;
         input.disabled = value;
         sendBtn.disabled = value;
+        if (micBtn) micBtn.disabled = value;
         messages.querySelectorAll('.chat-car__select').forEach(function (b) { b.disabled = value; });
         if (!value) input.focus();
     }
@@ -358,11 +360,69 @@
         (pickup || ret).focus({ preventScroll: true });
     }
 
+    // ── Voice input ────────────────────────────────────────────────────────────
+    // Web Speech API (Chrome, Edge, Safari; not Firefox). The recognised text goes into the input field and
+    // is not sent automatically, so the user can correct dates or car names before pressing Send.
+    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+
+    function appendNote(text) {
+        messages.appendChild(el('div', 'chat-note', text));
+        scrollDown();
+    }
+    function setListening(on) {
+        micBtn.classList.toggle('is-listening', on);
+        micBtn.setAttribute('aria-pressed', String(on));
+        micBtn.title = on ? L.micStop : L.micStart;
+        micBtn.setAttribute('aria-label', micBtn.title);
+    }
+    function stopVoice() {
+        if (recognition) recognition.abort();
+    }
+    function toggleVoice() {
+        if (recognition) { recognition.stop(); return; }
+        if (busy) return;
+
+        const before = input.value.trim();
+        const r = new Recognition();
+        r.lang = /^en/i.test(document.documentElement.lang || '') ? 'en-US' : 'uk-UA';
+        r.interimResults = true;
+        r.continuous = false;
+        r.maxAlternatives = 1;
+        r.onresult = function (e) {
+            let heard = '';
+            for (let i = 0; i < e.results.length; i++) heard += e.results[i][0].transcript;
+            input.value = ((before ? before + ' ' : '') + heard.trim()).slice(0, input.maxLength > 0 ? input.maxLength : 1000);
+        };
+        r.onerror = function (e) {
+            if (e.error === 'not-allowed' || e.error === 'service-not-allowed') appendNote(L.micDenied);
+            else if (e.error !== 'no-speech' && e.error !== 'aborted') appendNote(L.micError);
+        };
+        r.onend = function () {
+            if (recognition === r) recognition = null;
+            setListening(false);
+            if (!busy) input.focus();
+        };
+        try {
+            r.start();
+            recognition = r;
+            setListening(true);
+        } catch (err) {
+            setListening(false);
+        }
+    }
+
+    if (micBtn && Recognition && window.isSecureContext) {
+        micBtn.classList.remove('d-none');
+        micBtn.addEventListener('click', toggleVoice);
+    }
+
     // ── Conversation ───────────────────────────────────────────────────────────
     function sendMessage(text) {
         text = (text || '').trim();
         if (!text || busy) return;
 
+        stopVoice();
         closeDateForm();
         removeChips();
         appendMessage(text, 'user');
@@ -421,6 +481,7 @@
 
     function startNewChat() {
         if (busy) return;
+        stopVoice();
         openDateForm = null;
         chipRow = null;
         clearSessionId();
@@ -432,6 +493,7 @@
     }
 
     function setOpen(open) {
+        if (!open) stopVoice();
         panel.classList.toggle('d-none', !open);
         iconOpen.classList.toggle('d-none', open);
         iconClose.classList.toggle('d-none', !open);

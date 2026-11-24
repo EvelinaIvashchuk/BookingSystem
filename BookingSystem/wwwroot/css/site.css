@@ -625,6 +625,37 @@ body {
 #chat-send:hover { background: #0b5ed7; }
 #chat-send:disabled { background: #adb5bd; cursor: not-allowed; }
 
+/* Voice input */
+#chat-mic {
+    background: #fff;
+    color: var(--cr-violet-600, #534AB7);
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .15s, border-color .15s, color .15s;
+}
+#chat-mic.d-none { display: none; }
+#chat-mic:hover { border-color: var(--cr-violet-400, #7F77DD); }
+#chat-mic:disabled { color: #adb5bd; cursor: not-allowed; }
+#chat-mic.is-listening {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+    animation: chat-mic-pulse 1.2s infinite ease-in-out;
+}
+@keyframes chat-mic-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, .45); }
+    50% { box-shadow: 0 0 0 6px rgba(220, 53, 69, 0); }
+}
+@media (prefers-reduced-motion: reduce) { #chat-mic.is-listening { animation: none; } }
+.chat-note { align-self: center; max-width: 90%; font-size: .75rem; color: #6c757d; text-align: center; }
+
 @media (max-width: 400px) {
     #chat-window { width: calc(100vw - 2rem); right: -0.5rem; }
 }

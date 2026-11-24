@@ -264,6 +264,10 @@
   <data name="Chat_ChipsCars" xml:space="preserve"><value>Покажи дешевші варіанти|Лише з автоматичною коробкою|Потрібно більше місця для багажу</value></data>
   <data name="Chat_ChipsDraft" xml:space="preserve"><value>Які умови скасування?|Що взяти з собою для отримання авто?</value></data>
   <data name="Chat_ChipsBooked" xml:space="preserve"><value>Покажи мої бронювання|Що взяти з собою для отримання авто?</value></data>
+  <data name="Chat_MicStart" xml:space="preserve"><value>Голосовий ввід</value></data>
+  <data name="Chat_MicStop" xml:space="preserve"><value>Зупинити запис</value></data>
+  <data name="Chat_MicDenied" xml:space="preserve"><value>Немає доступу до мікрофона. Дозвольте його в налаштуваннях браузера й спробуйте ще раз.</value></data>
+  <data name="Chat_MicError" xml:space="preserve"><value>Не вдалося розпізнати мовлення. Спробуйте ще раз або введіть текст.</value></data>
   <data name="Chat_DraftTitle" xml:space="preserve"><value>Підтвердіть бронювання</value></data>
   <data name="Chat_DraftDates" xml:space="preserve"><value>{0} — {1} ({2} дн.)</value></data>
   <data name="Chat_DraftTotal" xml:space="preserve"><value>Разом: {0} ₴</value></data>
