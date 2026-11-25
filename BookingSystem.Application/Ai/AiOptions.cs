@@ -7,8 +7,11 @@ public sealed class AiOptions
 {
     public const string SectionName = "Ai";
 
-    /// <summary>Model in <c>provider:model</c> form, e.g. <c>groq:openai/gpt-oss-120b</c>.</summary>
-    public string DefaultModel { get; set; } = "groq:openai/gpt-oss-120b";
+    /// <summary>
+    /// Model in <c>provider:model</c> form. The default is the model chosen by experiment E1
+    /// (same value as in appsettings.json), so an empty configuration does not silently switch to another model.
+    /// </summary>
+    public string DefaultModel { get; set; } = "gemini:gemini-3.6-flash";
 
     /// <summary>Upper bound on model calls inside one agent turn (tool-calling loop).</summary>
     public int MaxAgentIterations { get; set; } = 5;
